@@ -1,60 +1,54 @@
 package net.p3pp3rf1y.sophisticatedstorage;
 
+import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.p3pp3rf1y.sophisticatedstorage.client.ClientEventHandler;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.properties.WoodType;
 import net.p3pp3rf1y.sophisticatedstorage.common.CommonEventHandler;
-import net.p3pp3rf1y.sophisticatedstorage.data.DataGenerators;
 import net.p3pp3rf1y.sophisticatedstorage.init.ModBlocks;
 import net.p3pp3rf1y.sophisticatedstorage.init.ModCompat;
 import net.p3pp3rf1y.sophisticatedstorage.init.ModItems;
 import net.p3pp3rf1y.sophisticatedstorage.init.ModLoot;
 import net.p3pp3rf1y.sophisticatedstorage.init.ModParticles;
 import net.p3pp3rf1y.sophisticatedstorage.item.CapabilityStorageWrapper;
+import net.p3pp3rf1y.sophisticatedstorage.item.WoodStorageBlockItem;
 import net.p3pp3rf1y.sophisticatedstorage.network.StoragePacketHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod(SophisticatedStorage.MOD_ID)
-public class SophisticatedStorage {
-	public static final String MOD_ID = "sophisticatedstorage";
-	public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
-	public static final CreativeModeTab CREATIVE_TAB = new SophisticatedStorageTab();
+public class SophisticatedStorage implements ModInitializer {
+	public static final String ID = "sophisticatedstorage";
+	public static final Logger LOGGER = LogManager.getLogger(ID);
+
+	public static final CreativeModeTab CREATIVE_TAB = FabricItemGroup.builder(getRL("item_group"))
+			.icon(() -> WoodStorageBlockItem.setWoodType(new ItemStack(ModBlocks.GOLD_BARREL_ITEM), WoodType.SPRUCE))
+			.build();
 
 	private final CommonEventHandler commonEventHandler = new CommonEventHandler();
 
 	@SuppressWarnings("java:S1118") //needs to be public for mod to work
 	public SophisticatedStorage() {
-		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Config.SERVER_SPEC);
-		ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.CLIENT_SPEC);
-		IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
-		modBus.addListener(Config.SERVER::onConfigReload);
-		commonEventHandler.registerHandlers();
-		if (FMLEnvironment.dist == Dist.CLIENT) {
-			ClientEventHandler.registerHandlers();
-		}
-		ModBlocks.registerHandlers(modBus);
-		ModItems.registerHandlers(modBus);
-		modBus.addListener(SophisticatedStorage::setup);
-		modBus.addListener(DataGenerators::gatherData);
-		modBus.addListener(CapabilityStorageWrapper::onRegister);
-		ModParticles.registerParticles(modBus);
-		modBus.addListener(ModLoot::registerLootFunction);
 	}
 
-	private static void setup(FMLCommonSetupEvent event) {
-		StoragePacketHandler.INSTANCE.init();
+	@Override
+	public void onInitialize() {
+		Config.register();
+
+		commonEventHandler.registerHandlers();
+
+		ModBlocks.register();
+		ModItems.register();
+
+		CapabilityStorageWrapper.register();
+
+		ModParticles.registerParticles();
+		ModLoot.registerLootFunction();
+
 		ModCompat.initCompats();
-		event.enqueueWork(ModBlocks::registerDispenseBehavior);
-		event.enqueueWork(ModBlocks::registerCauldronInteractions);
+
+		StoragePacketHandler.init();
 	}
 
 	public static ResourceLocation getRL(String regName) {
@@ -62,6 +56,6 @@ public class SophisticatedStorage {
 	}
 
 	public static String getRegistryName(String regName) {
-		return MOD_ID + ":" + regName;
+		return ID + ":" + regName;
 	}
 }

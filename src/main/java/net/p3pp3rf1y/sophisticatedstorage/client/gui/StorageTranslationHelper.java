@@ -9,7 +9,7 @@ public class StorageTranslationHelper extends TranslationHelper {
 	public static final StorageTranslationHelper INSTANCE = new StorageTranslationHelper();
 
 	private StorageTranslationHelper() {
-		super(SophisticatedStorage.MOD_ID);
+		super(SophisticatedStorage.ID);
 	}
 
 	public Component translItemOverlayMessage(Item item, String overlayMessage, Object... params) {

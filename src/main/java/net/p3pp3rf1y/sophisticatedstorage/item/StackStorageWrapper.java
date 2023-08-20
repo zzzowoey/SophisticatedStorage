@@ -1,8 +1,8 @@
 package net.p3pp3rf1y.sophisticatedstorage.item;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
-import net.p3pp3rf1y.sophisticatedcore.util.BlockItemBase;
 import net.p3pp3rf1y.sophisticatedcore.util.NBTHelper;
 import net.p3pp3rf1y.sophisticatedstorage.block.IStorageBlock;
 import net.p3pp3rf1y.sophisticatedstorage.block.ItemContentsStorage;
@@ -65,7 +65,7 @@ abstract class StackStorageWrapper extends StorageWrapper {
 
 	@Override
 	public int getDefaultNumberOfInventorySlots() {
-		return storageStack.getItem() instanceof BlockItemBase blockItem && blockItem.getBlock() instanceof IStorageBlock storageBlock ? storageBlock.getNumberOfInventorySlots() : 0;
+		return storageStack.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof IStorageBlock storageBlock ? storageBlock.getNumberOfInventorySlots() : 0;
 	}
 
 	@Override
@@ -76,6 +76,6 @@ abstract class StackStorageWrapper extends StorageWrapper {
 
 	@Override
 	public int getDefaultNumberOfUpgradeSlots() {
-		return storageStack.getItem() instanceof BlockItemBase blockItem && blockItem.getBlock() instanceof IStorageBlock storageBlock ? storageBlock.getNumberOfUpgradeSlots() : 0;
+		return storageStack.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof IStorageBlock storageBlock ? storageBlock.getNumberOfUpgradeSlots() : 0;
 	}
 }

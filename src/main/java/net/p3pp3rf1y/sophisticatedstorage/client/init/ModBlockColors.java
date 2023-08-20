@@ -1,11 +1,12 @@
 package net.p3pp3rf1y.sophisticatedstorage.client.init;
 
+import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.ColorResolver;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.p3pp3rf1y.sophisticatedcore.renderdata.RenderInfo;
 import net.p3pp3rf1y.sophisticatedcore.util.WorldHelper;
 import net.p3pp3rf1y.sophisticatedstorage.block.LimitedBarrelBlock;
@@ -18,17 +19,19 @@ import java.util.List;
 public class ModBlockColors {
 	private ModBlockColors() {}
 
-	public static void registerBlockColorHandlers(RegisterColorHandlersEvent.Block event) {
-		event.register(ModBlockColors::getBarrelTintColor,
-				ModBlocks.BARREL.get(), ModBlocks.IRON_BARREL.get(), ModBlocks.GOLD_BARREL.get(), ModBlocks.DIAMOND_BARREL.get(), ModBlocks.NETHERITE_BARREL.get(),
-				ModBlocks.LIMITED_BARREL_1.get(), ModBlocks.LIMITED_IRON_BARREL_1.get(), ModBlocks.LIMITED_GOLD_BARREL_1.get(), ModBlocks.LIMITED_DIAMOND_BARREL_1.get(), ModBlocks.LIMITED_NETHERITE_BARREL_1.get(),
-				ModBlocks.LIMITED_BARREL_2.get(), ModBlocks.LIMITED_IRON_BARREL_2.get(), ModBlocks.LIMITED_GOLD_BARREL_2.get(), ModBlocks.LIMITED_DIAMOND_BARREL_2.get(), ModBlocks.LIMITED_NETHERITE_BARREL_2.get(),
-				ModBlocks.LIMITED_BARREL_3.get(), ModBlocks.LIMITED_IRON_BARREL_3.get(), ModBlocks.LIMITED_GOLD_BARREL_3.get(), ModBlocks.LIMITED_DIAMOND_BARREL_3.get(), ModBlocks.LIMITED_NETHERITE_BARREL_3.get(),
-				ModBlocks.LIMITED_BARREL_4.get(), ModBlocks.LIMITED_IRON_BARREL_4.get(), ModBlocks.LIMITED_GOLD_BARREL_4.get(), ModBlocks.LIMITED_DIAMOND_BARREL_4.get(), ModBlocks.LIMITED_NETHERITE_BARREL_4.get()
+	public static void registerBlockColorHandlers() {
+		ColorProviderRegistry.BLOCK.register(ModBlockColors::getBarrelTintColor,
+				ModBlocks.BARREL, ModBlocks.IRON_BARREL, ModBlocks.GOLD_BARREL, ModBlocks.DIAMOND_BARREL, ModBlocks.NETHERITE_BARREL,
+				ModBlocks.LIMITED_BARREL_1, ModBlocks.LIMITED_IRON_BARREL_1, ModBlocks.LIMITED_GOLD_BARREL_1, ModBlocks.LIMITED_DIAMOND_BARREL_1, ModBlocks.LIMITED_NETHERITE_BARREL_1,
+				ModBlocks.LIMITED_BARREL_2, ModBlocks.LIMITED_IRON_BARREL_2, ModBlocks.LIMITED_GOLD_BARREL_2, ModBlocks.LIMITED_DIAMOND_BARREL_2, ModBlocks.LIMITED_NETHERITE_BARREL_2,
+				ModBlocks.LIMITED_BARREL_3, ModBlocks.LIMITED_IRON_BARREL_3, ModBlocks.LIMITED_GOLD_BARREL_3, ModBlocks.LIMITED_DIAMOND_BARREL_3, ModBlocks.LIMITED_NETHERITE_BARREL_3,
+				ModBlocks.LIMITED_BARREL_4, ModBlocks.LIMITED_IRON_BARREL_4, ModBlocks.LIMITED_GOLD_BARREL_4, ModBlocks.LIMITED_DIAMOND_BARREL_4, ModBlocks.LIMITED_NETHERITE_BARREL_4
 		);
 
-		event.register(ModBlockColors::getChestShulkerBoxColor, ModBlocks.CHEST.get(), ModBlocks.IRON_CHEST.get(), ModBlocks.GOLD_CHEST.get(), ModBlocks.DIAMOND_CHEST.get(), ModBlocks.NETHERITE_CHEST.get(),
-				ModBlocks.SHULKER_BOX.get(), ModBlocks.IRON_SHULKER_BOX.get(), ModBlocks.GOLD_SHULKER_BOX.get(), ModBlocks.DIAMOND_SHULKER_BOX.get(), ModBlocks.NETHERITE_SHULKER_BOX.get());
+		ColorProviderRegistry.BLOCK.register(ModBlockColors::getChestShulkerBoxColor,
+				ModBlocks.CHEST, ModBlocks.IRON_CHEST, ModBlocks.GOLD_CHEST, ModBlocks.DIAMOND_CHEST, ModBlocks.NETHERITE_CHEST,
+				ModBlocks.SHULKER_BOX, ModBlocks.IRON_SHULKER_BOX, ModBlocks.GOLD_SHULKER_BOX, ModBlocks.DIAMOND_SHULKER_BOX, ModBlocks.NETHERITE_SHULKER_BOX
+		);
 	}
 
 	private static int getBarrelTintColor(BlockState state, @Nullable BlockAndTintGetter blockDisplayReader, @Nullable BlockPos pos, int tintIndex) {
@@ -51,7 +54,7 @@ public class ModBlockColors {
 							if (stack.isEmpty()) {
 								return -1;
 							}
-							return Minecraft.getInstance().getItemColors().getColor(stack, tintIndex - tintOffset);
+							return Minecraft.getInstance().itemColors.getColor(stack, tintIndex - tintOffset);
 						}
 					}
 					return -1;

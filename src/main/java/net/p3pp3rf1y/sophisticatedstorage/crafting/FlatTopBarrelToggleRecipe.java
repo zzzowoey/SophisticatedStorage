@@ -1,9 +1,11 @@
 package net.p3pp3rf1y.sophisticatedstorage.crafting;
 
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
@@ -12,8 +14,8 @@ import net.p3pp3rf1y.sophisticatedstorage.init.ModBlocks;
 import net.p3pp3rf1y.sophisticatedstorage.item.BarrelBlockItem;
 
 public class FlatTopBarrelToggleRecipe extends CustomRecipe {
-	public FlatTopBarrelToggleRecipe(ResourceLocation registryName) {
-		super(registryName);
+	public FlatTopBarrelToggleRecipe(ResourceLocation registryName, CraftingBookCategory craftingBookCategory) {
+		super(registryName, craftingBookCategory);
 	}
 
 	@Override
@@ -36,7 +38,7 @@ public class FlatTopBarrelToggleRecipe extends CustomRecipe {
 	}
 
 	@Override
-	public ItemStack assemble(CraftingContainer container) {
+	public ItemStack assemble(CraftingContainer container, RegistryAccess registryManager) {
 		for (int i = 0; i < container.getContainerSize(); i++) {
 			ItemStack item = container.getItem(i);
 			if (item.isEmpty()) {
@@ -61,6 +63,6 @@ public class FlatTopBarrelToggleRecipe extends CustomRecipe {
 
 	@Override
 	public RecipeSerializer<?> getSerializer() {
-		return ModBlocks.FLAT_TOP_BARREL_TOGGLE_RECIPE_SERIALIZER.get();
+		return ModBlocks.FLAT_TOP_BARREL_TOGGLE_RECIPE_SERIALIZER;
 	}
 }

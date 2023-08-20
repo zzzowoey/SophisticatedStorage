@@ -1,11 +1,13 @@
 package net.p3pp3rf1y.sophisticatedstorage.block;
 
+import io.github.fabricators_of_create.porting_lib.util.LogicalSidedProvider;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.fml.util.thread.SidedThreadGroups;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.p3pp3rf1y.sophisticatedcore.api.IStorageWrapper;
 import net.p3pp3rf1y.sophisticatedcore.common.gui.SortBy;
 import net.p3pp3rf1y.sophisticatedcore.inventory.ITrackedContentsItemHandler;
@@ -122,10 +124,11 @@ public abstract class StorageWrapper implements IStorageWrapper {
 				inventoryIOHandler = null;
 				upgradeCachesInvalidatedHandler.run();
 			}) {
+
 				@Override
-				public boolean isItemValid(int slot, ItemStack stack) {
+				public boolean isItemValid(int slot, ItemVariant resource) {
 					//noinspection ConstantConditions - by this time the upgrade has registryName so it can't be null
-					return super.isItemValid(slot, stack) && (stack.isEmpty() || SophisticatedStorage.MOD_ID.equals(ForgeRegistries.ITEMS.getKey(stack.getItem()).getNamespace()) || stack.is(ModItems.STORAGE_UPGRADE_TAG));
+					return super.isItemValid(slot, resource) && (resource.isBlank() || SophisticatedStorage.ID.equals(BuiltInRegistries.ITEM.getKey(resource.getItem()).getNamespace()) || resource.toStack().is(ModItems.STORAGE_UPGRADE_TAG));
 				}
 
 				@Override
@@ -197,7 +200,7 @@ public abstract class StorageWrapper implements IStorageWrapper {
 	public void load(CompoundTag tag) {
 		loadContents(tag);
 		loadData(tag);
-		if (Thread.currentThread().getThreadGroup() == SidedThreadGroups.SERVER && getRenderInfo().getUpgradeItems().size() != getUpgradeHandler().getSlots()) {
+		if (LogicalSidedProvider.WORKQUEUE.get(EnvType.SERVER).isSameThread() && getRenderInfo().getUpgradeItems().size() != getUpgradeHandler().getSlotCount()) {
 			getUpgradeHandler().setRenderUpgradeItems();
 		}
 	}
@@ -249,8 +252,8 @@ public abstract class StorageWrapper implements IStorageWrapper {
 	private void initInventoryHandler() {
 		inventoryHandler = new InventoryHandler(getNumberOfInventorySlots(), this, getContentsNbt(), getSaveHandler.get(), StackUpgradeItem.getInventorySlotLimit(this), Config.SERVER.stackUpgrade) {
 			@Override
-			protected boolean isAllowed(ItemStack stack) {
-				return isAllowedInStorage(stack);
+			protected boolean isAllowed(ItemVariant resource) {
+				return isAllowedInStorage(resource.toStack());
 			}
 		};
 		inventoryHandler.addListener(getSettingsHandler().getTypeCategory(ItemDisplaySettingsCategory.class)::itemChanged);

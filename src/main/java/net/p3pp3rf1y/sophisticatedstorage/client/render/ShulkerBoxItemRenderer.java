@@ -1,3 +1,4 @@
+/*
 package net.p3pp3rf1y.sophisticatedstorage.client.render;
 
 import com.google.common.cache.CacheBuilder;
@@ -12,6 +13,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.p3pp3rf1y.sophisticatedstorage.block.ITintableBlockItem;
 import net.p3pp3rf1y.sophisticatedstorage.block.ShulkerBoxBlock;
@@ -33,7 +35,7 @@ public class ShulkerBoxItemRenderer extends BlockEntityWithoutLevelRenderer {
 	}
 
 	@Override
-	public void renderByItem(ItemStack stack, ItemTransforms.TransformType transformType, PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
+	public void renderByItem(ItemStack stack, ItemDisplayContext displayContext, PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
 		if (!(stack.getItem() instanceof BlockItem blockItem)) {
 			return;
 		}
@@ -52,3 +54,4 @@ public class ShulkerBoxItemRenderer extends BlockEntityWithoutLevelRenderer {
 		}
 	}
 }
+*/

@@ -3,18 +3,16 @@ package net.p3pp3rf1y.sophisticatedstorage.client.render;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.ModelData;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -44,7 +42,7 @@ public class RenderHelper {
 		TextureAtlasSprite sprite = parseSpriteFromModel(blockState, direction, rand);
 
 		if (sprite == null) {
-			sprite = Minecraft.getInstance().getModelManager().getMissingModel().getParticleIcon(ModelData.EMPTY);
+			sprite = Minecraft.getInstance().getModelManager().getMissingModel().getParticleIcon();
 		}
 
 		return sprite;
@@ -57,8 +55,8 @@ public class RenderHelper {
 
 		BakedModel blockModel = Minecraft.getInstance().getBlockRenderer().getBlockModel(blockState);
 		try {
-			for (RenderType layer : blockModel.getRenderTypes(blockState, rand, ModelData.EMPTY)) {
-				List<BakedQuad> culledQuads = blockModel.getQuads(blockState, direction, rand, ModelData.EMPTY, layer);
+//			for (RenderType layer : blockModel.getRenderTypes(blockState, rand, ModelData.EMPTY)) {
+				List<BakedQuad> culledQuads = blockModel.getQuads(blockState, direction, rand);
 				if (!culledQuads.isEmpty()) {
 					return culledQuads.get(0).getSprite();
 				}
@@ -73,7 +71,7 @@ public class RenderHelper {
 						return bakedQuad.getSprite();
 					}
 				}
-			}
+//			}
 		}
 		catch (Exception e) {
 			// NO OP
@@ -81,7 +79,7 @@ public class RenderHelper {
 
 		if (sprite == null) {
 			try {
-				sprite = blockModel.getParticleIcon(ModelData.EMPTY);
+				sprite = blockModel.getParticleIcon();
 			}
 			catch (Exception e) {
 				// NO OP
@@ -92,7 +90,7 @@ public class RenderHelper {
 	}
 
 	private static BlockState getDefaultBlockState(ResourceLocation blockName) {
-		Block block = ForgeRegistries.BLOCKS.getValue(blockName);
+		Block block = BuiltInRegistries.BLOCK.get(blockName);
 		return block != null ? block.defaultBlockState() : Blocks.AIR.defaultBlockState();
 	}
 

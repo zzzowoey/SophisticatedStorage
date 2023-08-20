@@ -1,22 +1,21 @@
 package net.p3pp3rf1y.sophisticatedstorage.item;
 
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
-import net.p3pp3rf1y.sophisticatedcore.util.BlockItemBase;
 import net.p3pp3rf1y.sophisticatedcore.util.NBTHelper;
-import net.p3pp3rf1y.sophisticatedstorage.SophisticatedStorage;
 import net.p3pp3rf1y.sophisticatedstorage.block.ITintableBlockItem;
 
 import java.util.Optional;
 
-public class StorageBlockItem extends BlockItemBase implements ITintableBlockItem {
+public class StorageBlockItem extends BlockItem implements ITintableBlockItem {
 
 	private static final String ACCENT_COLOR_TAG = "accentColor";
 	private static final String MAIN_COLOR_TAG = "mainColor";
 	private static final String SHOWS_TIER_TAG = "showsTier";
 
 	public StorageBlockItem(Block block, Properties properties) {
-		super(block, properties, SophisticatedStorage.CREATIVE_TAB);
+		super(block, properties);
 	}
 
 	public static Optional<Integer> getMainColorFromStack(ItemStack barrelStack) {

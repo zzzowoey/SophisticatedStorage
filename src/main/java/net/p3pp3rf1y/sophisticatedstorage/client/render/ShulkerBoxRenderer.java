@@ -2,7 +2,9 @@ package net.p3pp3rf1y.sophisticatedstorage.client.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.model.ShulkerModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.geom.ModelPart;
@@ -16,8 +18,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.p3pp3rf1y.sophisticatedstorage.SophisticatedStorage;
 import net.p3pp3rf1y.sophisticatedstorage.block.ShulkerBoxBlock;
 import net.p3pp3rf1y.sophisticatedstorage.block.ShulkerBoxBlockEntity;
@@ -25,7 +25,7 @@ import net.p3pp3rf1y.sophisticatedstorage.init.ModBlocks;
 
 import static net.p3pp3rf1y.sophisticatedstorage.client.render.DisplayItemRenderer.getNorthBasedRotation;
 
-@OnlyIn(Dist.CLIENT)
+@Environment(EnvType.CLIENT)
 public class ShulkerBoxRenderer extends StorageRenderer<ShulkerBoxBlockEntity> {
 	private static final String ENTITY_SHULKER_BOX_FOLDER = "entity/shulker_box/";
 
@@ -85,7 +85,7 @@ public class ShulkerBoxRenderer extends StorageRenderer<ShulkerBoxBlockEntity> {
 		} else if (holdsItemThatShowsHiddenTiers()) {
 			//noinspection resource
 			TextureAtlasSprite sprite = getTierMaterial(blockState.getBlock()).sprite();
-			VertexConsumer vertexconsumer = sprite.wrap(bufferSource.getBuffer(RenderType.entityTranslucent(sprite.atlas().location())));
+			VertexConsumer vertexconsumer = sprite.wrap(bufferSource.getBuffer(RenderType.entityTranslucent(sprite.atlasLocation())));
 			poseStack.pushPose();
 			poseStack.translate(0, -0.01, 0);
 			poseStack.scale(1.01f, 1.01f, 1.01f);
@@ -103,7 +103,7 @@ public class ShulkerBoxRenderer extends StorageRenderer<ShulkerBoxBlockEntity> {
 		float zOffset = 0;
 		if (lidProgress > 0) {
 			zOffset = lidProgress * 0.5f;
-			poseStack.mulPose(Vector3f.ZP.rotationDegrees(270.0F * lidProgress));
+			poseStack.mulPose(Axis.ZP.rotationDegrees(270.0F * lidProgress));
 		}
 
 		poseStack.translate(-0.5D, -0.5D, -0.5D - zOffset);
@@ -117,13 +117,13 @@ public class ShulkerBoxRenderer extends StorageRenderer<ShulkerBoxBlockEntity> {
 	}
 
 	private Material getTierMaterial(Block block) {
-		if (block == ModBlocks.IRON_SHULKER_BOX.get()) {
+		if (block == ModBlocks.IRON_SHULKER_BOX) {
 			return IRON_TIER_MATERIAL;
-		} else if (block == ModBlocks.GOLD_SHULKER_BOX.get()) {
+		} else if (block == ModBlocks.GOLD_SHULKER_BOX) {
 			return GOLD_TIER_MATERIAL;
-		} else if (block == ModBlocks.DIAMOND_SHULKER_BOX.get()) {
+		} else if (block == ModBlocks.DIAMOND_SHULKER_BOX) {
 			return DIAMOND_TIER_MATERIAL;
-		} else if (block == ModBlocks.NETHERITE_SHULKER_BOX.get()) {
+		} else if (block == ModBlocks.NETHERITE_SHULKER_BOX) {
 			return NETHERITE_TIER_MATERIAL;
 		}
 		return BASE_TIER_MATERIAL;

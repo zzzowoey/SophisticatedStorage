@@ -1,6 +1,8 @@
 package net.p3pp3rf1y.sophisticatedstorage.compat.jei;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -10,8 +12,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.ShapedRecipe;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.p3pp3rf1y.sophisticatedcore.compat.jei.ClientRecipeHelper;
+import net.p3pp3rf1y.sophisticatedcore.Config;
+import net.p3pp3rf1y.sophisticatedcore.compat.common.ClientRecipeHelper;
 import net.p3pp3rf1y.sophisticatedstorage.SophisticatedStorage;
 import net.p3pp3rf1y.sophisticatedstorage.crafting.ShulkerBoxFromChestRecipe;
 import net.p3pp3rf1y.sophisticatedstorage.item.ChestBlockItem;
@@ -63,12 +65,12 @@ public class ShulkerBoxFromChestRecipesMaker {
 					}
 					i++;
 				}
-				ItemStack result = originalRecipe.assemble(craftinginventory);
+				ItemStack result = originalRecipe.assemble(craftinginventory, Minecraft.getInstance().level.registryAccess());
 				//noinspection ConstantConditions
-				ResourceLocation newId = new ResourceLocation(SophisticatedStorage.MOD_ID, "shulker_from_" + ForgeRegistries.ITEMS.getKey(chestItem.getItem()).getPath()
+				ResourceLocation newId = new ResourceLocation(SophisticatedStorage.ID, "shulker_from_" + BuiltInRegistries.ITEM.getKey(chestItem.getItem()).getPath()
 						+ result.getOrCreateTag().toString().toLowerCase(Locale.ROOT).replaceAll("[^a-z\\d/._-]", "_"));
 
-				recipes.add(new ShapedRecipe(newId, "", originalRecipe.getRecipeWidth(), originalRecipe.getRecipeHeight(), ingredientsCopy, result));
+				recipes.add(new ShapedRecipe(newId, "", originalRecipe.category(), originalRecipe.getWidth(), originalRecipe.getHeight(), ingredientsCopy, result));
 			});
 		}));
 
@@ -82,8 +84,10 @@ public class ShulkerBoxFromChestRecipesMaker {
 
 			for (ItemStack ingredientItem : ingredientItems) {
 				Item item = ingredientItem.getItem();
-				if (item instanceof ChestBlockItem) {
-					item.fillItemCategory(SophisticatedStorage.CREATIVE_TAB, chestItems);
+				if (item instanceof ChestBlockItem chestBlockItem) {
+					if (Config.SERVER.enabledItems.isItemEnabled(chestBlockItem)) {
+						chestItems.add(new ItemStack(chestBlockItem.getBlock()));
+					}
 				}
 			}
 		}

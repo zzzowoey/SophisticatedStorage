@@ -16,11 +16,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.p3pp3rf1y.sophisticatedcore.client.gui.utils.TranslationHelper;
 import net.p3pp3rf1y.sophisticatedcore.controller.ILinkable;
-import net.p3pp3rf1y.sophisticatedcore.util.ItemBase;
 import net.p3pp3rf1y.sophisticatedcore.util.NBTHelper;
 import net.p3pp3rf1y.sophisticatedcore.util.RegistryHelper;
 import net.p3pp3rf1y.sophisticatedcore.util.WorldHelper;
-import net.p3pp3rf1y.sophisticatedstorage.SophisticatedStorage;
 import net.p3pp3rf1y.sophisticatedstorage.block.ICountDisplay;
 import net.p3pp3rf1y.sophisticatedstorage.block.ILockable;
 import net.p3pp3rf1y.sophisticatedstorage.block.ITierDisplay;
@@ -34,13 +32,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class StorageToolItem extends ItemBase {
+public class StorageToolItem extends Item {
 
 	private static final String CONTROLLER_POS_TAG = "controllerPos";
 	private static final String MODE_TAG = "mode";
 
 	public StorageToolItem() {
-		super(new Item.Properties().stacksTo(1), SophisticatedStorage.CREATIVE_TAB);
+		super(new Item.Properties().stacksTo(1));
 	}
 
 	@Override
@@ -65,10 +63,11 @@ public class StorageToolItem extends ItemBase {
 	}
 
 	@Override
-	public InteractionResult onItemUseFirst(ItemStack tool, UseOnContext context) {
+	public InteractionResult useOn(UseOnContext context) {
 		BlockPos pos = context.getClickedPos();
 		Level level = context.getLevel();
 		Block blockClicked = level.getBlockState(pos).getBlock();
+		ItemStack tool = context.getItemInHand();
 		Mode mode = getMode(tool);
 		switch (mode) {
 			case LINK -> {
@@ -102,7 +101,7 @@ public class StorageToolItem extends ItemBase {
 				}
 			}
 		}
-		return super.onItemUseFirst(tool, context);
+		return InteractionResult.PASS;
 	}
 
 	private static <T> boolean tryToggling(BlockPos pos, Level level, Class<T> clazz, Consumer<T> toggle) {
@@ -117,7 +116,7 @@ public class StorageToolItem extends ItemBase {
 	}
 
 	private boolean tryLinking(BlockPos pos, Level level, Block blockClicked, ItemStack tool) {
-		if (blockClicked == ModBlocks.CONTROLLER.get()) {
+		if (blockClicked == ModBlocks.CONTROLLER) {
 			setControllerLink(tool, pos);
 			return true;
 		}

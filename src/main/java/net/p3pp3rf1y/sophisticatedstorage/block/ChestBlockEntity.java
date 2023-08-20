@@ -41,7 +41,7 @@ public class ChestBlockEntity extends WoodStorageBlockEntity {
 	}
 
 	public ChestBlockEntity(BlockPos pos, BlockState state) {
-		super(pos, state, ModBlocks.CHEST_BLOCK_ENTITY_TYPE.get());
+		super(pos, state, ModBlocks.CHEST_BLOCK_ENTITY_TYPE);
 	}
 
 	public static void lidAnimateTick(ChestBlockEntity chestBlockEntity) {

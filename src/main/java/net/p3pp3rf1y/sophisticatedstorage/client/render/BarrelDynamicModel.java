@@ -1,16 +1,23 @@
 package net.p3pp3rf1y.sophisticatedstorage.client.render;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.ModelData;
 import net.p3pp3rf1y.sophisticatedstorage.block.BarrelBlock;
+import net.p3pp3rf1y.sophisticatedstorage.block.BarrelBlockEntity;
+import net.p3pp3rf1y.sophisticatedstorage.client.util.LazyQuadTransformer;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 public class BarrelDynamicModel extends BarrelDynamicModelBase<BarrelDynamicModel> {
 
@@ -19,17 +26,17 @@ public class BarrelDynamicModel extends BarrelDynamicModelBase<BarrelDynamicMode
 	}
 
 	@Override
-	protected BarrelBakedModelBase instantiateBakedModel(Map<String, Map<BarrelModelPart, BakedModel>> woodModelParts, @Nullable BakedModel flatTopModel, Map<String, Map<DynamicBarrelBakingData.DynamicPart, DynamicBarrelBakingData>> woodDynamicBakingData, Map<String, Map<BarrelModelPart, BakedModel>> woodPartitionedModelParts) {
-		return new BarrelBakedModel(woodModelParts, flatTopModel, woodDynamicBakingData, woodPartitionedModelParts);
+	protected BarrelBakedModelBase instantiateBakedModel(ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, Map<String, Map<BarrelModelPart, BakedModel>> woodModelParts, @Nullable BakedModel flatTopModel, Map<String, Map<DynamicBarrelBakingData.DynamicPart, DynamicBarrelBakingData>> woodDynamicBakingData, Map<String, Map<BarrelModelPart, BakedModel>> woodPartitionedModelParts) {
+		return new BarrelBakedModel(baker, spriteGetter, woodModelParts, flatTopModel, woodDynamicBakingData, woodPartitionedModelParts);
 	}
 
 	private static class BarrelBakedModel extends BarrelBakedModelBase {
-		public BarrelBakedModel(Map<String, Map<BarrelModelPart, BakedModel>> woodModelParts, @Nullable BakedModel flatTopModel, Map<String, Map<DynamicBarrelBakingData.DynamicPart, DynamicBarrelBakingData>> woodDynamicBakingData, Map<String, Map<BarrelModelPart, BakedModel>> woodPartitionedModelParts) {
-			super(woodModelParts, flatTopModel, woodDynamicBakingData, woodPartitionedModelParts);
+		public BarrelBakedModel(ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, Map<String, Map<BarrelModelPart, BakedModel>> woodModelParts, @Nullable BakedModel flatTopModel, Map<String, Map<DynamicBarrelBakingData.DynamicPart, DynamicBarrelBakingData>> woodDynamicBakingData, Map<String, Map<BarrelModelPart, BakedModel>> woodPartitionedModelParts) {
+			super(baker, spriteGetter, woodModelParts, flatTopModel, woodDynamicBakingData, woodPartitionedModelParts);
 		}
 
 		@Override
-		protected int getInWorldBlockHash(BlockState state, ModelData data) {
+		protected int getInWorldBlockHash(BlockState state, BarrelBlockEntity.ModelData data) {
 			int hash = super.getInWorldBlockHash(state, data);
 			hash = hash * 31 + (Boolean.TRUE.equals(state.getValue(BarrelBlock.OPEN)) ? 1 : 0);
 			hash = hash * 31 + state.getValue(BarrelBlock.FACING).get3DDataValue();
@@ -43,8 +50,8 @@ public class BarrelDynamicModel extends BarrelDynamicModelBase<BarrelDynamicMode
 		}
 
 		@Override
-		protected List<BakedQuad> rotateDisplayItemQuads(List<BakedQuad> quads, BlockState state) {
-			return DIRECTION_ROTATES.get(state.getValue(BarrelBlock.FACING)).process(quads);
+		protected void rotateDisplayItemQuads(BlockState state, LazyQuadTransformer stack) {
+			stack.add(DIRECTION_ROTATES.get(state.getValue(BarrelBlock.FACING)));
 		}
 
 		@Override

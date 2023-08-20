@@ -1,3 +1,5 @@
+// TODO:
+/*
 package net.p3pp3rf1y.sophisticatedstorage.block;
 
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -100,3 +102,4 @@ class BarrelBlockClientExtensions implements IClientBlockExtensions {
 		return true;
 	}
 }
+*/

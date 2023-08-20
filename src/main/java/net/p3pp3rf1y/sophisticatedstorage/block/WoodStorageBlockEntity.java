@@ -3,15 +3,12 @@ package net.p3pp3rf1y.sophisticatedstorage.block;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.WoodType;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.p3pp3rf1y.sophisticatedcore.util.NBTHelper;
 import net.p3pp3rf1y.sophisticatedstorage.item.WoodStorageBlockItem;
 
@@ -72,7 +69,7 @@ public abstract class WoodStorageBlockEntity extends StorageBlockEntity {
 	}
 
 	private Component makeWoodStorageDescriptionId(WoodType wt) {
-		String id = Util.makeDescriptionId("block", Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(getBlockState().getBlock())));
+		String id = Util.makeDescriptionId("block", Objects.requireNonNull(BuiltInRegistries.BLOCK.getKey(getBlockState().getBlock())));
 		return WoodStorageBlockItem.getDisplayName(id, wt);
 	}
 
@@ -89,7 +86,8 @@ public abstract class WoodStorageBlockEntity extends StorageBlockEntity {
 		return !isPacked();
 	}
 
-	@Nonnull
+	// TODO:
+/*	@Nonnull
 	@Override
 	public <T> LazyOptional<T> getCapability(Capability<T> cap, @Nullable Direction side) {
 		if (isPacked() && cap == ForgeCapabilities.ITEM_HANDLER) {
@@ -97,7 +95,7 @@ public abstract class WoodStorageBlockEntity extends StorageBlockEntity {
 		}
 
 		return super.getCapability(cap, side);
-	}
+	}*/
 
 	@Override
 	public boolean canConnectStorages() {
@@ -112,5 +110,16 @@ public abstract class WoodStorageBlockEntity extends StorageBlockEntity {
 	@Override
 	public boolean canBeLinked() {
 		return !packed;
+	}
+
+	@Override
+	public @org.jetbrains.annotations.Nullable Object getRenderAttachmentData() {
+		return new ModelData(this);
+	}
+
+	public record ModelData(Boolean hasMainColor, @Nullable String woodName) {
+		public ModelData(WoodStorageBlockEntity tile) {
+			this(tile.getStorageWrapper().hasMainColor(), tile.getWoodType().map(WoodType::name).orElse(null));
+		}
 	}
 }

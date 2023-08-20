@@ -18,6 +18,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.p3pp3rf1y.sophisticatedstorage.Config;
 import net.p3pp3rf1y.sophisticatedstorage.init.ModBlocks;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -54,7 +55,7 @@ public class ShulkerBoxBlockEntity extends StorageBlockEntity {
 	};
 
 	public ShulkerBoxBlockEntity(BlockPos pos, BlockState state) {
-		super(pos, state, ModBlocks.SHULKER_BOX_BLOCK_ENTITY_TYPE.get());
+		super(pos, state, ModBlocks.SHULKER_BOX_BLOCK_ENTITY_TYPE);
 	}
 
 	public static void tick(Level level, BlockPos pos, BlockState state, ShulkerBoxBlockEntity blockEntity) {
@@ -143,5 +144,16 @@ public class ShulkerBoxBlockEntity extends StorageBlockEntity {
 		OPENING,
 		OPENED,
 		CLOSING
+	}
+
+	@Override
+	public @Nullable Object getRenderAttachmentData() {
+		return new ModelData(this);
+	}
+
+	public record ModelData(Boolean hasMainColor) {
+		public ModelData(ShulkerBoxBlockEntity tile) {
+			this(tile.getStorageWrapper().hasMainColor());
+		}
 	}
 }

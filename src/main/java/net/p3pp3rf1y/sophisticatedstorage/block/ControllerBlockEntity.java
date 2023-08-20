@@ -1,15 +1,15 @@
 package net.p3pp3rf1y.sophisticatedstorage.block;
 
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.fabricmc.fabric.api.transfer.v1.item.PlayerInventoryStorage;
+import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.p3pp3rf1y.sophisticatedcore.controller.ControllerBlockEntityBase;
-import net.p3pp3rf1y.sophisticatedcore.util.InventoryHelper;
 import net.p3pp3rf1y.sophisticatedcore.util.WorldHelper;
 import net.p3pp3rf1y.sophisticatedstorage.init.ModBlocks;
 
@@ -21,13 +21,13 @@ public class ControllerBlockEntity extends ControllerBlockEntityBase implements 
 	private long lastDepositTime = -100;
 
 	public ControllerBlockEntity(BlockPos pos, BlockState state) {
-		super(ModBlocks.CONTROLLER_BLOCK_ENTITY_TYPE.get(), pos, state);
+		super(ModBlocks.CONTROLLER_BLOCK_ENTITY_TYPE, pos, state);
 	}
 
-	@Override
+	/*@Override
 	public AABB getRenderBoundingBox() {
 		return new AABB(worldPosition).inflate(ControllerBlockEntityBase.SEARCH_RANGE);
-	}
+	}*/
 
 	public void depositPlayerItems(Player player, InteractionHand hand) {
 		if (getLevel() == null) {
@@ -37,23 +37,24 @@ public class ControllerBlockEntity extends ControllerBlockEntityBase implements 
 		boolean doubleClick = gameTime - lastDepositTime < 10;
 		lastDepositTime = gameTime;
 		if (doubleClick) {
-			player.getCapability(ForgeCapabilities.ITEM_HANDLER, Direction.UP).ifPresent(
-					playerInventory -> InventoryHelper.iterate(playerInventory, (slot, stack) -> {
-						if (canDepositStack(stack)) {
-							ItemStack resultStack = insertItem(stack, true, false);
-							int countToExtract = stack.getCount() - resultStack.getCount();
-							if (countToExtract > 0 && playerInventory.extractItem(slot, countToExtract, true).getCount() == countToExtract) {
-								insertItem(playerInventory.extractItem(slot, countToExtract, false), false, false);
-							}
+			PlayerInventoryStorage playerInventory = PlayerInventoryStorage.of(player);
+			for (var view : playerInventory.nonEmptyViews()) {
+				if (canDepositStack(view.getResource().toStack((int) view.getAmount()))) {
+					try(Transaction ctx = Transaction.openOuter()) {
+						long inserted = insert(view.getResource(), view.getAmount(), ctx, false);
+						if (inserted > 0 && view.extract(view.getResource(), inserted, ctx) == inserted) {
+							ctx.commit();
 						}
 					}
-			));
+				}
+			}
 			return;
 		}
 
 		ItemStack itemInHand = player.getItemInHand(hand);
 		if (!itemInHand.isEmpty() && canDepositStack(itemInHand)) {
-			player.setItemInHand(hand, insertItem(itemInHand, false, false));
+			long inserted = insert(ItemVariant.of(itemInHand), itemInHand.getCount(), null, false);
+			player.setItemInHand(hand, itemInHand.copyWithCount(itemInHand.getCount() - (int) inserted));
 		}
 	}
 
@@ -138,6 +139,11 @@ public class ControllerBlockEntity extends ControllerBlockEntityBase implements 
 	@Override
 	public List<Integer> getSlotCounts() {
 		return List.of();
+	}
+
+	@Override
+	public SingleSlotStorage<ItemVariant> getSlot(int slot) {
+		return null;
 	}
 
 	@Override

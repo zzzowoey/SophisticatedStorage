@@ -1,23 +1,34 @@
 package net.p3pp3rf1y.sophisticatedstorage.common;
 
+import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
+import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
+import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
+import net.fabricmc.fabric.api.networking.v1.S2CPlayChannelEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.level.BlockEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraft.world.phys.BlockHitResult;
 import net.p3pp3rf1y.sophisticatedcore.network.PacketHandler;
 import net.p3pp3rf1y.sophisticatedcore.network.SyncPlayerSettingsMessage;
 import net.p3pp3rf1y.sophisticatedcore.settings.SettingsManager;
 import net.p3pp3rf1y.sophisticatedcore.util.InventoryHelper;
-import net.p3pp3rf1y.sophisticatedcore.util.ItemBase;
 import net.p3pp3rf1y.sophisticatedcore.util.WorldHelper;
 import net.p3pp3rf1y.sophisticatedstorage.Config;
 import net.p3pp3rf1y.sophisticatedstorage.block.ISneakItemInteractionBlock;
@@ -27,6 +38,7 @@ import net.p3pp3rf1y.sophisticatedstorage.block.WoodStorageBlockEntity;
 import net.p3pp3rf1y.sophisticatedstorage.client.gui.StorageTranslationHelper;
 import net.p3pp3rf1y.sophisticatedstorage.init.ModItems;
 import net.p3pp3rf1y.sophisticatedstorage.settings.StorageSettingsHandler;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -34,75 +46,76 @@ public class CommonEventHandler {
 	private static final int AVERAGE_MAX_ITEM_ENTITY_DROP_COUNT = 20;
 
 	public void registerHandlers() {
-		IEventBus eventBus = MinecraftForge.EVENT_BUS;
-		eventBus.addListener(this::onPlayerLoggedIn);
-		eventBus.addListener(this::onPlayerChangedDimension);
-		eventBus.addListener(this::onPlayerRespawn);
-		eventBus.addListener(this::onBlockBreak);
-		eventBus.addListener(this::onLimitedBarrelLeftClicked);
-		eventBus.addListener(this::onSneakItemBlockInteraction);
+
+		ServerPlayConnectionEvents.JOIN.register(this::onPlayerLoggedIn);
+		ServerEntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.register(this::onPlayerChangedDimension);
+		ServerPlayerEvents.AFTER_RESPAWN.register(this::onPlayerRespawn);
+
+		PlayerBlockBreakEvents.BEFORE.register(this::onBlockBreak);
+
+		AttackBlockCallback.EVENT.register(this::onLimitedBarrelLeftClicked);
+		UseBlockCallback.EVENT.register(this::onSneakItemBlockInteraction);
 	}
 
-	private void onLimitedBarrelLeftClicked(PlayerInteractEvent.LeftClickBlock event) {
-		Player player = event.getEntity();
+	private InteractionResult onLimitedBarrelLeftClicked(Player player, Level level, InteractionHand hand, BlockPos pos, Direction direction) {
 		if (!player.isCreative()) {
-			return;
+			return InteractionResult.PASS;
 		}
 
-		BlockPos pos = event.getPos();
-		Level level = event.getLevel();
 		BlockState state = level.getBlockState(pos);
 		if (!(state.getBlock() instanceof LimitedBarrelBlock limitedBarrel)) {
-			return;
+			return InteractionResult.PASS;
 		}
 		if (limitedBarrel.tryToTakeItem(state, level, pos, player)) {
-			event.setCanceled(true);
+			return InteractionResult.SUCCESS;
 		}
+
+		return InteractionResult.PASS;
 	}
 
-	private void onSneakItemBlockInteraction(PlayerInteractEvent.RightClickBlock event) {
-		if (!event.getEntity().isShiftKeyDown()) {
-			return;
+	private InteractionResult onSneakItemBlockInteraction(Player player, Level level, InteractionHand hand, BlockHitResult hitResult) {
+		if (!player.isShiftKeyDown()) {
+			return InteractionResult.PASS;
 		}
 
-		BlockPos pos = event.getPos();
-		Level level = event.getLevel();
+		BlockPos pos = hitResult.getBlockPos();
 		BlockState state = level.getBlockState(pos);
 		if (!(state.getBlock() instanceof ISneakItemInteractionBlock sneakItemInteractionBlock)) {
-			return;
+			return InteractionResult.PASS;
 		}
-		if (sneakItemInteractionBlock.trySneakItemInteraction(event.getEntity(), event.getHand(), state, level, pos, event.getHitVec(), event.getItemStack())) {
-			event.setCanceled(true);
+		if (sneakItemInteractionBlock.trySneakItemInteraction(player, hand, state, level, pos, hitResult, player.getItemInHand(hand))) {
+			return InteractionResult.SUCCESS;
 		}
+
+		return InteractionResult.PASS;
 	}
 
-	private void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
-		sendPlayerSettingsToClient(event.getEntity());
+	private void onPlayerChangedDimension(ServerPlayer player, ServerLevel origin, ServerLevel destination) {
+		sendPlayerSettingsToClient(player);
 	}
 
-	private void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-		sendPlayerSettingsToClient(event.getEntity());
+	private void onPlayerLoggedIn(ServerGamePacketListenerImpl handler, PacketSender sender, MinecraftServer server) {
+		sendPlayerSettingsToClient(handler.player);
 	}
 
 	private void sendPlayerSettingsToClient(Player player) {
 		String playerTagName = StorageSettingsHandler.SOPHISTICATED_STORAGE_SETTINGS_PLAYER_TAG;
-		PacketHandler.INSTANCE.sendToClient((ServerPlayer) player, new SyncPlayerSettingsMessage(playerTagName, SettingsManager.getPlayerSettingsTag(player, playerTagName)));
+		PacketHandler.sendToClient((ServerPlayer) player, new SyncPlayerSettingsMessage(playerTagName, SettingsManager.getPlayerSettingsTag(player, playerTagName)));
 	}
 
-	private void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
-		sendPlayerSettingsToClient(event.getEntity());
+	private void onPlayerRespawn(ServerPlayer oldPlayer, ServerPlayer newPlayer, boolean alive) {
+		sendPlayerSettingsToClient(newPlayer);
 	}
 
-	private void onBlockBreak(BlockEvent.BreakEvent event) {
-		Player player = event.getPlayer();
-		if (!(event.getState().getBlock() instanceof WoodStorageBlockBase) || player.isShiftKeyDown()) {
-			return;
+	private boolean onBlockBreak(Level world, Player player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity) {
+		if (!(state.getBlock() instanceof WoodStorageBlockBase) || player.isShiftKeyDown()) {
+			return true;
 		}
 
 		Level level = player.getLevel();
-		WorldHelper.getBlockEntity(level, event.getPos(), WoodStorageBlockEntity.class).ifPresent(wbe -> {
+		return WorldHelper.getBlockEntity(level, pos, WoodStorageBlockEntity.class).map(wbe -> {
 			if (wbe.isPacked()) {
-				return;
+				return true;
 			}
 
 			AtomicInteger droppedItemEntityCount = new AtomicInteger(0);
@@ -114,15 +127,18 @@ public class CommonEventHandler {
 			});
 
 			if (droppedItemEntityCount.get() > Config.SERVER.tooManyItemEntityDrops.get()) {
-				event.setCanceled(true);
-				ItemBase packingTapeItem = ModItems.PACKING_TAPE.get();
+				Item packingTapeItem = ModItems.PACKING_TAPE;
 				Component packingTapeItemName = packingTapeItem.getName(new ItemStack(packingTapeItem)).copy().withStyle(ChatFormatting.GREEN);
 				player.sendSystemMessage(StorageTranslationHelper.INSTANCE.translStatusMessage("too_many_item_entity_drops",
-						event.getState().getBlock().getName().withStyle(ChatFormatting.GREEN),
+						state.getBlock().getName().withStyle(ChatFormatting.GREEN),
 						Component.literal(String.valueOf(droppedItemEntityCount.get())).withStyle(ChatFormatting.RED),
 						packingTapeItemName)
 				);
+
+				return false;
 			}
-		});
+
+			return true;
+		}).orElse(true);
 	}
 }

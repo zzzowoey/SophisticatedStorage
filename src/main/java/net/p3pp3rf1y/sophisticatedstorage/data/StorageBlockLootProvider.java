@@ -1,11 +1,12 @@
 package net.p3pp3rf1y.sophisticatedstorage.data;
 
-import net.minecraft.data.CachedOutput;
-import net.minecraft.data.DataGenerator;
+import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricBlockLootTableProvider;
 import net.minecraft.data.DataProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.LootTables;
@@ -21,58 +22,55 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
-public class StorageBlockLootProvider implements DataProvider {
-	private final DataGenerator generator;
-
-	StorageBlockLootProvider(DataGenerator generator) {
-		this.generator = generator;
+public class StorageBlockLootProvider extends FabricBlockLootTableProvider {
+	public StorageBlockLootProvider(FabricDataOutput output) {
+		super(output);
 	}
 
 	@Override
-	public void run(CachedOutput cache) throws IOException {
-		Map<ResourceLocation, LootTable.Builder> tables = new HashMap<>();
+	public void generate() {
+		Map<Block, LootTable.Builder> tables = new HashMap<>();
 
-		tables.put(ModBlocks.BARREL.getId(), getStorage(ModBlocks.BARREL_ITEM.get()));
-		tables.put(ModBlocks.IRON_BARREL.getId(), getStorage(ModBlocks.IRON_BARREL_ITEM.get()));
-		tables.put(ModBlocks.GOLD_BARREL.getId(), getStorage(ModBlocks.GOLD_BARREL_ITEM.get()));
-		tables.put(ModBlocks.DIAMOND_BARREL.getId(), getStorage(ModBlocks.DIAMOND_BARREL_ITEM.get()));
-		tables.put(ModBlocks.NETHERITE_BARREL.getId(), getStorage(ModBlocks.NETHERITE_BARREL_ITEM.get()));
-		tables.put(ModBlocks.LIMITED_BARREL_1.getId(), getStorage(ModBlocks.LIMITED_BARREL_1_ITEM.get()));
-		tables.put(ModBlocks.LIMITED_IRON_BARREL_1.getId(), getStorage(ModBlocks.LIMITED_IRON_BARREL_1_ITEM.get()));
-		tables.put(ModBlocks.LIMITED_GOLD_BARREL_1.getId(), getStorage(ModBlocks.LIMITED_GOLD_BARREL_1_ITEM.get()));
-		tables.put(ModBlocks.LIMITED_DIAMOND_BARREL_1.getId(), getStorage(ModBlocks.LIMITED_DIAMOND_BARREL_1_ITEM.get()));
-		tables.put(ModBlocks.LIMITED_NETHERITE_BARREL_1.getId(), getStorage(ModBlocks.LIMITED_NETHERITE_BARREL_1_ITEM.get()));
-		tables.put(ModBlocks.LIMITED_BARREL_2.getId(), getStorage(ModBlocks.LIMITED_BARREL_2_ITEM.get()));
-		tables.put(ModBlocks.LIMITED_IRON_BARREL_2.getId(), getStorage(ModBlocks.LIMITED_IRON_BARREL_2_ITEM.get()));
-		tables.put(ModBlocks.LIMITED_GOLD_BARREL_2.getId(), getStorage(ModBlocks.LIMITED_GOLD_BARREL_2_ITEM.get()));
-		tables.put(ModBlocks.LIMITED_DIAMOND_BARREL_2.getId(), getStorage(ModBlocks.LIMITED_DIAMOND_BARREL_2_ITEM.get()));
-		tables.put(ModBlocks.LIMITED_NETHERITE_BARREL_2.getId(), getStorage(ModBlocks.LIMITED_NETHERITE_BARREL_2_ITEM.get()));
-		tables.put(ModBlocks.LIMITED_BARREL_3.getId(), getStorage(ModBlocks.LIMITED_BARREL_3_ITEM.get()));
-		tables.put(ModBlocks.LIMITED_IRON_BARREL_3.getId(), getStorage(ModBlocks.LIMITED_IRON_BARREL_3_ITEM.get()));
-		tables.put(ModBlocks.LIMITED_GOLD_BARREL_3.getId(), getStorage(ModBlocks.LIMITED_GOLD_BARREL_3_ITEM.get()));
-		tables.put(ModBlocks.LIMITED_DIAMOND_BARREL_3.getId(), getStorage(ModBlocks.LIMITED_DIAMOND_BARREL_3_ITEM.get()));
-		tables.put(ModBlocks.LIMITED_NETHERITE_BARREL_3.getId(), getStorage(ModBlocks.LIMITED_NETHERITE_BARREL_3_ITEM.get()));
-		tables.put(ModBlocks.LIMITED_BARREL_4.getId(), getStorage(ModBlocks.LIMITED_BARREL_4_ITEM.get()));
-		tables.put(ModBlocks.LIMITED_IRON_BARREL_4.getId(), getStorage(ModBlocks.LIMITED_IRON_BARREL_4_ITEM.get()));
-		tables.put(ModBlocks.LIMITED_GOLD_BARREL_4.getId(), getStorage(ModBlocks.LIMITED_GOLD_BARREL_4_ITEM.get()));
-		tables.put(ModBlocks.LIMITED_DIAMOND_BARREL_4.getId(), getStorage(ModBlocks.LIMITED_DIAMOND_BARREL_4_ITEM.get()));
-		tables.put(ModBlocks.LIMITED_NETHERITE_BARREL_4.getId(), getStorage(ModBlocks.LIMITED_NETHERITE_BARREL_4_ITEM.get()));
-		tables.put(ModBlocks.CHEST.getId(), getStorage(ModBlocks.CHEST_ITEM.get()));
-		tables.put(ModBlocks.IRON_CHEST.getId(), getStorage(ModBlocks.IRON_CHEST_ITEM.get()));
-		tables.put(ModBlocks.GOLD_CHEST.getId(), getStorage(ModBlocks.GOLD_CHEST_ITEM.get()));
-		tables.put(ModBlocks.DIAMOND_CHEST.getId(), getStorage(ModBlocks.DIAMOND_CHEST_ITEM.get()));
-		tables.put(ModBlocks.NETHERITE_CHEST.getId(), getStorage(ModBlocks.NETHERITE_CHEST_ITEM.get()));
-		tables.put(ModBlocks.SHULKER_BOX.getId(), getStorage(ModBlocks.SHULKER_BOX_ITEM.get()));
-		tables.put(ModBlocks.IRON_SHULKER_BOX.getId(), getStorage(ModBlocks.IRON_SHULKER_BOX_ITEM.get()));
-		tables.put(ModBlocks.GOLD_SHULKER_BOX.getId(), getStorage(ModBlocks.GOLD_SHULKER_BOX_ITEM.get()));
-		tables.put(ModBlocks.DIAMOND_SHULKER_BOX.getId(), getStorage(ModBlocks.DIAMOND_SHULKER_BOX_ITEM.get()));
-		tables.put(ModBlocks.NETHERITE_SHULKER_BOX.getId(), getStorage(ModBlocks.NETHERITE_SHULKER_BOX_ITEM.get()));
-		tables.put(ModBlocks.CONTROLLER.getId(), createSingleItemTable(ModBlocks.CONTROLLER_ITEM.get()));
-		tables.put(ModBlocks.STORAGE_LINK.getId(), createSingleItemTable(ModBlocks.STORAGE_LINK_ITEM.get()));
+		tables.put(ModBlocks.BARREL, getStorage(ModBlocks.BARREL_ITEM));
+		tables.put(ModBlocks.IRON_BARREL, getStorage(ModBlocks.IRON_BARREL_ITEM));
+		tables.put(ModBlocks.GOLD_BARREL, getStorage(ModBlocks.GOLD_BARREL_ITEM));
+		tables.put(ModBlocks.DIAMOND_BARREL, getStorage(ModBlocks.DIAMOND_BARREL_ITEM));
+		tables.put(ModBlocks.NETHERITE_BARREL, getStorage(ModBlocks.NETHERITE_BARREL_ITEM));
+		tables.put(ModBlocks.LIMITED_BARREL_1, getStorage(ModBlocks.LIMITED_BARREL_1_ITEM));
+		tables.put(ModBlocks.LIMITED_IRON_BARREL_1, getStorage(ModBlocks.LIMITED_IRON_BARREL_1_ITEM));
+		tables.put(ModBlocks.LIMITED_GOLD_BARREL_1, getStorage(ModBlocks.LIMITED_GOLD_BARREL_1_ITEM));
+		tables.put(ModBlocks.LIMITED_DIAMOND_BARREL_1, getStorage(ModBlocks.LIMITED_DIAMOND_BARREL_1_ITEM));
+		tables.put(ModBlocks.LIMITED_NETHERITE_BARREL_1, getStorage(ModBlocks.LIMITED_NETHERITE_BARREL_1_ITEM));
+		tables.put(ModBlocks.LIMITED_BARREL_2, getStorage(ModBlocks.LIMITED_BARREL_2_ITEM));
+		tables.put(ModBlocks.LIMITED_IRON_BARREL_2, getStorage(ModBlocks.LIMITED_IRON_BARREL_2_ITEM));
+		tables.put(ModBlocks.LIMITED_GOLD_BARREL_2, getStorage(ModBlocks.LIMITED_GOLD_BARREL_2_ITEM));
+		tables.put(ModBlocks.LIMITED_DIAMOND_BARREL_2, getStorage(ModBlocks.LIMITED_DIAMOND_BARREL_2_ITEM));
+		tables.put(ModBlocks.LIMITED_NETHERITE_BARREL_2, getStorage(ModBlocks.LIMITED_NETHERITE_BARREL_2_ITEM));
+		tables.put(ModBlocks.LIMITED_BARREL_3, getStorage(ModBlocks.LIMITED_BARREL_3_ITEM));
+		tables.put(ModBlocks.LIMITED_IRON_BARREL_3, getStorage(ModBlocks.LIMITED_IRON_BARREL_3_ITEM));
+		tables.put(ModBlocks.LIMITED_GOLD_BARREL_3, getStorage(ModBlocks.LIMITED_GOLD_BARREL_3_ITEM));
+		tables.put(ModBlocks.LIMITED_DIAMOND_BARREL_3, getStorage(ModBlocks.LIMITED_DIAMOND_BARREL_3_ITEM));
+		tables.put(ModBlocks.LIMITED_NETHERITE_BARREL_3, getStorage(ModBlocks.LIMITED_NETHERITE_BARREL_3_ITEM));
+		tables.put(ModBlocks.LIMITED_BARREL_4, getStorage(ModBlocks.LIMITED_BARREL_4_ITEM));
+		tables.put(ModBlocks.LIMITED_IRON_BARREL_4, getStorage(ModBlocks.LIMITED_IRON_BARREL_4_ITEM));
+		tables.put(ModBlocks.LIMITED_GOLD_BARREL_4, getStorage(ModBlocks.LIMITED_GOLD_BARREL_4_ITEM));
+		tables.put(ModBlocks.LIMITED_DIAMOND_BARREL_4, getStorage(ModBlocks.LIMITED_DIAMOND_BARREL_4_ITEM));
+		tables.put(ModBlocks.LIMITED_NETHERITE_BARREL_4, getStorage(ModBlocks.LIMITED_NETHERITE_BARREL_4_ITEM));
+		tables.put(ModBlocks.CHEST, getStorage(ModBlocks.CHEST_ITEM));
+		tables.put(ModBlocks.IRON_CHEST, getStorage(ModBlocks.IRON_CHEST_ITEM));
+		tables.put(ModBlocks.GOLD_CHEST, getStorage(ModBlocks.GOLD_CHEST_ITEM));
+		tables.put(ModBlocks.DIAMOND_CHEST, getStorage(ModBlocks.DIAMOND_CHEST_ITEM));
+		tables.put(ModBlocks.NETHERITE_CHEST, getStorage(ModBlocks.NETHERITE_CHEST_ITEM));
+		tables.put(ModBlocks.SHULKER_BOX, getStorage(ModBlocks.SHULKER_BOX_ITEM));
+		tables.put(ModBlocks.IRON_SHULKER_BOX, getStorage(ModBlocks.IRON_SHULKER_BOX_ITEM));
+		tables.put(ModBlocks.GOLD_SHULKER_BOX, getStorage(ModBlocks.GOLD_SHULKER_BOX_ITEM));
+		tables.put(ModBlocks.DIAMOND_SHULKER_BOX, getStorage(ModBlocks.DIAMOND_SHULKER_BOX_ITEM));
+		tables.put(ModBlocks.NETHERITE_SHULKER_BOX, getStorage(ModBlocks.NETHERITE_SHULKER_BOX_ITEM));
+		tables.put(ModBlocks.CONTROLLER, createSingleItemTable(ModBlocks.CONTROLLER_ITEM));
+		tables.put(ModBlocks.STORAGE_LINK, createSingleItemTable(ModBlocks.STORAGE_LINK_ITEM));
 
-		for (Map.Entry<ResourceLocation, LootTable.Builder> e : tables.entrySet()) {
-			Path path = getPath(generator.getOutputFolder(), e.getKey());
-			DataProvider.saveStable(cache, LootTables.serialize(e.getValue().setParamSet(LootContextParamSets.BLOCK).build()), path);
+		for (Map.Entry<Block, LootTable.Builder> e : tables.entrySet()) {
+			add(e.getKey(), e.getValue().setParamSet(LootContextParamSets.BLOCK));
 		}
 	}
 
@@ -87,13 +85,14 @@ public class StorageBlockLootProvider implements DataProvider {
 
 	private static LootTable.Builder getStorage(Item storageItem) {
 		LootPoolEntryContainer.Builder<?> entry = LootItem.lootTableItem(storageItem);
-		LootPool.Builder pool = LootPool.lootPool().name("main").setRolls(ConstantValue.exactly(1)).add(entry)
+		LootPool.Builder pool = LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(entry)
 				.apply(CopyNameFunction.copyName(CopyNameFunction.NameSource.BLOCK_ENTITY))
 				.apply(CopyStorageDataFunction.builder());
 		return LootTable.lootTable().withPool(pool);
 	}
 
-	protected static LootTable.Builder createSingleItemTable(ItemLike item) {
+	@Override
+	public LootTable.Builder createSingleItemTable(ItemLike item) {
 		return LootTable.lootTable().withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).add(LootItem.lootTableItem(item)));
 	}
 }

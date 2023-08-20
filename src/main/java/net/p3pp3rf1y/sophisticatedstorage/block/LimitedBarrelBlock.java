@@ -1,8 +1,8 @@
 package net.p3pp3rf1y.sophisticatedstorage.block;
 
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -38,6 +38,8 @@ import net.p3pp3rf1y.sophisticatedstorage.common.gui.LimitedBarrelContainerMenu;
 import net.p3pp3rf1y.sophisticatedstorage.common.gui.StorageContainerMenu;
 import net.p3pp3rf1y.sophisticatedstorage.init.ModBlocks;
 import net.p3pp3rf1y.sophisticatedstorage.item.BarrelBlockItem;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -57,11 +59,11 @@ public class LimitedBarrelBlock extends BarrelBlock {
 	}
 
 	@Override
-	public BlockState rotate(BlockState state, LevelAccessor world, BlockPos pos, Rotation direction) {
+	public BlockState rotate(BlockState state, Rotation rotation) {
 		if (getVerticalFacing(state) != VerticalFacing.NO) {
 			return state;
 		}
-		return state.setValue(HORIZONTAL_FACING, direction.rotate(state.getValue(HORIZONTAL_FACING)));
+		return state.setValue(HORIZONTAL_FACING, rotation.rotate(state.getValue(HORIZONTAL_FACING)));
 	}
 
 	@Override
@@ -119,7 +121,7 @@ public class LimitedBarrelBlock extends BarrelBlock {
 
 	@Override
 	protected BlockEntityType<? extends StorageBlockEntity> getBlockEntityType() {
-		return ModBlocks.LIMITED_BARREL_BLOCK_ENTITY_TYPE.get();
+		return ModBlocks.LIMITED_BARREL_BLOCK_ENTITY_TYPE;
 	}
 
 	@Override
@@ -167,14 +169,14 @@ public class LimitedBarrelBlock extends BarrelBlock {
 			return 0;
 		}
 
-		Vector3f blockCoords = new Vector3f(hitResult.getLocation().subtract(pos.getX(), pos.getY(), pos.getZ()));
+		Vector3f blockCoords = new Vector3f(hitResult.getLocation().subtract(pos.getX(), pos.getY(), pos.getZ()).toVector3f());
 		blockCoords.add(-0.5f, -0.5f, -0.5f); // move to corner
 		VerticalFacing verticalFacing = getVerticalFacing(state);
 		if (verticalFacing != VerticalFacing.NO) {
-			blockCoords.transform(getNorthBasedRotation(state.getValue(HORIZONTAL_FACING)));
-			blockCoords.transform(getNorthBasedRotation(verticalFacing.getDirection().getOpposite()));
+			blockCoords.rotate(getNorthBasedRotation(state.getValue(HORIZONTAL_FACING)));
+			blockCoords.rotate(getNorthBasedRotation(verticalFacing.getDirection().getOpposite()));
 		} else {
-			blockCoords.transform(getNorthBasedRotation(state.getValue(HORIZONTAL_FACING).getOpposite()));
+			blockCoords.rotate(getNorthBasedRotation(state.getValue(HORIZONTAL_FACING).getOpposite()));
 		}
 		blockCoords.add(0.5f, 0.5f, 0.5f);
 		boolean top = blockCoords.y() > 0.5f;
@@ -200,27 +202,28 @@ public class LimitedBarrelBlock extends BarrelBlock {
 		return new LimitedBarrelContainerMenu(w, pl, pos);
 	}
 
-	public static Quaternion getNorthBasedRotation(Direction dir) {
+	public static Quaternionf getNorthBasedRotation(Direction dir) {
 		return switch (dir) {
 			case DOWN -> {
-				Quaternion quaternion = Vector3f.XP.rotationDegrees(90);
-				quaternion.mul(Vector3f.YP.rotationDegrees(180));
+				Quaternionf quaternion = Axis.XP.rotationDegrees(90);
+				quaternion.mul(Axis.YP.rotationDegrees(180));
 				yield quaternion;
 			}
 			case UP -> {
-				Quaternion quaternion = Vector3f.XP.rotationDegrees(-90);
-				quaternion.mul(Vector3f.YP.rotationDegrees(180));
+				Quaternionf quaternion = Axis.XP.rotationDegrees(-90);
+				quaternion.mul(Axis.YP.rotationDegrees(180));
 				yield quaternion;
 			}
-			case NORTH -> Quaternion.ONE.copy();
-			case SOUTH -> Vector3f.YP.rotationDegrees(180.0F);
-			case WEST -> Vector3f.YP.rotationDegrees(-90.0F);
-			case EAST -> Vector3f.YP.rotationDegrees(90.0F);
+			case NORTH -> new Quaternionf();
+			case SOUTH -> Axis.YP.rotationDegrees(180.0F);
+			case WEST -> Axis.YP.rotationDegrees(-90.0F);
+			case EAST -> Axis.YP.rotationDegrees(90.0F);
 		};
 	}
 
 	private Optional<BlockHitResult> getHitResult(Player player) {
-		HitResult hitResult = player.pick(player.getReachDistance(), 0, false);
+		double d = Minecraft.getInstance().gameMode.getPickRange();
+		HitResult hitResult = player.pick(d, 0, false);
 		return hitResult instanceof BlockHitResult blockHitResult ? Optional.of(blockHitResult) : Optional.empty();
 	}
 

@@ -5,6 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.ShapedRecipe;
@@ -30,45 +31,45 @@ public class DyeRecipesMaker {
 		List<CraftingRecipe> recipes = new ArrayList<>();
 
 		Map<Item, ItemStack[]> blocks = new HashMap<>();
-		blocks.put(ModBlocks.BARREL_ITEM.get(), getWoodStorageStacks(ModBlocks.BARREL.get()));
-		blocks.put(ModBlocks.IRON_BARREL_ITEM.get(), getWoodStorageStacks(ModBlocks.IRON_BARREL.get()));
-		blocks.put(ModBlocks.GOLD_BARREL_ITEM.get(), getWoodStorageStacks(ModBlocks.GOLD_BARREL.get()));
-		blocks.put(ModBlocks.DIAMOND_BARREL_ITEM.get(), getWoodStorageStacks(ModBlocks.DIAMOND_BARREL.get()));
-		blocks.put(ModBlocks.NETHERITE_BARREL_ITEM.get(), getWoodStorageStacks(ModBlocks.NETHERITE_BARREL.get()));
-		blocks.put(ModBlocks.CHEST_ITEM.get(), getWoodStorageStacks(ModBlocks.CHEST.get()));
-		blocks.put(ModBlocks.IRON_CHEST_ITEM.get(), getWoodStorageStacks(ModBlocks.IRON_CHEST.get()));
-		blocks.put(ModBlocks.GOLD_CHEST_ITEM.get(), getWoodStorageStacks(ModBlocks.GOLD_CHEST.get()));
-		blocks.put(ModBlocks.DIAMOND_CHEST_ITEM.get(), getWoodStorageStacks(ModBlocks.DIAMOND_CHEST.get()));
-		blocks.put(ModBlocks.NETHERITE_CHEST_ITEM.get(), getWoodStorageStacks(ModBlocks.NETHERITE_CHEST.get()));
-		blocks.put(ModBlocks.SHULKER_BOX_ITEM.get(), new ItemStack[] {new ItemStack(ModBlocks.SHULKER_BOX_ITEM.get())});
-		blocks.put(ModBlocks.IRON_SHULKER_BOX_ITEM.get(), new ItemStack[] {new ItemStack(ModBlocks.IRON_SHULKER_BOX_ITEM.get())});
-		blocks.put(ModBlocks.GOLD_SHULKER_BOX_ITEM.get(), new ItemStack[] {new ItemStack(ModBlocks.GOLD_SHULKER_BOX_ITEM.get())});
-		blocks.put(ModBlocks.DIAMOND_SHULKER_BOX_ITEM.get(), new ItemStack[] {new ItemStack(ModBlocks.DIAMOND_SHULKER_BOX_ITEM.get())});
-		blocks.put(ModBlocks.NETHERITE_SHULKER_BOX_ITEM.get(), new ItemStack[] {new ItemStack(ModBlocks.NETHERITE_SHULKER_BOX_ITEM.get())});
+		blocks.put(ModBlocks.BARREL_ITEM, getWoodStorageStacks(ModBlocks.BARREL));
+		blocks.put(ModBlocks.IRON_BARREL_ITEM, getWoodStorageStacks(ModBlocks.IRON_BARREL));
+		blocks.put(ModBlocks.GOLD_BARREL_ITEM, getWoodStorageStacks(ModBlocks.GOLD_BARREL));
+		blocks.put(ModBlocks.DIAMOND_BARREL_ITEM, getWoodStorageStacks(ModBlocks.DIAMOND_BARREL));
+		blocks.put(ModBlocks.NETHERITE_BARREL_ITEM, getWoodStorageStacks(ModBlocks.NETHERITE_BARREL));
+		blocks.put(ModBlocks.CHEST_ITEM, getWoodStorageStacks(ModBlocks.CHEST));
+		blocks.put(ModBlocks.IRON_CHEST_ITEM, getWoodStorageStacks(ModBlocks.IRON_CHEST));
+		blocks.put(ModBlocks.GOLD_CHEST_ITEM, getWoodStorageStacks(ModBlocks.GOLD_CHEST));
+		blocks.put(ModBlocks.DIAMOND_CHEST_ITEM, getWoodStorageStacks(ModBlocks.DIAMOND_CHEST));
+		blocks.put(ModBlocks.NETHERITE_CHEST_ITEM, getWoodStorageStacks(ModBlocks.NETHERITE_CHEST));
+		blocks.put(ModBlocks.SHULKER_BOX_ITEM, new ItemStack[] {new ItemStack(ModBlocks.SHULKER_BOX_ITEM)});
+		blocks.put(ModBlocks.IRON_SHULKER_BOX_ITEM, new ItemStack[] {new ItemStack(ModBlocks.IRON_SHULKER_BOX_ITEM)});
+		blocks.put(ModBlocks.GOLD_SHULKER_BOX_ITEM, new ItemStack[] {new ItemStack(ModBlocks.GOLD_SHULKER_BOX_ITEM)});
+		blocks.put(ModBlocks.DIAMOND_SHULKER_BOX_ITEM, new ItemStack[] {new ItemStack(ModBlocks.DIAMOND_SHULKER_BOX_ITEM)});
+		blocks.put(ModBlocks.NETHERITE_SHULKER_BOX_ITEM, new ItemStack[] {new ItemStack(ModBlocks.NETHERITE_SHULKER_BOX_ITEM)});
 
-		blocks.put(ModBlocks.LIMITED_BARREL_1_ITEM.get(), getWoodStorageStacks(ModBlocks.LIMITED_BARREL_1.get()));
-		blocks.put(ModBlocks.LIMITED_IRON_BARREL_1_ITEM.get(), getWoodStorageStacks(ModBlocks.LIMITED_IRON_BARREL_1.get()));
-		blocks.put(ModBlocks.LIMITED_GOLD_BARREL_1_ITEM.get(), getWoodStorageStacks(ModBlocks.LIMITED_GOLD_BARREL_1.get()));
-		blocks.put(ModBlocks.LIMITED_DIAMOND_BARREL_1_ITEM.get(), getWoodStorageStacks(ModBlocks.LIMITED_DIAMOND_BARREL_1.get()));
-		blocks.put(ModBlocks.LIMITED_NETHERITE_BARREL_1_ITEM.get(), getWoodStorageStacks(ModBlocks.LIMITED_NETHERITE_BARREL_1.get()));
+		blocks.put(ModBlocks.LIMITED_BARREL_1_ITEM, getWoodStorageStacks(ModBlocks.LIMITED_BARREL_1));
+		blocks.put(ModBlocks.LIMITED_IRON_BARREL_1_ITEM, getWoodStorageStacks(ModBlocks.LIMITED_IRON_BARREL_1));
+		blocks.put(ModBlocks.LIMITED_GOLD_BARREL_1_ITEM, getWoodStorageStacks(ModBlocks.LIMITED_GOLD_BARREL_1));
+		blocks.put(ModBlocks.LIMITED_DIAMOND_BARREL_1_ITEM, getWoodStorageStacks(ModBlocks.LIMITED_DIAMOND_BARREL_1));
+		blocks.put(ModBlocks.LIMITED_NETHERITE_BARREL_1_ITEM, getWoodStorageStacks(ModBlocks.LIMITED_NETHERITE_BARREL_1));
 
-		blocks.put(ModBlocks.LIMITED_BARREL_2_ITEM.get(), getWoodStorageStacks(ModBlocks.LIMITED_BARREL_2.get()));
-		blocks.put(ModBlocks.LIMITED_IRON_BARREL_2_ITEM.get(), getWoodStorageStacks(ModBlocks.LIMITED_IRON_BARREL_2.get()));
-		blocks.put(ModBlocks.LIMITED_GOLD_BARREL_2_ITEM.get(), getWoodStorageStacks(ModBlocks.LIMITED_GOLD_BARREL_2.get()));
-		blocks.put(ModBlocks.LIMITED_DIAMOND_BARREL_2_ITEM.get(), getWoodStorageStacks(ModBlocks.LIMITED_DIAMOND_BARREL_2.get()));
-		blocks.put(ModBlocks.LIMITED_NETHERITE_BARREL_2_ITEM.get(), getWoodStorageStacks(ModBlocks.LIMITED_NETHERITE_BARREL_2.get()));
+		blocks.put(ModBlocks.LIMITED_BARREL_2_ITEM, getWoodStorageStacks(ModBlocks.LIMITED_BARREL_2));
+		blocks.put(ModBlocks.LIMITED_IRON_BARREL_2_ITEM, getWoodStorageStacks(ModBlocks.LIMITED_IRON_BARREL_2));
+		blocks.put(ModBlocks.LIMITED_GOLD_BARREL_2_ITEM, getWoodStorageStacks(ModBlocks.LIMITED_GOLD_BARREL_2));
+		blocks.put(ModBlocks.LIMITED_DIAMOND_BARREL_2_ITEM, getWoodStorageStacks(ModBlocks.LIMITED_DIAMOND_BARREL_2));
+		blocks.put(ModBlocks.LIMITED_NETHERITE_BARREL_2_ITEM, getWoodStorageStacks(ModBlocks.LIMITED_NETHERITE_BARREL_2));
 
-		blocks.put(ModBlocks.LIMITED_BARREL_3_ITEM.get(), getWoodStorageStacks(ModBlocks.LIMITED_BARREL_3.get()));
-		blocks.put(ModBlocks.LIMITED_IRON_BARREL_3_ITEM.get(), getWoodStorageStacks(ModBlocks.LIMITED_IRON_BARREL_3.get()));
-		blocks.put(ModBlocks.LIMITED_GOLD_BARREL_3_ITEM.get(), getWoodStorageStacks(ModBlocks.LIMITED_GOLD_BARREL_3.get()));
-		blocks.put(ModBlocks.LIMITED_DIAMOND_BARREL_3_ITEM.get(), getWoodStorageStacks(ModBlocks.LIMITED_DIAMOND_BARREL_3.get()));
-		blocks.put(ModBlocks.LIMITED_NETHERITE_BARREL_3_ITEM.get(), getWoodStorageStacks(ModBlocks.LIMITED_NETHERITE_BARREL_3.get()));
+		blocks.put(ModBlocks.LIMITED_BARREL_3_ITEM, getWoodStorageStacks(ModBlocks.LIMITED_BARREL_3));
+		blocks.put(ModBlocks.LIMITED_IRON_BARREL_3_ITEM, getWoodStorageStacks(ModBlocks.LIMITED_IRON_BARREL_3));
+		blocks.put(ModBlocks.LIMITED_GOLD_BARREL_3_ITEM, getWoodStorageStacks(ModBlocks.LIMITED_GOLD_BARREL_3));
+		blocks.put(ModBlocks.LIMITED_DIAMOND_BARREL_3_ITEM, getWoodStorageStacks(ModBlocks.LIMITED_DIAMOND_BARREL_3));
+		blocks.put(ModBlocks.LIMITED_NETHERITE_BARREL_3_ITEM, getWoodStorageStacks(ModBlocks.LIMITED_NETHERITE_BARREL_3));
 
-		blocks.put(ModBlocks.LIMITED_BARREL_4_ITEM.get(), getWoodStorageStacks(ModBlocks.LIMITED_BARREL_4.get()));
-		blocks.put(ModBlocks.LIMITED_IRON_BARREL_4_ITEM.get(), getWoodStorageStacks(ModBlocks.LIMITED_IRON_BARREL_4.get()));
-		blocks.put(ModBlocks.LIMITED_GOLD_BARREL_4_ITEM.get(), getWoodStorageStacks(ModBlocks.LIMITED_GOLD_BARREL_4.get()));
-		blocks.put(ModBlocks.LIMITED_DIAMOND_BARREL_4_ITEM.get(), getWoodStorageStacks(ModBlocks.LIMITED_DIAMOND_BARREL_4.get()));
-		blocks.put(ModBlocks.LIMITED_NETHERITE_BARREL_4_ITEM.get(), getWoodStorageStacks(ModBlocks.LIMITED_NETHERITE_BARREL_4.get()));
+		blocks.put(ModBlocks.LIMITED_BARREL_4_ITEM, getWoodStorageStacks(ModBlocks.LIMITED_BARREL_4));
+		blocks.put(ModBlocks.LIMITED_IRON_BARREL_4_ITEM, getWoodStorageStacks(ModBlocks.LIMITED_IRON_BARREL_4));
+		blocks.put(ModBlocks.LIMITED_GOLD_BARREL_4_ITEM, getWoodStorageStacks(ModBlocks.LIMITED_GOLD_BARREL_4));
+		blocks.put(ModBlocks.LIMITED_DIAMOND_BARREL_4_ITEM, getWoodStorageStacks(ModBlocks.LIMITED_DIAMOND_BARREL_4));
+		blocks.put(ModBlocks.LIMITED_NETHERITE_BARREL_4_ITEM, getWoodStorageStacks(ModBlocks.LIMITED_NETHERITE_BARREL_4));
 
 		addSingleColorRecipes(recipes, blocks);
 		addMultipleColorsRecipe(recipes, blocks);
@@ -94,8 +95,8 @@ public class DyeRecipesMaker {
 				tintableBlockItem.setMainColor(result, ColorHelper.getColor(DyeColor.YELLOW.getTextureDiffuseColors()));
 				tintableBlockItem.setAccentColor(result, ColorHelper.getColor(DyeColor.LIME.getTextureDiffuseColors()));
 			}
-			ResourceLocation id = new ResourceLocation(SophisticatedStorage.MOD_ID, "multiple_colors");
-			recipes.add(new ShapedRecipe(id, "", 3, 1, ingredients, result));
+			ResourceLocation id = new ResourceLocation(SophisticatedStorage.ID, "multiple_colors");
+			recipes.add(new ShapedRecipe(id, "", CraftingBookCategory.MISC, 3, 1, ingredients, result));
 		});
 	}
 
@@ -110,8 +111,8 @@ public class DyeRecipesMaker {
 					tintableBlockItem.setMainColor(result, ColorHelper.getColor(color.getTextureDiffuseColors()));
 					tintableBlockItem.setAccentColor(result, ColorHelper.getColor(color.getTextureDiffuseColors()));
 				}
-				ResourceLocation id = new ResourceLocation(SophisticatedStorage.MOD_ID, "single_color_" + color.getSerializedName());
-				recipes.add(new ShapedRecipe(id, "", 1, 2, ingredients, result));
+				ResourceLocation id = new ResourceLocation(SophisticatedStorage.ID, "single_color_" + color.getSerializedName());
+				recipes.add(new ShapedRecipe(id, "", CraftingBookCategory.MISC, 1, 2, ingredients, result));
 			});
 		}
 	}

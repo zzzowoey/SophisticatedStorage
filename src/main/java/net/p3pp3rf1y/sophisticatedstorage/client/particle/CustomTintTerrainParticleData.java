@@ -6,14 +6,13 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.commands.arguments.blocks.BlockStateParser;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.GameData;
 import net.p3pp3rf1y.sophisticatedstorage.init.ModParticles;
 
 import java.util.Objects;
@@ -34,18 +33,18 @@ public class CustomTintTerrainParticleData extends ParticleType<CustomTintTerrai
 
 	@Override
 	public CustomTintTerrainParticleData getType() {
-		return ModParticles.TERRAIN_PARTICLE.get();
+		return ModParticles.TERRAIN_PARTICLE;
 	}
 
 	@Override
 	public void writeToNetwork(FriendlyByteBuf buffer) {
-		buffer.writeVarInt(GameData.getBlockStateIDMap().getId(state));
+		buffer.writeVarInt(Block.getId(state));
 		buffer.writeBlockPos(pos);
 	}
 
 	@Override
 	public String writeToString() {
-		return ForgeRegistries.PARTICLE_TYPES.getKey(getType()) + "|" + BlockStateParser.serialize(state) + "|" + pos.toShortString();
+		return BuiltInRegistries.PARTICLE_TYPE.getKey(getType()) + "|" + BlockStateParser.serialize(state) + "|" + pos.toShortString();
 	}
 
 	@SuppressWarnings("deprecation")
@@ -54,7 +53,7 @@ public class CustomTintTerrainParticleData extends ParticleType<CustomTintTerrai
 		public CustomTintTerrainParticleData fromCommand(ParticleType<CustomTintTerrainParticleData> particleType, StringReader reader)
 				throws CommandSyntaxException {
 			reader.expect('|');
-			BlockState blockState = Objects.requireNonNull(BlockStateParser.parseForBlock(Registry.BLOCK, reader, false).blockState());
+			BlockState blockState = Objects.requireNonNull(BlockStateParser.parseForBlock(BuiltInRegistries.BLOCK.asLookup(), reader, false).blockState());
 			reader.expect('|');
 			BlockPos pos = fromString(reader.readUnquotedString());
 			return new CustomTintTerrainParticleData(blockState, pos);
@@ -62,12 +61,12 @@ public class CustomTintTerrainParticleData extends ParticleType<CustomTintTerrai
 
 		private BlockPos fromString(String value) {
 			String[] split = value.split(",");
-			return new BlockPos(Double.parseDouble(split[0]), Double.parseDouble(split[1]), Double.parseDouble(split[2]));
+			return new BlockPos(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
 		}
 
 		@Override
 		public CustomTintTerrainParticleData fromNetwork(ParticleType<CustomTintTerrainParticleData> particleType, FriendlyByteBuf buffer) {
-			return new CustomTintTerrainParticleData(Objects.requireNonNull(GameData.getBlockStateIDMap().byId(buffer.readVarInt())), buffer.readBlockPos());
+			return new CustomTintTerrainParticleData(Objects.requireNonNull(Block.stateById(buffer.readVarInt())), buffer.readBlockPos());
 		}
 	};
 

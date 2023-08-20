@@ -1,23 +1,21 @@
 package net.p3pp3rf1y.sophisticatedstorage.data;
 
-import net.minecraft.data.DataGenerator;
-import net.minecraft.data.tags.BlockTagsProvider;
-import net.minecraft.data.tags.ItemTagsProvider;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.p3pp3rf1y.sophisticatedstorage.SophisticatedStorage;
+import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
+import net.minecraft.core.HolderLookup;
 import net.p3pp3rf1y.sophisticatedstorage.init.ModBlocks;
 
-import javax.annotation.Nullable;
+import java.util.concurrent.CompletableFuture;
 
 import static net.p3pp3rf1y.sophisticatedstorage.init.ModBlocks.BASE_TIER_WOODEN_STORAGE_TAG;
 
-public class ItemTagProvider extends ItemTagsProvider {
-	public ItemTagProvider(DataGenerator dataGenerator, BlockTagsProvider blockTagsProvider, @Nullable ExistingFileHelper existingFileHelper) {
-		super(dataGenerator, blockTagsProvider, SophisticatedStorage.MOD_ID, existingFileHelper);
+public class ItemTagProvider extends FabricTagProvider.ItemTagProvider {
+	public ItemTagProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
+		super(output, registriesFuture);
 	}
 
 	@Override
-	protected void addTags() {
-		tag(BASE_TIER_WOODEN_STORAGE_TAG).add(ModBlocks.BARREL_ITEM.get(), ModBlocks.CHEST_ITEM.get());
+	protected void addTags(HolderLookup.Provider arg) {
+		getOrCreateTagBuilder(BASE_TIER_WOODEN_STORAGE_TAG).add(ModBlocks.BARREL_ITEM, ModBlocks.CHEST_ITEM);
 	}
 }

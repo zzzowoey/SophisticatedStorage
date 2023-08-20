@@ -1,10 +1,12 @@
 package net.p3pp3rf1y.sophisticatedstorage;
 
+import fuzs.forgeconfigapiport.api.config.v2.ForgeConfigRegistry;
+import fuzs.forgeconfigapiport.api.config.v2.ModConfigEvents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.fml.config.ModConfig;
 import net.p3pp3rf1y.sophisticatedcore.upgrades.FilteredUpgradeConfig;
 import net.p3pp3rf1y.sophisticatedcore.upgrades.cooking.AutoCookingUpgradeConfig;
 import net.p3pp3rf1y.sophisticatedcore.upgrades.cooking.CookingUpgradeConfig;
@@ -17,30 +19,25 @@ import net.p3pp3rf1y.sophisticatedstorage.upgrades.compression.CompressionUpgrad
 import net.p3pp3rf1y.sophisticatedstorage.upgrades.hopper.HopperUpgradeConfig;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
 
 public class Config {
+	private static final Map<ModConfig.Type, BaseConfig> CONFIGS = new EnumMap<>(ModConfig.Type.class);
 	private Config() {}
 
-	public static final Client CLIENT;
-	public static final ForgeConfigSpec CLIENT_SPEC;
+	public static Server SERVER;
 
-	public static final Server SERVER;
-	public static final ForgeConfigSpec SERVER_SPEC;
+	public static Client CLIENT;
 
-	static {
-		final Pair<Server, ForgeConfigSpec> commonSpec = new ForgeConfigSpec.Builder().configure(Server::new);
-		SERVER_SPEC = commonSpec.getRight();
-		SERVER = commonSpec.getLeft();
-		final Pair<Client, ForgeConfigSpec> clientSpec = new ForgeConfigSpec.Builder().configure(Client::new);
-		CLIENT_SPEC = clientSpec.getRight();
-		CLIENT = clientSpec.getLeft();
+	public static class BaseConfig {
+		public ForgeConfigSpec specification;
+
+		public void onLoad() { }
+		public void onReload() { }
 	}
 
-	public static class Client {
+	public static class Client extends BaseConfig {
 		public final ForgeConfigSpec.BooleanValue showHigherTierTintedVariants;
 
 		public Client(ForgeConfigSpec.Builder builder) {
@@ -53,7 +50,7 @@ public class Config {
 		}
 	}
 
-	public static class Server {
+	public static class Server extends BaseConfig {
 		public final StorageConfig woodBarrel;
 		public final StorageConfig ironBarrel;
 		public final StorageConfig goldBarrel;
@@ -126,8 +123,8 @@ public class Config {
 
 		public final ForgeConfigSpec.IntValue tooManyItemEntityDrops;
 
-		@SuppressWarnings("unused") //need the Event parameter for forge reflection to understand what event this listens to
-		public void onConfigReload(ModConfigEvent.Reloading event) {
+		@Override
+		public void onReload() {
 			stackUpgrade.clearNonStackableItems();
 		}
 
@@ -247,7 +244,7 @@ public class Config {
 			}
 
 			public boolean isItemDisallowed(Item item) {
-				if (!SERVER_SPEC.isLoaded()) {
+				if (!SERVER.specification.isLoaded()) {
 					return true;
 				}
 
@@ -268,11 +265,44 @@ public class Config {
 
 				for (String disallowedItemName : disallowedItemsList.get()) {
 					ResourceLocation registryName = new ResourceLocation(disallowedItemName);
-					if (ForgeRegistries.ITEMS.containsKey(registryName)) {
-						disallowedItemsSet.add(ForgeRegistries.ITEMS.getValue(registryName));
+					if (BuiltInRegistries.ITEM.containsKey(registryName)) {
+						disallowedItemsSet.add(BuiltInRegistries.ITEM.get(registryName));
 					}
 				}
 			}
 		}
+	}
+
+	private static <T extends BaseConfig> T register(Function<ForgeConfigSpec.Builder, T> factory, ModConfig.Type side) {
+		Pair<T, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(factory);
+
+		T config = specPair.getLeft();
+		config.specification = specPair.getRight();
+		CONFIGS.put(side, config);
+		return config;
+	}
+
+	public static void register() {
+		CLIENT = register(Client::new, ModConfig.Type.CLIENT);
+		SERVER = register(Server::new, ModConfig.Type.SERVER);
+
+		for (Map.Entry<ModConfig.Type, BaseConfig> pair : CONFIGS.entrySet()) {
+			ForgeConfigRegistry.INSTANCE.register(SophisticatedStorage.ID, pair.getKey(), pair.getValue().specification);
+		}
+
+		ModConfigEvents.loading(SophisticatedStorage.ID).register(Config::onLoad);
+		ModConfigEvents.reloading(SophisticatedStorage.ID).register(Config::onReload);
+	}
+
+	public static void onLoad(ModConfig modConfig) {
+		for (Config.BaseConfig config : CONFIGS.values())
+			if (config.specification == modConfig.getSpec())
+				config.onLoad();
+	}
+
+	public static void onReload(ModConfig modConfig) {
+		for (Config.BaseConfig config : CONFIGS.values())
+			if (config.specification == modConfig.getSpec())
+				config.onReload();
 	}
 }

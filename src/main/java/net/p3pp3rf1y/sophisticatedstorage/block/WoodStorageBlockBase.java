@@ -88,37 +88,9 @@ public abstract class WoodStorageBlockBase extends StorageBlockBase implements I
 	}
 
 	@Override
-	public void fillItemCategory(CreativeModeTab tab, NonNullList<ItemStack> items) {
-		CUSTOM_TEXTURE_WOOD_TYPES.keySet().forEach(woodType -> items.add(WoodStorageBlockItem.setWoodType(new ItemStack(this), woodType)));
-
-		if (isBasicTier() || Boolean.TRUE.equals(Config.CLIENT.showHigherTierTintedVariants.get())) {
-			for (DyeColor color : DyeColor.values()) {
-				ItemStack storageStack = new ItemStack(this);
-				if (storageStack.getItem() instanceof ITintableBlockItem tintableBlockItem) {
-					tintableBlockItem.setMainColor(storageStack, ColorHelper.getColor(color.getTextureDiffuseColors()));
-					tintableBlockItem.setAccentColor(storageStack, ColorHelper.getColor(color.getTextureDiffuseColors()));
-				}
-				items.add(storageStack);
-			}
-			ItemStack storageStack = new ItemStack(this);
-			if (storageStack.getItem() instanceof ITintableBlockItem tintableBlockItem) {
-				tintableBlockItem.setMainColor(storageStack, ColorHelper.getColor(DyeColor.YELLOW.getTextureDiffuseColors()));
-				tintableBlockItem.setAccentColor(storageStack, ColorHelper.getColor(DyeColor.LIME.getTextureDiffuseColors()));
-			}
-			items.add(storageStack);
-		}
-	}
-
-	private boolean isBasicTier() {
-		return this == ModBlocks.BARREL.get() || this == ModBlocks.CHEST.get()
-				|| this == ModBlocks.LIMITED_BARREL_1.get() || this == ModBlocks.LIMITED_BARREL_2.get()
-				|| this == ModBlocks.LIMITED_BARREL_3.get() || this == ModBlocks.LIMITED_BARREL_4.get();
-	}
-
-	@Override
-	public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter world, BlockPos pos, Player player) {
+	public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state) {
 		ItemStack stack = new ItemStack(this);
-		addNameWoodAndTintData(stack, world, pos);
+		addNameWoodAndTintData(stack, level, pos);
 		return stack;
 	}
 
@@ -141,7 +113,7 @@ public abstract class WoodStorageBlockBase extends StorageBlockBase implements I
 			be.getStorageWrapper().onInit();
 			be.tryToAddToController();
 
-			if (placer != null && placer.getOffhandItem().getItem() == ModItems.STORAGE_TOOL.get()) {
+			if (placer != null && placer.getOffhandItem().getItem() == ModItems.STORAGE_TOOL) {
 				StorageToolItem.useOffHandOnPlaced(placer.getOffhandItem(), be);
 			}
 		});
@@ -149,7 +121,7 @@ public abstract class WoodStorageBlockBase extends StorageBlockBase implements I
 
 	@SuppressWarnings("java:S1172") //parameter is used in override
 	protected boolean tryItemInteraction(Player player, InteractionHand hand, WoodStorageBlockEntity b, ItemStack stackInHand, Direction facing, BlockHitResult hitResult) {
-		if (stackInHand.getItem() == ModItems.PACKING_TAPE.get()) {
+		if (stackInHand.getItem() == ModItems.PACKING_TAPE) {
 			packStorage(player, hand, b, stackInHand);
 			return true;
 		}

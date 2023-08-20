@@ -1,35 +1,34 @@
 package net.p3pp3rf1y.sophisticatedstorage.upgrades.hopper;
 
+import io.github.fabricators_of_create.porting_lib.transfer.item.SlottedStackStorage;
+import net.fabricmc.fabric.api.lookup.v1.block.BlockApiCache;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandler;
 import net.p3pp3rf1y.sophisticatedcore.api.IStorageWrapper;
+import net.p3pp3rf1y.sophisticatedcore.common.lookup.ItemStorage;
 import net.p3pp3rf1y.sophisticatedcore.settings.memory.MemorySettingsCategory;
 import net.p3pp3rf1y.sophisticatedcore.upgrades.ContentsFilterLogic;
 import net.p3pp3rf1y.sophisticatedcore.upgrades.FilterLogic;
 import net.p3pp3rf1y.sophisticatedcore.upgrades.ITickableUpgrade;
 import net.p3pp3rf1y.sophisticatedcore.upgrades.UpgradeWrapperBase;
-import net.p3pp3rf1y.sophisticatedcore.util.InventoryHelper;
 import net.p3pp3rf1y.sophisticatedcore.util.NBTHelper;
-import net.p3pp3rf1y.sophisticatedcore.util.WorldHelper;
 import net.p3pp3rf1y.sophisticatedstorage.block.StorageBlockBase;
 import net.p3pp3rf1y.sophisticatedstorage.block.VerticalFacing;
 import net.p3pp3rf1y.sophisticatedstorage.common.gui.BlockSide;
 import net.p3pp3rf1y.sophisticatedstorage.upgrades.INeighborChangeListenerUpgrade;
 
 import javax.annotation.Nullable;
-import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -39,7 +38,7 @@ public class HopperUpgradeWrapper extends UpgradeWrapperBase<HopperUpgradeWrappe
 
 	private Set<Direction> pullDirections = new LinkedHashSet<>();
 	private Set<Direction> pushDirections = new LinkedHashSet<>();
-	private final Map<Direction, LazyOptional<IItemHandler>> handlerCache = new EnumMap<>(Direction.class);
+	private BlockApiCache<SlottedStackStorage, Direction> handlerCache;
 
 	private final ContentsFilterLogic inputFilterLogic;
 	private final ContentsFilterLogic outputFilterLogic;
@@ -89,24 +88,31 @@ public class HopperUpgradeWrapper extends UpgradeWrapperBase<HopperUpgradeWrappe
 		}
 	}
 
-	private boolean pullItem(IItemHandler fromHandler) {
+	private boolean pullItem(SlottedStackStorage fromHandler) {
 		return moveItems(fromHandler, storageWrapper.getInventoryForUpgradeProcessing(), inputFilterLogic);
 	}
 
-	private boolean pushItems(IItemHandler toHandler) {
+	private boolean pushItems(SlottedStackStorage toHandler) {
 		return moveItems(storageWrapper.getInventoryForUpgradeProcessing(), toHandler, outputFilterLogic);
 	}
 
-	private boolean moveItems(IItemHandler fromHandler, IItemHandler toHandler, FilterLogic filterLogic) {
-		for (int slot = 0; slot < fromHandler.getSlots(); slot++) {
+	private boolean moveItems(SlottedStackStorage fromHandler, SlottedStackStorage toHandler, FilterLogic filterLogic) {
+		for (int slot = 0; slot < fromHandler.getSlotCount(); slot++) {
 			ItemStack slotStack = fromHandler.getStackInSlot(slot);
 			if (!slotStack.isEmpty() && filterLogic.matchesFilter(slotStack)) {
-				ItemStack extractedStack = fromHandler.extractItem(slot, upgradeItem.getMaxTransferStackSize(), true);
-				if (!extractedStack.isEmpty()) {
-					ItemStack remainder = InventoryHelper.insertIntoInventory(extractedStack, toHandler, true);
-					if (remainder.getCount() < extractedStack.getCount()) {
-						InventoryHelper.insertIntoInventory(fromHandler.extractItem(slot, extractedStack.getCount() - remainder.getCount(), false), toHandler, false);
-						return true;
+				ItemVariant resource = ItemVariant.of(slotStack);
+				long extracted;
+				try (Transaction simulate = Transaction.openOuter()) {
+					extracted = fromHandler.extractSlot(slot, resource, upgradeItem.getMaxTransferStackSize(), simulate);
+				}
+				if (extracted > 0) {
+					try (Transaction ctx = Transaction.openOuter()) {
+						long inserted = toHandler.insert(resource, extracted, ctx);
+						if (inserted < extracted) {
+							fromHandler.extractSlot(slot, resource, inserted, ctx);
+							ctx.commit();
+							return true;
+						}
 					}
 				}
 			}
@@ -116,28 +122,18 @@ public class HopperUpgradeWrapper extends UpgradeWrapperBase<HopperUpgradeWrappe
 
 	@Override
 	public void onNeighborChange(Level level, BlockPos pos, Direction direction) {
-		if (pushDirections.contains(direction) || pullDirections.contains(direction)) {
+		// TODO: I don't think this is still necessary.
+		/*if (pushDirections.contains(direction) || pullDirections.contains(direction)) {
 			updateCacheOnSide(level, pos, direction);
-		}
+		}*/
 	}
 
-	public void updateCacheOnSide(Level level, BlockPos pos, Direction direction) {
-		WorldHelper.getLoadedBlockEntity(level, pos.relative(direction)).ifPresentOrElse(blockEntity -> {
-			LazyOptional<IItemHandler> lazyOptional = blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER, direction.getOpposite());
-			if (lazyOptional.isPresent()) {
-				handlerCache.put(direction, lazyOptional);
-				lazyOptional.addListener(l -> updateCacheOnSide(level, pos, direction));
-			} else {
-				handlerCache.put(direction, LazyOptional.empty());
-			}
-		}, () -> handlerCache.put(direction, LazyOptional.empty()));
-	}
-
-	private LazyOptional<IItemHandler> getItemHandler(Level level, BlockPos pos, Direction direction) {
-		if (!handlerCache.containsKey(direction)) {
-			updateCacheOnSide(level, pos, direction);
+	private Optional<SlottedStackStorage> getItemHandler(Level level, BlockPos pos, Direction direction) {
+		if (handlerCache == null) {
+			handlerCache = BlockApiCache.create(ItemStorage.SIDED, (ServerLevel) level, pos);
 		}
-		return handlerCache.get(direction);
+
+		return Optional.ofNullable(handlerCache.find(direction));
 	}
 
 	public ContentsFilterLogic getInputFilterLogic() {

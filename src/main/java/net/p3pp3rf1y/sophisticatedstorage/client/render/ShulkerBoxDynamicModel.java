@@ -2,41 +2,36 @@ package net.p3pp3rf1y.sophisticatedstorage.client.render;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
-import com.mojang.datafixers.util.Pair;
+import io.github.fabricators_of_create.porting_lib.models.geometry.IGeometryLoader;
+import io.github.fabricators_of_create.porting_lib.models.geometry.IUnbakedGeometry;
+import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
+import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
+import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachedBlockView;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.Material;
-import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.client.resources.model.ModelState;
-import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.client.resources.model.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.ModelData;
-import net.minecraftforge.client.model.data.ModelProperty;
-import net.minecraftforge.client.model.geometry.IGeometryBakingContext;
-import net.minecraftforge.client.model.geometry.IGeometryLoader;
-import net.minecraftforge.client.model.geometry.IUnbakedGeometry;
-import net.p3pp3rf1y.sophisticatedcore.util.WorldHelper;
 import net.p3pp3rf1y.sophisticatedstorage.SophisticatedStorage;
-import net.p3pp3rf1y.sophisticatedstorage.block.StorageBlockEntity;
+import net.p3pp3rf1y.sophisticatedstorage.block.ShulkerBoxBlockEntity;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class ShulkerBoxDynamicModel implements IUnbakedGeometry<ShulkerBoxDynamicModel> {
 	private static final String BLOCK_BREAK_FOLDER = "block/break/";
@@ -44,21 +39,38 @@ public class ShulkerBoxDynamicModel implements IUnbakedGeometry<ShulkerBoxDynami
 	public static final ResourceLocation MAIN_BREAK_TEXTURE = SophisticatedStorage.getRL(BLOCK_BREAK_FOLDER + "shulker_box");
 
 	@Override
-	public BakedModel bake(IGeometryBakingContext context, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ItemOverrides overrides, ResourceLocation modelLocation) {
+	public BakedModel bake(BlockModel context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation, boolean isGui3d) {
 		return new ShulkerBoxBakedModel();
 	}
 
-	@Override
+/*	@Override
 	public Collection<Material> getMaterials(IGeometryBakingContext context, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors) {
 		return Collections.emptySet();
-	}
+	}*/
 
-	private static class ShulkerBoxBakedModel implements BakedModel {
-		private static final ModelProperty<Boolean> HAS_MAIN_COLOR = new ModelProperty<>();
-
+	private static class ShulkerBoxBakedModel implements BakedModel, FabricBakedModel, IDataModel {
 		@Override
 		public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand) {
 			return Collections.emptyList();
+		}
+
+
+		@Override
+		public boolean isVanillaAdapter() {
+			return true;
+		}
+
+		@Override
+		public void emitBlockQuads(BlockAndTintGetter blockView, BlockState state, BlockPos pos, Supplier<RandomSource> randomSupplier, RenderContext context) {
+		}
+
+		@Override
+		public void emitItemQuads(ItemStack stack, Supplier<RandomSource> randomSupplier, RenderContext context) {
+		}
+
+		@Override
+		public ItemTransforms getTransforms() {
+			return ItemTransforms.NO_TRANSFORMS;
 		}
 
 		@Override
@@ -88,24 +100,18 @@ public class ShulkerBoxDynamicModel implements IUnbakedGeometry<ShulkerBoxDynami
 			return model.getParticleIcon();
 		}
 
-		@Nonnull
 		@Override
-		public ModelData getModelData(BlockAndTintGetter level, BlockPos pos, BlockState state, ModelData modelData) {
-			return WorldHelper.getBlockEntity(level, pos, StorageBlockEntity.class)
-					.map(be -> {
-						ModelData.Builder builder = ModelData.builder();
-						builder.with(HAS_MAIN_COLOR, be.getStorageWrapper().getMainColor() > -1);
-						return builder.build();
-					}).orElse(ModelData.EMPTY);
-		}
-
-		@Override
-		public TextureAtlasSprite getParticleIcon(ModelData data) {
-			ResourceLocation texture = TINTABLE_BREAK_TEXTURE;
-			if (Boolean.FALSE.equals(data.get(HAS_MAIN_COLOR))) {
-				texture = MAIN_BREAK_TEXTURE;
+		public TextureAtlasSprite getParticleIcon(BlockState state, BlockAndTintGetter blockView, BlockPos pos) {
+			Object data = ((RenderAttachedBlockView) blockView).getBlockEntityRenderAttachment(pos);
+			if (data instanceof ShulkerBoxBlockEntity.ModelData sbd) {
+				ResourceLocation texture = TINTABLE_BREAK_TEXTURE;
+				if (Boolean.FALSE.equals(sbd.hasMainColor())) {
+					texture = MAIN_BREAK_TEXTURE;
+				}
+				return Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(texture);
 			}
-			return Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(texture);
+
+			return getParticleIcon();
 		}
 
 		@Override

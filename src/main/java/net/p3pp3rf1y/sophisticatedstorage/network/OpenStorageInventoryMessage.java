@@ -5,51 +5,52 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleMenuProvider;
-import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.network.NetworkHooks;
+import net.p3pp3rf1y.sophisticatedcore.network.SimplePacketBase;
+import net.p3pp3rf1y.sophisticatedcore.util.MenuProviderHelper;
 import net.p3pp3rf1y.sophisticatedcore.util.WorldHelper;
 import net.p3pp3rf1y.sophisticatedstorage.block.LimitedBarrelBlock;
 import net.p3pp3rf1y.sophisticatedstorage.block.StorageBlockEntity;
+import net.p3pp3rf1y.sophisticatedstorage.client.gui.StorageTranslationHelper;
 import net.p3pp3rf1y.sophisticatedstorage.common.gui.LimitedBarrelContainerMenu;
 import net.p3pp3rf1y.sophisticatedstorage.common.gui.StorageContainerMenu;
 
-import javax.annotation.Nullable;
-import java.util.function.Supplier;
-
-public class OpenStorageInventoryMessage {
+public class OpenStorageInventoryMessage extends SimplePacketBase {
 	private final BlockPos pos;
 
 	public OpenStorageInventoryMessage(BlockPos pos) {this.pos = pos;}
 
-	public static void encode(OpenStorageInventoryMessage msg, FriendlyByteBuf packetBuffer) {
-		packetBuffer.writeBlockPos(msg.pos);
+	public OpenStorageInventoryMessage(FriendlyByteBuf buffer) {
+		this(buffer.readBlockPos());
 	}
 
-	public static OpenStorageInventoryMessage decode(FriendlyByteBuf packetBuffer) {
-		return new OpenStorageInventoryMessage(packetBuffer.readBlockPos());
+	@Override
+	public void write(FriendlyByteBuf buffer) {
+		buffer.writeBlockPos(pos);
 	}
 
-	static void onMessage(OpenStorageInventoryMessage msg, Supplier<NetworkEvent.Context> contextSupplier) {
-		NetworkEvent.Context context = contextSupplier.get();
-		context.enqueueWork(() -> handleMessage(context.getSender(), msg));
-		context.setPacketHandled(true);
+	@Override
+	public boolean handle(Context context) {
+		context.enqueueWork(() -> {
+			ServerPlayer player = context.getSender();
+			if (player == null) {
+				return;
+			}
+
+			player.openMenu(
+					MenuProviderHelper.createMenuProvider(
+							(w, ctx, pl) -> {
+								if (pl.level.getBlockState(pos).getBlock() instanceof LimitedBarrelBlock) {
+									return new LimitedBarrelContainerMenu(w, pl, pos);
+								} else {
+									return new StorageContainerMenu(w, pl, pos);
+								}
+							},
+							buffer -> buffer.writeBlockPos(pos),
+							WorldHelper.getBlockEntity(player.level, pos, StorageBlockEntity.class).map(StorageBlockEntity::getDisplayName).orElse(Component.empty())
+					)
+			);
+		});
+		return true;
 	}
 
-	private static void handleMessage(@Nullable ServerPlayer player, OpenStorageInventoryMessage msg) {
-		if (player == null) {
-			return;
-		}
-
-		NetworkHooks.openScreen(player, new SimpleMenuProvider((w, p, pl) -> instantiateContainerMenu(msg, w, pl),
-				WorldHelper.getBlockEntity(player.level, msg.pos, StorageBlockEntity.class).map(StorageBlockEntity::getDisplayName).orElse(Component.empty())), msg.pos);
-	}
-
-	private static StorageContainerMenu instantiateContainerMenu(OpenStorageInventoryMessage msg, int windowId, Player player) {
-		if (player.level.getBlockState(msg.pos).getBlock() instanceof LimitedBarrelBlock) {
-			return new LimitedBarrelContainerMenu(windowId, player, msg.pos);
-		} else {
-			return new StorageContainerMenu(windowId, player, msg.pos);
-		}
-	}
 }

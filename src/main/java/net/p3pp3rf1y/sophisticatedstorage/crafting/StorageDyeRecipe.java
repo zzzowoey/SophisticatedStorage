@@ -4,6 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.p3pp3rf1y.sophisticatedcore.crafting.StorageDyeRecipeBase;
 import net.p3pp3rf1y.sophisticatedcore.util.ColorHelper;
@@ -13,13 +14,13 @@ import net.p3pp3rf1y.sophisticatedstorage.init.ModBlocks;
 import java.util.List;
 
 public class StorageDyeRecipe extends StorageDyeRecipeBase {
-	public StorageDyeRecipe(ResourceLocation registryName) {
-		super(registryName);
+	public StorageDyeRecipe(ResourceLocation registryName, CraftingBookCategory craftingBookCategory) {
+		super(registryName, craftingBookCategory);
 	}
 
 	@Override
 	public RecipeSerializer<?> getSerializer() {
-		return ModBlocks.STORAGE_DYE_RECIPE_SERIALIZER.get();
+		return ModBlocks.STORAGE_DYE_RECIPE_SERIALIZER;
 	}
 
 	@Override

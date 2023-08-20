@@ -44,14 +44,14 @@ public abstract class StorageRenderer<T extends StorageBlockEntity> implements B
 			}
 
 			boolean holdsStorageTool = holdsItem(player, this::isStorageTool);
-			holdsStorageToolSetToToggleUpgrades = holdsStorageTool && InventoryHelper.getItemFromEitherHand(player, ModItems.STORAGE_TOOL.get())
+			holdsStorageToolSetToToggleUpgrades = holdsStorageTool && InventoryHelper.getItemFromEitherHand(player, ModItems.STORAGE_TOOL)
 					.map(item -> StorageToolItem.getMode(item) == StorageToolItem.Mode.UPGRADES_DISPLAY).orElse(false);
 
 			holdsItemThatShowsUpgrades = holdsStorageTool || holdsItem(player, this::isUpgrade);
-			holdsItemThatShowsHiddenTiers = (holdsStorageTool && InventoryHelper.getItemFromEitherHand(player, ModItems.STORAGE_TOOL.get())
+			holdsItemThatShowsHiddenTiers = (holdsStorageTool && InventoryHelper.getItemFromEitherHand(player, ModItems.STORAGE_TOOL)
 					.map(item -> StorageToolItem.getMode(item) == StorageToolItem.Mode.TIER_DISPLAY).orElse(false))
 					|| holdsItem(player, StorageTierUpgradeItem.class::isInstance);
-			holdsToolInToggleLockOrLockDisplay = holdsStorageTool && InventoryHelper.getItemFromEitherHand(player, ModItems.STORAGE_TOOL.get())
+			holdsToolInToggleLockOrLockDisplay = holdsStorageTool && InventoryHelper.getItemFromEitherHand(player, ModItems.STORAGE_TOOL)
 					.map(item -> {
 						StorageToolItem.Mode mode = StorageToolItem.getMode(item);
 						return mode == StorageToolItem.Mode.LOCK_DISPLAY || mode == StorageToolItem.Mode.LOCK;
@@ -75,11 +75,11 @@ public abstract class StorageRenderer<T extends StorageBlockEntity> implements B
 	}
 
 	private boolean isStorageTool(Item item) {
-		return item == ModItems.STORAGE_TOOL.get();
+		return item == ModItems.STORAGE_TOOL;
 	}
 
 	private boolean isUpgrade(Item item) {
-		return item instanceof UpgradeItemBase && RegistryHelper.getItemKey(item).getNamespace().equals(SophisticatedStorage.MOD_ID);
+		return item instanceof UpgradeItemBase && RegistryHelper.getItemKey(item).getNamespace().equals(SophisticatedStorage.ID);
 	}
 
 	public boolean shouldShowDisabledUpgradesDisplay(T storageBlockEntity) {

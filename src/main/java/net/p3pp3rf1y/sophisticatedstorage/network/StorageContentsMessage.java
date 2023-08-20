@@ -4,15 +4,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
 import net.p3pp3rf1y.sophisticatedcore.client.render.ClientStorageContentsTooltip;
+import net.p3pp3rf1y.sophisticatedcore.network.SimplePacketBase;
 import net.p3pp3rf1y.sophisticatedstorage.block.ItemContentsStorage;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
-import java.util.function.Supplier;
 
-public class StorageContentsMessage {
+public class StorageContentsMessage extends SimplePacketBase {
 	private final UUID shulkerBoxUuid;
 	@Nullable
 	private final CompoundTag contents;
@@ -22,28 +21,28 @@ public class StorageContentsMessage {
 		this.contents = contents;
 	}
 
-	public static void encode(StorageContentsMessage msg, FriendlyByteBuf packetBuffer) {
-		packetBuffer.writeUUID(msg.shulkerBoxUuid);
-		packetBuffer.writeNbt(msg.contents);
+	public StorageContentsMessage(FriendlyByteBuf buffer) {
+		this(buffer.readUUID(), buffer.readNbt());
 	}
 
-	public static StorageContentsMessage decode(FriendlyByteBuf packetBuffer) {
-		return new StorageContentsMessage(packetBuffer.readUUID(), packetBuffer.readNbt());
+	@Override
+	public void write(FriendlyByteBuf buffer) {
+		buffer.writeUUID(shulkerBoxUuid);
+		buffer.writeNbt(contents);
 	}
 
-	static void onMessage(StorageContentsMessage msg, Supplier<NetworkEvent.Context> contextSupplier) {
-		NetworkEvent.Context context = contextSupplier.get();
-		context.enqueueWork(() -> handleMessage(msg));
-		context.setPacketHandled(true);
+	@Override
+	public boolean handle(Context context) {
+		context.enqueueWork(() -> {
+			LocalPlayer player = Minecraft.getInstance().player;
+			if (player == null || contents == null) {
+				return;
+			}
+
+			ItemContentsStorage.get().setStorageContents(shulkerBoxUuid, contents);
+			ClientStorageContentsTooltip.refreshContents();
+		});
+		return true;
 	}
 
-	private static void handleMessage(StorageContentsMessage msg) {
-		LocalPlayer player = Minecraft.getInstance().player;
-		if (player == null || msg.contents == null) {
-			return;
-		}
-
-		ItemContentsStorage.get().setStorageContents(msg.shulkerBoxUuid, msg.contents);
-		ClientStorageContentsTooltip.refreshContents();
-	}
 }

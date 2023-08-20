@@ -1,5 +1,8 @@
 package net.p3pp3rf1y.sophisticatedstorage.block;
 
+import io.github.fabricators_of_create.porting_lib.util.LogicalSidedProvider;
+import io.github.fabricators_of_create.porting_lib.util.ServerLifecycleHooks;
+import net.fabricmc.api.EnvType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtUtils;
@@ -9,8 +12,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
-import net.minecraftforge.fml.util.thread.SidedThreadGroups;
-import net.minecraftforge.server.ServerLifecycleHooks;
 import net.p3pp3rf1y.sophisticatedstorage.SophisticatedStorage;
 
 import java.util.HashMap;
@@ -19,7 +20,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class ItemContentsStorage extends SavedData {
-	private static final String SAVED_DATA_NAME = SophisticatedStorage.MOD_ID;
+	private static final String SAVED_DATA_NAME = SophisticatedStorage.ID;
 
 	private final Map<UUID, CompoundTag> storageContents = new HashMap<>();
 	private static final ItemContentsStorage clientStorageCopy = new ItemContentsStorage();
@@ -27,7 +28,7 @@ public class ItemContentsStorage extends SavedData {
 	private ItemContentsStorage() {}
 
 	public static ItemContentsStorage get() {
-		if (Thread.currentThread().getThreadGroup() == SidedThreadGroups.SERVER) {
+		if (LogicalSidedProvider.WORKQUEUE.get(EnvType.SERVER).isSameThread()) {
 			MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
 			if (server != null) {
 				ServerLevel overworld = server.getLevel(Level.OVERWORLD);

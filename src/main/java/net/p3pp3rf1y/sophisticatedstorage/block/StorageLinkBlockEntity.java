@@ -22,7 +22,7 @@ public class StorageLinkBlockEntity extends BlockEntity implements ILinkable {
 	private boolean chunkBeingUnloaded = false;
 
 	public StorageLinkBlockEntity(BlockPos pos, BlockState state) {
-		super(ModBlocks.STORAGE_LINK_BLOCK_ENTITY_TYPE.get(), pos, state);
+		super(ModBlocks.STORAGE_LINK_BLOCK_ENTITY_TYPE, pos, state);
 	}
 
 	@Override
@@ -84,11 +84,12 @@ public class StorageLinkBlockEntity extends BlockEntity implements ILinkable {
 		return getControllerPos().isPresent();
 	}
 
-	@Override
+	// TODO:
+/*	@Override
 	public void onChunkUnloaded() {
 		super.onChunkUnloaded();
 		chunkBeingUnloaded = true;
-	}
+	}*/
 
 	@Override
 	public void setRemoved() {

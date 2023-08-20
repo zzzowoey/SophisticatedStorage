@@ -1,3 +1,4 @@
+/*
 package net.p3pp3rf1y.sophisticatedstorage.client.render;
 
 import com.google.common.cache.CacheBuilder;
@@ -62,3 +63,4 @@ public class ChestItemRenderer extends BlockEntityWithoutLevelRenderer {
 		}
 	}
 }
+*/

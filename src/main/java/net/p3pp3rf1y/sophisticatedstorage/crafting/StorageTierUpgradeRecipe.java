@@ -1,5 +1,6 @@
 package net.p3pp3rf1y.sophisticatedstorage.crafting;
 
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.BlockItem;
@@ -24,7 +25,7 @@ public class StorageTierUpgradeRecipe extends ShapedRecipe implements IWrapperRe
 	private final ShapedRecipe compose;
 
 	public StorageTierUpgradeRecipe(ShapedRecipe compose) {
-		super(compose.getId(), compose.getGroup(), compose.getRecipeWidth(), compose.getRecipeHeight(), compose.getIngredients(), compose.getResultItem());
+		super(compose.getId(), compose.getGroup(), compose.category(), compose.getWidth(), compose.getHeight(), compose.getIngredients(), compose.getResultItem(null));
 		this.compose = compose;
 		REGISTERED_RECIPES.add(compose.getId());
 	}
@@ -40,11 +41,11 @@ public class StorageTierUpgradeRecipe extends ShapedRecipe implements IWrapperRe
 	}
 
 	@Override
-	public ItemStack assemble(CraftingContainer inv) {
-		ItemStack upgradedStorage = super.assemble(inv);
+	public ItemStack assemble(CraftingContainer inv, RegistryAccess registryAccess) {
+		ItemStack upgradedStorage = super.assemble(inv, registryAccess);
 		getOriginalStorage(inv).ifPresent(originalStorage -> upgradedStorage.setTag(originalStorage.getTag()));
 		if (upgradedStorage.getItem() instanceof ShulkerBoxItem shulkerBoxItem) {
-			upgradedStorage.getCapability(CapabilityStorageWrapper.getCapabilityInstance()).ifPresent(wrapper -> {
+			CapabilityStorageWrapper.get(upgradedStorage).ifPresent(wrapper -> {
 				shulkerBoxItem.setNumberOfInventorySlots(upgradedStorage, wrapper.getDefaultNumberOfInventorySlots());
 				shulkerBoxItem.setNumberOfUpgradeSlots(upgradedStorage, wrapper.getDefaultNumberOfUpgradeSlots());
 			});
@@ -70,7 +71,7 @@ public class StorageTierUpgradeRecipe extends ShapedRecipe implements IWrapperRe
 
 	@Override
 	public RecipeSerializer<?> getSerializer() {
-		return ModBlocks.STORAGE_TIER_UPGRADE_RECIPE_SERIALIZER.get();
+		return ModBlocks.STORAGE_TIER_UPGRADE_RECIPE_SERIALIZER;
 	}
 
 	public static class Serializer extends RecipeWrapperSerializer<ShapedRecipe, StorageTierUpgradeRecipe> {

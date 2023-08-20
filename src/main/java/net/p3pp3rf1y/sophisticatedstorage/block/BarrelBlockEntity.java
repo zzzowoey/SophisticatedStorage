@@ -11,12 +11,16 @@ import net.minecraft.world.level.block.BarrelBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.WoodType;
+import net.p3pp3rf1y.sophisticatedcore.renderdata.RenderInfo;
 import net.p3pp3rf1y.sophisticatedcore.util.NBTHelper;
 import net.p3pp3rf1y.sophisticatedcore.util.WorldHelper;
 import net.p3pp3rf1y.sophisticatedstorage.common.gui.StorageContainerMenu;
 import net.p3pp3rf1y.sophisticatedstorage.init.ModBlocks;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -63,7 +67,7 @@ public class BarrelBlockEntity extends WoodStorageBlockEntity {
 	}
 
 	public BarrelBlockEntity(BlockPos pos, BlockState state) {
-		this(pos, state, ModBlocks.BARREL_BLOCK_ENTITY_TYPE.get());
+		this(pos, state, ModBlocks.BARREL_BLOCK_ENTITY_TYPE);
 	}
 
 	void updateOpenBlockState(BlockState state, boolean open) {
@@ -114,5 +118,84 @@ public class BarrelBlockEntity extends WoodStorageBlockEntity {
 
 	public Map<BarrelMaterial, ResourceLocation> getMaterials() {
 		return materials;
+	}
+
+	@Override
+	public @Nullable Object getRenderAttachmentData() {
+		return new ModelData(this);
+	}
+
+	public class ModelData {
+		private Boolean hasMainColor;
+		private Boolean hasAccentColor;
+		private String woodName;
+		private Boolean isPacked;
+		private Boolean showsLock;
+		private Boolean showsTier;
+		private List<RenderInfo.DisplayItem> displayItems;
+		private List<Integer> inaccessibleSlots;
+		private Map<BarrelMaterial, ResourceLocation> materials;
+
+		public ModelData(BarrelBlockEntity tile) {
+			StorageWrapper wrapper = tile.getStorageWrapper();
+			this.hasMainColor = wrapper.hasMainColor();
+			this.hasAccentColor = wrapper.hasAccentColor();
+
+			Optional<WoodType> woodType = tile.getWoodType();
+			if (woodType.isPresent() || !(hasMainColor && hasAccentColor)) {
+				this.woodName = woodType.orElse(WoodType.ACACIA).name();
+			}
+
+			if (!tile.hasFullyDynamicRenderer()) {
+				this.displayItems = wrapper.getRenderInfo().getItemDisplayRenderInfo().getDisplayItems();
+				this.inaccessibleSlots = wrapper.getRenderInfo().getItemDisplayRenderInfo().getInaccessibleSlots();
+			}
+
+			this.isPacked = tile.isPacked();
+			this.showsLock = tile.isLocked() && tile.shouldShowLock();
+			this.showsTier = tile.shouldShowTier();
+			this.materials = tile.getMaterials();
+		}
+
+		// Getters for fields (you can generate these automatically in most IDEs)
+		public Boolean hasMainColor() {
+			return hasMainColor;
+		}
+
+		public Boolean hasAccentColor() {
+			return hasAccentColor;
+		}
+
+		@Nullable
+		public String woodName() {
+			return woodName;
+		}
+
+		public Boolean isPacked() {
+			return isPacked;
+		}
+
+		public Boolean showsLock() {
+			return showsLock;
+		}
+
+		public Boolean showsTier() {
+			return showsTier;
+		}
+
+		@Nullable
+		public List<RenderInfo.DisplayItem> getDisplayItems() {
+			return displayItems;
+		}
+
+		@Nullable
+		public List<Integer> getInaccessibleSlots() {
+			return inaccessibleSlots;
+		}
+
+		@Nullable
+		public Map<BarrelMaterial, ResourceLocation> getMaterials() {
+			return materials;
+		}
 	}
 }

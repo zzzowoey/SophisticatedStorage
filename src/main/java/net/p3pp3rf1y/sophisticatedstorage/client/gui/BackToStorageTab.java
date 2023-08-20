@@ -24,6 +24,6 @@ public class BackToStorageTab extends Tab {
 
 	@Override
 	protected void onTabIconClicked(int button) {
-		StoragePacketHandler.INSTANCE.sendToServer(new OpenStorageInventoryMessage(pos));
+		StoragePacketHandler.sendToServer(new OpenStorageInventoryMessage(pos));
 	}
 }

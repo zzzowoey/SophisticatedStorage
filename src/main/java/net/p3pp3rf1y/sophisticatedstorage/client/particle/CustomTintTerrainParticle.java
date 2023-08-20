@@ -5,6 +5,8 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.TerrainParticle;
+import net.minecraft.client.renderer.block.BlockModelShaper;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 import net.p3pp3rf1y.sophisticatedstorage.block.BarrelBlock;
@@ -24,6 +26,16 @@ public class CustomTintTerrainParticle extends TerrainParticle {
 		rCol *= (color >> 16 & 255) / 255.0F;
 		gCol *= (color >> 8 & 255) / 255.0F;
 		bCol *= (color & 255) / 255.0F;
+	}
+
+	public Particle updateSprite(BlockState state, @Nullable BlockPos pos) {
+		if (pos != null) {
+			BlockModelShaper shaper = Minecraft.getInstance().getBlockRenderer().getBlockModelShaper();
+			BakedModel model = shaper.getBlockModel(state);
+			this.setSprite(model.getParticleIcon());
+		}
+
+		return this;
 	}
 
 	public static class Factory implements ParticleProvider<CustomTintTerrainParticleData> {

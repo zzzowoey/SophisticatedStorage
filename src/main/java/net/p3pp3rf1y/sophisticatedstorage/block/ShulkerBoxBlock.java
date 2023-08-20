@@ -44,11 +44,11 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.EntityCollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.network.NetworkHooks;
 import net.p3pp3rf1y.sophisticatedcore.controller.IControllerBoundable;
 import net.p3pp3rf1y.sophisticatedcore.inventory.InventoryHandler;
 import net.p3pp3rf1y.sophisticatedcore.upgrades.UpgradeHandler;
 import net.p3pp3rf1y.sophisticatedcore.util.ColorHelper;
+import net.p3pp3rf1y.sophisticatedcore.util.MenuProviderHelper;
 import net.p3pp3rf1y.sophisticatedcore.util.NBTHelper;
 import net.p3pp3rf1y.sophisticatedcore.util.WorldHelper;
 import net.p3pp3rf1y.sophisticatedstorage.Config;
@@ -91,7 +91,7 @@ public class ShulkerBoxBlock extends StorageBlockBase implements IAdditionalDrop
 	@Override
 	@Nullable
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
-		return createTickerHelper(blockEntityType, ModBlocks.SHULKER_BOX_BLOCK_ENTITY_TYPE.get(), (l, pos, s, blockEntity) -> {
+		return createTickerHelper(blockEntityType, ModBlocks.SHULKER_BOX_BLOCK_ENTITY_TYPE, (l, pos, s, blockEntity) -> {
 			ShulkerBoxBlockEntity.tick(l, pos, s, blockEntity);
 			if (!l.isClientSide) {
 				StorageBlockEntity.serverTick(l, pos, blockEntity);
@@ -118,8 +118,8 @@ public class ShulkerBoxBlock extends StorageBlockBase implements IAdditionalDrop
 			}
 
 			player.awardStat(Stats.CUSTOM.get(Stats.OPEN_SHULKER_BOX));
-			NetworkHooks.openScreen((ServerPlayer) player, new SimpleMenuProvider((w, p, pl) -> new StorageContainerMenu(w, pl, pos),
-					WorldHelper.getBlockEntity(level, pos, StorageBlockEntity.class).map(StorageBlockEntity::getDisplayName).orElse(Component.empty())), pos);
+			player.openMenu(MenuProviderHelper.createMenuProvider((w, ctx, pl) -> new StorageContainerMenu(w, pl, pos), buffer -> buffer.writeBlockPos(pos),
+					WorldHelper.getBlockEntity(level, pos, StorageBlockEntity.class).map(StorageBlockEntity::getDisplayName).orElse(Component.empty())));
 			PiglinAi.angerNearbyPiglins(player, true);
 			return InteractionResult.CONSUME;
 		}).orElse(InteractionResult.PASS);
@@ -147,37 +147,19 @@ public class ShulkerBoxBlock extends StorageBlockBase implements IAdditionalDrop
 				shulkerBoxItem.getAccentColor(stack).ifPresent(storageWrapper::setAccentColor);
 				InventoryHandler inventoryHandler = storageWrapper.getInventoryHandler();
 				UpgradeHandler upgradeHandler = storageWrapper.getUpgradeHandler();
-				storageWrapper.increaseSize(shulkerBoxItem.getNumberOfInventorySlots(stack) - inventoryHandler.getSlots(),
-						shulkerBoxItem.getNumberOfUpgradeSlots(stack) - upgradeHandler.getSlots());
+				storageWrapper.increaseSize(shulkerBoxItem.getNumberOfInventorySlots(stack) - inventoryHandler.getSlotCount(),
+						shulkerBoxItem.getNumberOfUpgradeSlots(stack) - upgradeHandler.getSlotCount());
 			}
 
 			be.getStorageWrapper().onInit();
 			be.tryToAddToController();
 
-			if (placer != null && placer.getOffhandItem().getItem() == ModItems.STORAGE_TOOL.get()) {
+			if (placer != null && placer.getOffhandItem().getItem() == ModItems.STORAGE_TOOL) {
 				StorageToolItem.useOffHandOnPlaced(placer.getOffhandItem(), be);
 			}
 
 			be.setChanged();
 		});
-	}
-
-	@Override
-	public void fillItemCategory(CreativeModeTab tab, NonNullList<ItemStack> items) {
-		items.add(new ItemStack(this));
-
-		if (this == ModBlocks.SHULKER_BOX.get() || Boolean.TRUE.equals(Config.CLIENT.showHigherTierTintedVariants.get())) {
-			for (DyeColor color : DyeColor.values()) {
-				ItemStack storageStack = getTintedStack(color);
-				items.add(storageStack);
-			}
-			ItemStack storageStack = new ItemStack(this);
-			if (storageStack.getItem() instanceof ITintableBlockItem tintableBlockItem) {
-				tintableBlockItem.setMainColor(storageStack, ColorHelper.getColor(DyeColor.YELLOW.getTextureDiffuseColors()));
-				tintableBlockItem.setAccentColor(storageStack, ColorHelper.getColor(DyeColor.LIME.getTextureDiffuseColors()));
-			}
-			items.add(storageStack);
-		}
 	}
 
 	public ItemStack getTintedStack(DyeColor color) {
@@ -250,8 +232,8 @@ public class ShulkerBoxBlock extends StorageBlockBase implements IAdditionalDrop
 			if (accentColor > -1) {
 				shulkerBoxItem.setAccentColor(stack, accentColor);
 			}
-			shulkerBoxItem.setNumberOfInventorySlots(stack, storageWrapper.getInventoryHandler().getSlots());
-			shulkerBoxItem.setNumberOfUpgradeSlots(stack, storageWrapper.getUpgradeHandler().getSlots());
+			shulkerBoxItem.setNumberOfInventorySlots(stack, storageWrapper.getInventoryHandler().getSlotCount());
+			shulkerBoxItem.setNumberOfUpgradeSlots(stack, storageWrapper.getUpgradeHandler().getSlotCount());
 		}
 	}
 
@@ -313,7 +295,7 @@ public class ShulkerBoxBlock extends StorageBlockBase implements IAdditionalDrop
 
 	@Override
 	protected BlockEntityType<? extends StorageBlockEntity> getBlockEntityType() {
-		return ModBlocks.SHULKER_BOX_BLOCK_ENTITY_TYPE.get();
+		return ModBlocks.SHULKER_BOX_BLOCK_ENTITY_TYPE;
 	}
 
 	@Override
@@ -333,7 +315,8 @@ public class ShulkerBoxBlock extends StorageBlockBase implements IAdditionalDrop
 		return false;
 	}
 
-	@Override
+	// TODO:
+/*	@Override
 	public boolean addLandingEffects(BlockState state1, ServerLevel level, BlockPos pos, BlockState state2, LivingEntity entity, int numberOfParticles) {
 		level.sendParticles(new CustomTintTerrainParticleData(state1, pos), entity.getX(), entity.getY(), entity.getZ(), numberOfParticles, 0.0D, 0.0D, 0.0D, 0.15D);
 		return true;
@@ -346,5 +329,5 @@ public class ShulkerBoxBlock extends StorageBlockBase implements IAdditionalDrop
 				entity.getX() + (level.random.nextDouble() - 0.5D) * entity.getBbWidth(), entity.getY() + 0.1D, entity.getZ() + (level.random.nextDouble() - 0.5D) * entity.getBbWidth(),
 				vec3.x * -4.0D, 1.5D, vec3.z * -4.0D);
 		return true;
-	}
+	}*/
 }

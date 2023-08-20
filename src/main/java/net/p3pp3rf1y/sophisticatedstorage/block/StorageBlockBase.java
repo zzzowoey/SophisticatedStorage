@@ -1,9 +1,12 @@
 package net.p3pp3rf1y.sophisticatedstorage.block;
 
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
@@ -20,8 +23,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.p3pp3rf1y.sophisticatedcore.api.IStorageWrapper;
 import net.p3pp3rf1y.sophisticatedcore.api.IUpgradeRenderer;
 import net.p3pp3rf1y.sophisticatedcore.client.render.UpgradeRenderRegistry;
@@ -35,6 +36,7 @@ import net.p3pp3rf1y.sophisticatedcore.util.InventoryHelper;
 import net.p3pp3rf1y.sophisticatedcore.util.RegistryHelper;
 import net.p3pp3rf1y.sophisticatedcore.util.WorldHelper;
 import net.p3pp3rf1y.sophisticatedstorage.SophisticatedStorage;
+import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -68,10 +70,10 @@ public abstract class StorageBlockBase extends Block implements IStorageBlock, I
 	}
 
 	private static Vector3f getMiddleFacePoint(BlockPos pos, Direction facing, Vector3f vector) {
-		Vector3f point = vector.copy();
+		Vector3f point = new Vector3f(vector);
 		point.add(0, 0, 0.6f);
-		point.transform(Vector3f.XP.rotationDegrees(-90.0F));
-		point.transform(facing.getRotation());
+		point.rotate(Axis.XP.rotationDegrees(-90.0F));
+		point.rotate(facing.getRotation());
 		point.add(pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f);
 		return point;
 	}
@@ -92,7 +94,7 @@ public abstract class StorageBlockBase extends Block implements IStorageBlock, I
 
 	private void tryToPickup(Level world, ItemEntity itemEntity, IStorageWrapper w) {
 		ItemStack remainingStack = itemEntity.getItem().copy();
-		remainingStack = InventoryHelper.runPickupOnPickupResponseUpgrades(world, w.getUpgradeHandler(), remainingStack, false);
+		remainingStack = InventoryHelper.runPickupOnPickupResponseUpgrades(world, w.getUpgradeHandler(), remainingStack, null);
 		if (remainingStack.getCount() < itemEntity.getItem().getCount()) {
 			itemEntity.setItem(remainingStack);
 		}
@@ -199,8 +201,8 @@ public abstract class StorageBlockBase extends Block implements IStorageBlock, I
 	}
 
 	@Override
-	public void onNeighborChange(BlockState state, LevelReader level, BlockPos pos, BlockPos neighbor) {
-		WorldHelper.getBlockEntity(level, pos, StorageBlockEntity.class).ifPresent(be -> be.onNeighborChange(neighbor));
+	public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
+		WorldHelper.getBlockEntity(level, pos, StorageBlockEntity.class).ifPresent(be -> be.onNeighborChange(neighborPos));
 	}
 
 	protected boolean tryAddUpgrade(Player player, InteractionHand hand, StorageBlockEntity b, ItemStack itemInHand, Direction facing, BlockHitResult hitResult) {
@@ -216,14 +218,18 @@ public abstract class StorageBlockBase extends Block implements IStorageBlock, I
 	}
 
 	private static boolean isStorageUpgrade(ItemStack itemInHand) {
-		return itemInHand.getItem() instanceof UpgradeItemBase<?> upgradeItem && RegistryHelper.getRegistryName(ForgeRegistries.ITEMS, upgradeItem).map(r -> r.getNamespace().equals(SophisticatedStorage.MOD_ID)).orElse(false);
+		return itemInHand.getItem() instanceof UpgradeItemBase<?> upgradeItem && RegistryHelper.getRegistryName(BuiltInRegistries.ITEM, upgradeItem).map(r -> r.getNamespace().equals(SophisticatedStorage.ID)).orElse(false);
 	}
 
 	public boolean tryAddSingleUpgrade(Player player, InteractionHand hand, StorageBlockEntity b, ItemStack itemInHand) {
 		if (isStorageUpgrade(itemInHand)) {
 			UpgradeHandler upgradeHandler = b.getStorageWrapper().getUpgradeHandler();
-			if (InventoryHelper.insertIntoInventory(itemInHand, upgradeHandler, true).getCount() != itemInHand.getCount()) {
-				InventoryHelper.insertIntoInventory(ItemHandlerHelper.copyStackWithSize(itemInHand, 1), upgradeHandler, false);
+			ItemVariant resource = ItemVariant.of(itemInHand);
+			if (upgradeHandler.simulateInsert(resource, itemInHand.getCount(), null) > 0) {
+				try (Transaction ctx = Transaction.openOuter()) {
+					upgradeHandler.insert(resource, 1, ctx);
+					ctx.commit();
+				}
 				itemInHand.shrink(1);
 				if (itemInHand.isEmpty()) {
 					player.setItemInHand(hand, ItemStack.EMPTY);

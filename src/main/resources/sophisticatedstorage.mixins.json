@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "priority": 1100,
+  "minVersion": "0.8",
+  "package": "net.p3pp3rf1y.sophisticatedstorage.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "${archivesBaseName}-refmap.json",
+  "mixins": [
+  ],
+  "client": [
+    "ScreenEffectRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

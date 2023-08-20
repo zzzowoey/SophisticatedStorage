@@ -1,13 +1,13 @@
 package net.p3pp3rf1y.sophisticatedstorage.crafting;
 
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.LegacyUpgradeRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.UpgradeRecipe;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import net.p3pp3rf1y.sophisticatedcore.crafting.IWrapperRecipe;
 import net.p3pp3rf1y.sophisticatedcore.crafting.RecipeWrapperSerializer;
 import net.p3pp3rf1y.sophisticatedstorage.block.IStorageBlock;
@@ -15,17 +15,16 @@ import net.p3pp3rf1y.sophisticatedstorage.init.ModBlocks;
 import net.p3pp3rf1y.sophisticatedstorage.item.WoodStorageBlockItem;
 
 import java.util.LinkedHashSet;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
-public class SmithingStorageUpgradeRecipe extends UpgradeRecipe implements IWrapperRecipe<UpgradeRecipe> {
+@SuppressWarnings("removal")
+public class SmithingStorageUpgradeRecipe extends LegacyUpgradeRecipe implements IWrapperRecipe<LegacyUpgradeRecipe> {
 	public static final Set<ResourceLocation> REGISTERED_RECIPES = new LinkedHashSet<>();
-	private final UpgradeRecipe compose;
+	private final LegacyUpgradeRecipe compose;
 
-	public SmithingStorageUpgradeRecipe(UpgradeRecipe compose) {
-		super(compose.getId(), compose.base,
-				compose.addition, compose.getResultItem());
+	public SmithingStorageUpgradeRecipe(LegacyUpgradeRecipe compose) {
+		super(compose.getId(), compose.base, compose.addition, compose.getResultItem(null));
 		this.compose = compose;
 		REGISTERED_RECIPES.add(compose.getId());
 	}
@@ -36,14 +35,10 @@ public class SmithingStorageUpgradeRecipe extends UpgradeRecipe implements IWrap
 	}
 
 	@Override
-	public ItemStack assemble(Container inv) {
-		ItemStack upgradedStorage = getCraftingResult().copy();
+	public ItemStack assemble(Container inv, RegistryAccess registryAccess) {
+		ItemStack upgradedStorage = getResultItem(registryAccess);
 		getStorage(inv).ifPresent(storage -> upgradedStorage.setTag(storage.getTag()));
 		return upgradedStorage;
-	}
-
-	private ItemStack getCraftingResult() {
-		return Objects.requireNonNull(ObfuscationReflectionHelper.getPrivateValue(UpgradeRecipe.class, this, "f_44520_"));
 	}
 
 	@Override
@@ -61,15 +56,15 @@ public class SmithingStorageUpgradeRecipe extends UpgradeRecipe implements IWrap
 
 	@Override
 	public RecipeSerializer<?> getSerializer() {
-		return ModBlocks.SMITHING_STORAGE_UPGRADE_RECIPE_SERIALIZER.get();
+		return ModBlocks.SMITHING_STORAGE_UPGRADE_RECIPE_SERIALIZER;
 	}
 
 	@Override
-	public UpgradeRecipe getCompose() {
+	public LegacyUpgradeRecipe getCompose() {
 		return compose;
 	}
 
-	public static class Serializer extends RecipeWrapperSerializer<UpgradeRecipe, SmithingStorageUpgradeRecipe> {
+	public static class Serializer extends RecipeWrapperSerializer<LegacyUpgradeRecipe, SmithingStorageUpgradeRecipe> {
 		public Serializer() {
 			super(SmithingStorageUpgradeRecipe::new, RecipeSerializer.SMITHING);
 		}
