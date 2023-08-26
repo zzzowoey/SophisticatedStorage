@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "${mod_id}",
+  "id": "sophisticatedstorage",
   "version": "${mod_version}",
 
   "name": "Sophisticated Storage",

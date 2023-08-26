@@ -206,18 +206,18 @@ public abstract class BarrelBakedModelBase implements BakedModel, FabricBakedMod
 			return;
 		}
 
-		emitQuads(state, Boolean.TRUE.equals(extraData.hasMainColor()), Boolean.TRUE.equals(extraData.hasAccentColor()), isPacked(extraData), showsTier(extraData),
-				extraData.woodName(), getMaterials(extraData), random, context, extraData);
+		emitQuads(blockView, state, pos, null, random, context, Boolean.TRUE.equals(extraData.hasMainColor()), Boolean.TRUE.equals(extraData.hasAccentColor()), isPacked(extraData), showsTier(extraData),
+				extraData.woodName(), getMaterials(extraData), extraData);
 	}
 
 	@Override
 	public void emitItemQuads(ItemStack stack, Supplier<RandomSource> random, RenderContext context) {
-		emitQuads(null, barrelHasMainColor, barrelHasAccentColor, barrelIsPacked, barrelShowsTier, barrelWoodName,
-				barrelMaterials, random, context, null);
+		emitQuads(null, null, null, stack, random, context, barrelHasMainColor, barrelHasAccentColor, barrelIsPacked, barrelShowsTier, barrelWoodName,
+				barrelMaterials, null);
 	}
 
-	private void emitQuads(@Nullable BlockState state, boolean hasMainColor, boolean hasAccentColor, boolean isPacked, boolean showsTier, String woodName,
-						   Map<BarrelMaterial, ResourceLocation> materials, Supplier<RandomSource> random, RenderContext context, @Nullable BarrelBlockEntity.ModelData extraData) {
+	private void emitQuads(@Nullable BlockAndTintGetter blockView, @Nullable BlockState state, @Nullable BlockPos pos, @Nullable ItemStack stack, Supplier<RandomSource> random, RenderContext context, boolean hasMainColor, boolean hasAccentColor, boolean isPacked, boolean showsTier, String woodName,
+						   Map<BarrelMaterial, ResourceLocation> materials, @Nullable BarrelBlockEntity.ModelData extraData) {
 		boolean isBakedDynamically = !materials.isEmpty() && woodDynamicBakingData.containsKey(woodName);
 		Set<BarrelMaterial.MaterialModelPart> materialModelParts = materials.keySet().stream().map(BarrelMaterial::getMaterialModelPart).collect(Collectors.toSet());
 		boolean rendersUsingSplitModel = materialModelParts.contains(BarrelMaterial.MaterialModelPart.CORE) || materialModelParts.contains(BarrelMaterial.MaterialModelPart.TRIM);
@@ -228,28 +228,34 @@ public abstract class BarrelBakedModelBase implements BakedModel, FabricBakedMod
 		}
 
 		if ((!hasMainColor || !hasAccentColor) && !isBakedDynamically) {
-			addPartQuads(state, context, modelParts, getBasePart(state));
+			addPartQuads(blockView, state, pos, stack, random, context, modelParts, getBasePart(state));
 		}
 
-		addTintableModelQuads(state, context, hasMainColor, hasAccentColor, modelParts);
+		addTintableModelQuads(blockView, state, pos, stack, random, context, hasMainColor, hasAccentColor, modelParts);
 
 		if (isBakedDynamically) {
 			for (var dir : Direction.values()) {
 				bakeAndAddDynamicQuads(dir, random.get(), woodName, materials, rendersUsingSplitModel,
 						!hasMainColor || materialModelParts.contains(BarrelMaterial.MaterialModelPart.CORE), !hasAccentColor || materialModelParts.contains(BarrelMaterial.MaterialModelPart.TRIM))
-						.forEach(bakedModel -> context.bakedModelConsumer().accept(bakedModel, state));
+						.forEach(bakedModel -> {
+							if (blockView != null) {
+								bakedModel.emitBlockQuads(blockView, state, pos, random, context);
+							} else {
+								bakedModel.emitItemQuads(stack, random, context);
+							}
+						});
 			}
 		}
 
 		if (showsTier) {
-			addPartQuads(state, context, modelParts, BarrelModelPart.TIER);
+			addPartQuads(blockView, state, pos, stack, random, context, modelParts, BarrelModelPart.TIER);
 		}
 
 		if (isPacked) {
-			addPartQuads(state, context, modelParts, BarrelModelPart.PACKED);
+			addPartQuads(blockView, state, pos, stack, random, context, modelParts, BarrelModelPart.PACKED);
 		} else {
 			if (showsLocked(extraData)) {
-				addPartQuads(state, context, modelParts, BarrelModelPart.LOCKED);
+				addPartQuads(blockView, state, pos, stack, random, context, modelParts, BarrelModelPart.LOCKED);
 			}
 			addDisplayItemQuads(state, context, extraData);
 		}
@@ -327,7 +333,6 @@ public abstract class BarrelBakedModelBase implements BakedModel, FabricBakedMod
 		return extraData.getMaterials() != null ? extraData.getMaterials() : Collections.emptyMap();
 	}
 
-
 	private BakedModel compileAndBakeModel(Map<String, Either<Material, String>> materials, DynamicBarrelBakingData bakingData) {
 		bakingData.modelPartDefinition().textures().forEach((textureName, texture) -> {
 			if (!materials.containsKey(textureName)) {
@@ -355,72 +360,6 @@ public abstract class BarrelBakedModelBase implements BakedModel, FabricBakedMod
 
 	private boolean showsTier(@Nullable BarrelBlockEntity.ModelData extraData) {
 		return extraData != null && extraData.showsTier();
-	}
-
-
-	private int createHash(@Nullable BlockState state, @Nullable Direction side, BarrelBlockEntity.ModelData data) {
-		int hash;
-		if (state != null) {
-			hash = getInWorldBlockHash(state, data);
-		} else {
-			hash = getItemBlockHash();
-		}
-		hash = hash * 31 + (side == null ? 0 : side.get3DDataValue() + 1);
-		hash = getDisplayItemsHash(data, hash);
-		return hash;
-	}
-
-	private int getItemBlockHash() {
-		int hash = barrelItem.hashCode();
-		hash = hash * 31 + (barrelWoodName != null ? barrelWoodName.hashCode() + 1 : 0);
-		hash = hash * 31 + (barrelHasMainColor ? 1 : 0);
-		hash = hash * 31 + (barrelHasAccentColor ? 1 : 0);
-		hash = hash * 31 + (barrelIsPacked ? 1 : 0);
-		hash = hash * 31 + (barrelShowsTier ? 1 : 0);
-		hash = hash * 31 + (flatTop ? 1 : 0);
-		hash = hash * 31 + barrelMaterials.hashCode();
-		return hash;
-	}
-
-	protected int getInWorldBlockHash(BlockState state, BarrelBlockEntity.ModelData data) {
-		int hash = state.getBlock().hashCode();
-
-		//noinspection ConstantConditions
-		hash = hash * 31 + (data.woodName() != null ? data.woodName().hashCode() + 1 : 0);
-		hash = hash * 31 + (Boolean.TRUE.equals(data.hasMainColor()) ? 1 : 0);
-		hash = hash * 31 + (Boolean.TRUE.equals(data.hasAccentColor()) ? 1 : 0);
-		hash = hash * 31 + (isPacked(data) ? 1 : 0);
-		hash = hash * 31 + (showsLocked(data) ? 1 : 0);
-		hash = hash * 31 + (showsTier(data) ? 1 : 0);
-		hash = hash * 31 + (Boolean.TRUE.equals(state.getValue(BarrelBlock.FLAT_TOP)) ? 1 : 0);
-		//noinspection ConstantConditions
-		hash = hash * 31 + (data.getMaterials() != null ? data.getMaterials().hashCode() : 0);
-		return hash;
-	}
-
-	private int getDisplayItemsHash(BarrelBlockEntity.ModelData data, int hash) {
-		if (data.getDisplayItems() != null) {
-			List<RenderInfo.DisplayItem> displayItems = data.getDisplayItems();
-			//noinspection ConstantConditions
-			for (RenderInfo.DisplayItem displayItem : displayItems) {
-				hash = hash * 31 + getDisplayItemHash(displayItem);
-			}
-		}
-		if (data.getInaccessibleSlots() != null) {
-			List<Integer> inaccessibleSlots = data.getInaccessibleSlots();
-			//noinspection ConstantConditions
-			for (Integer inaccessibleSlot : inaccessibleSlots) {
-				hash = hash * 31 + inaccessibleSlot;
-			}
-		}
-		return hash;
-	}
-
-	private int getDisplayItemHash(RenderInfo.DisplayItem displayItem) {
-		int hash = displayItem.getRotation();
-		hash = hash * 31 + ItemStackKey.getHashCode(displayItem.getItem());
-		hash = hash * 31 + displayItem.getSlotIndex();
-		return hash;
 	}
 
 	private void addDisplayItemQuads(@Nullable BlockState state, RenderContext context, BarrelBlockEntity.ModelData data) {
@@ -568,14 +507,14 @@ public abstract class BarrelBakedModelBase implements BakedModel, FabricBakedMod
 		return DISPLAY_ROTATIONS.computeIfAbsent(rotation, r -> QuadTransformers.applying(new Transformation(null, Axis.ZP.rotationDegrees(rotation), null, null)));
 	}
 
-	private void addTintableModelQuads(@Nullable BlockState state, RenderContext context, boolean hasMainColor,
+	private void addTintableModelQuads(@Nullable BlockAndTintGetter blockView, @Nullable BlockState state, @Nullable BlockPos pos, @Nullable ItemStack stack, Supplier<RandomSource> random, RenderContext context, boolean hasMainColor,
 									   boolean hasAccentColor, Map<BarrelModelPart, BakedModel> modelParts) {
 		if (hasAccentColor) {
-			addPartQuads(state, context, modelParts, BarrelModelPart.TINTABLE_ACCENT);
+			addPartQuads(blockView, state, pos, stack, random, context, modelParts, BarrelModelPart.TINTABLE_ACCENT);
 		}
 
 		if (hasMainColor) {
-			addPartQuads(state, context, modelParts, getMainPart(state));
+			addPartQuads(blockView, state, pos, stack, random, context, modelParts, getMainPart(state));
 		}
 	}
 
@@ -585,9 +524,13 @@ public abstract class BarrelBakedModelBase implements BakedModel, FabricBakedMod
 
 	protected abstract boolean rendersOpen();
 
-	private void addPartQuads(@Nullable BlockState state, RenderContext context, Map<BarrelModelPart, BakedModel> modelParts, BarrelModelPart part) {
+	private void addPartQuads(@Nullable BlockAndTintGetter blockView, @Nullable BlockState state, @Nullable BlockPos pos, @Nullable ItemStack stack, Supplier<RandomSource> random, RenderContext context, Map<BarrelModelPart, BakedModel> modelParts, BarrelModelPart part) {
 		if (modelParts.containsKey(part)) {
-			context.bakedModelConsumer().accept(modelParts.getOrDefault(part, Minecraft.getInstance().getModelManager().getMissingModel()), state);
+			if (blockView != null) {
+				modelParts.getOrDefault(part, Minecraft.getInstance().getModelManager().getMissingModel()).emitBlockQuads(blockView, state, pos, random, context);
+			} else {
+				modelParts.getOrDefault(part, Minecraft.getInstance().getModelManager().getMissingModel()).emitItemQuads(stack, random, context);
+			}
 		}
 	}
 

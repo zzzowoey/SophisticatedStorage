@@ -2,6 +2,7 @@ package net.p3pp3rf1y.sophisticatedstorage.block;
 
 import com.mojang.math.Axis;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -14,7 +15,6 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -225,7 +225,7 @@ public abstract class StorageBlockBase extends Block implements IStorageBlock, I
 		if (isStorageUpgrade(itemInHand)) {
 			UpgradeHandler upgradeHandler = b.getStorageWrapper().getUpgradeHandler();
 			ItemVariant resource = ItemVariant.of(itemInHand);
-			if (upgradeHandler.simulateInsert(resource, itemInHand.getCount(), null) > 0) {
+			if (StorageUtil.simulateInsert(upgradeHandler, resource, itemInHand.getCount(), null) > 0) {
 				try (Transaction ctx = Transaction.openOuter()) {
 					upgradeHandler.insert(resource, 1, ctx);
 					ctx.commit();

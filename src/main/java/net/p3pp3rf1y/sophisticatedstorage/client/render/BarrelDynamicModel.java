@@ -36,15 +36,6 @@ public class BarrelDynamicModel extends BarrelDynamicModelBase<BarrelDynamicMode
 		}
 
 		@Override
-		protected int getInWorldBlockHash(BlockState state, BarrelBlockEntity.ModelData data) {
-			int hash = super.getInWorldBlockHash(state, data);
-			hash = hash * 31 + (Boolean.TRUE.equals(state.getValue(BarrelBlock.OPEN)) ? 1 : 0);
-			hash = hash * 31 + state.getValue(BarrelBlock.FACING).get3DDataValue();
-
-			return hash;
-		}
-
-		@Override
 		protected BarrelModelPart getBasePart(@Nullable BlockState state) {
 			return state != null && state.getValue(BarrelBlock.OPEN) ? BarrelModelPart.BASE_OPEN : BarrelModelPart.BASE;
 		}
