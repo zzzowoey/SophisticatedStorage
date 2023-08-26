@@ -71,7 +71,7 @@ public class StorageTierUpgradeItem extends Item {
 	}
 
 	@Override
-	public InteractionResult useOn(UseOnContext context) {
+	public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
 		Level level = context.getLevel();
 		if (level.isClientSide) {
 			return InteractionResult.PASS;

@@ -56,7 +56,7 @@ public class ChestDynamicModel implements IUnbakedGeometry<ChestDynamicModel> {
 		return new ChestBakedModel();
 	}
 
-	private static class ChestBakedModel implements BakedModel, FabricBakedModel, IDataModel {
+	private static class ChestBakedModel implements BakedModel, IDataModel {
 		@Override
 		public ItemTransforms getTransforms() {
 			return ItemTransforms.NO_TRANSFORMS;
@@ -65,21 +65,6 @@ public class ChestDynamicModel implements IUnbakedGeometry<ChestDynamicModel> {
 		@Override
 		public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand) {
 			return Collections.emptyList();
-		}
-
-		@Override
-		public boolean isVanillaAdapter() {
-			return true;
-		}
-
-		@Override
-		public void emitBlockQuads(BlockAndTintGetter blockView, BlockState state, BlockPos pos, Supplier<RandomSource> randomSupplier, RenderContext context) {
-
-		}
-
-		@Override
-		public void emitItemQuads(ItemStack stack, Supplier<RandomSource> randomSupplier, RenderContext context) {
-
 		}
 
 		@Override

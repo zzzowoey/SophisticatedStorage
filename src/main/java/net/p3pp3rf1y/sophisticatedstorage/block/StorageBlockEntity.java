@@ -1,5 +1,6 @@
 package net.p3pp3rf1y.sophisticatedstorage.block;
 
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
 import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachmentBlockEntity;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
@@ -10,6 +11,7 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Nameable;
@@ -20,6 +22,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.p3pp3rf1y.sophisticatedcore.controller.IControllableStorage;
 import net.p3pp3rf1y.sophisticatedcore.controller.ILinkable;
 import net.p3pp3rf1y.sophisticatedcore.inventory.ISlotTracker;
@@ -88,7 +91,6 @@ public abstract class StorageBlockEntity extends BlockEntity implements IControl
 			public ItemStack getWrappedStorageStack() {
 				BlockPos pos = getBlockPos();
 				return getBlockState().getBlock().getCloneItemStack(getLevel(), pos, getBlockState());
-				// return getBlockState().getBlock().getCloneItemStack(getBlockState(), new BlockHitResult(new Vec3(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5), Direction.DOWN, pos, true), getLevel(), pos, null);
 			}
 
 			@Override
@@ -142,10 +144,12 @@ public abstract class StorageBlockEntity extends BlockEntity implements IControl
 			}
 		};
 		storageWrapper.setUpgradeCachesInvalidatedHandler(this::onUpgradeCachesInvalidated);
+
+		ServerChunkEvents.CHUNK_UNLOAD.register(this::onChunkUnloaded);
 	}
 
 	protected void onUpgradeCachesInvalidated() {
-//		invalidateStorageCap();
+		invalidateStorageCap();
 	}
 
 	public boolean isOpen() {
@@ -263,12 +267,9 @@ public abstract class StorageBlockEntity extends BlockEntity implements IControl
 		}
 	}
 
-	// TODO:
-/*	@Override
-	public void onChunkUnloaded() {
-		super.onChunkUnloaded();
+	public void onChunkUnloaded(ServerLevel world, LevelChunk chunk) {
 		chunkBeingUnloaded = true;
-	}*/
+	}
 
 	@Override
 	public void setRemoved() {
@@ -361,31 +362,13 @@ public abstract class StorageBlockEntity extends BlockEntity implements IControl
 	}
 
 	// TODO:
-/*	@Nonnull
-	@Override
-	public <T> LazyOptional<T> getCapability(Capability<T> cap, @Nullable Direction side) {
-		if (cap == ForgeCapabilities.ITEM_HANDLER) {
-			if (itemHandlerCap == null) {
-				itemHandlerCap = LazyOptional.of(getStorageWrapper()::getInventoryForInputOutput);
-			}
-			return itemHandlerCap.cast();
-		}
-		return super.getCapability(cap, side);
-	}*/
-
-/*	@Override
-	public void invalidateCaps() {
-		super.invalidateCaps();
-		invalidateStorageCap();
-	}*/
-
-/*	private void invalidateStorageCap() {
-		if (itemHandlerCap != null) {
+	private void invalidateStorageCap() {
+/*		if (itemHandlerCap != null) {
 			LazyOptional<IItemHandler> tempItemHandlerCap = itemHandlerCap;
 			itemHandlerCap = null;
 			tempItemHandlerCap.invalidate();
-		}
-	}*/
+		}*/
+	}
 
 	public boolean shouldDropContents() {
 		return true;
@@ -495,7 +478,7 @@ public abstract class StorageBlockEntity extends BlockEntity implements IControl
 		updateEmptySlots();
 		if (allowsEmptySlotsMatchingItemInsertsWhenLocked()) {
 			contentsFilteredItemHandler = null;
-//			invalidateStorageCap();
+			invalidateStorageCap();
 		}
 		setChanged();
 		WorldHelper.notifyBlockUpdate(this);
@@ -515,7 +498,7 @@ public abstract class StorageBlockEntity extends BlockEntity implements IControl
 		updateEmptySlots();
 		if (allowsEmptySlotsMatchingItemInsertsWhenLocked()) {
 			contentsFilteredItemHandler = null;
-//			invalidateStorageCap();
+			invalidateStorageCap();
 		}
 		setChanged();
 		setUpdateBlockRender();

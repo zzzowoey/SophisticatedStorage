@@ -8,7 +8,7 @@
   "wood_name.sophisticatedstorage.crimson": "绯红木",
   "wood_name.sophisticatedstorage.mangrove": "红树木",
   "wood_name.sophisticatedstorage.warped": "诡异木",
-  "itemGroup.sophisticatedstorage": "精妙存储",
+  "itemGroup.sophisticatedstorage.item_group": "精妙存储",
   "item.sophisticatedstorage.packing_tape": "包装带",
   "item.sophisticatedstorage.storage_tool": "存储工具",
   "item.sophisticatedstorage.storage_tool.tooltip": "链接, 锁定, 隐藏容器上的数量和锁定",

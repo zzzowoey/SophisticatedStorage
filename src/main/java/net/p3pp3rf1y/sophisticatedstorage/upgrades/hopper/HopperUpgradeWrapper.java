@@ -1,8 +1,10 @@
 package net.p3pp3rf1y.sophisticatedstorage.upgrades.hopper;
 
-import io.github.fabricators_of_create.porting_lib.transfer.item.SlottedStackStorage;
 import net.fabricmc.fabric.api.lookup.v1.block.BlockApiCache;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
+import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
+import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -14,7 +16,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.p3pp3rf1y.sophisticatedcore.api.IStorageWrapper;
-import net.p3pp3rf1y.sophisticatedcore.common.lookup.ItemStorage;
 import net.p3pp3rf1y.sophisticatedcore.settings.memory.MemorySettingsCategory;
 import net.p3pp3rf1y.sophisticatedcore.upgrades.ContentsFilterLogic;
 import net.p3pp3rf1y.sophisticatedcore.upgrades.FilterLogic;
@@ -24,21 +25,19 @@ import net.p3pp3rf1y.sophisticatedcore.util.NBTHelper;
 import net.p3pp3rf1y.sophisticatedstorage.block.StorageBlockBase;
 import net.p3pp3rf1y.sophisticatedstorage.block.VerticalFacing;
 import net.p3pp3rf1y.sophisticatedstorage.common.gui.BlockSide;
-import net.p3pp3rf1y.sophisticatedstorage.upgrades.INeighborChangeListenerUpgrade;
 
 import javax.annotation.Nullable;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 
+import static net.fabricmc.fabric.api.transfer.v1.item.ItemStorage.SIDED;
+
 public class HopperUpgradeWrapper extends UpgradeWrapperBase<HopperUpgradeWrapper, HopperUpgradeItem>
-		implements ITickableUpgrade, INeighborChangeListenerUpgrade {
+		implements ITickableUpgrade {
 
 	private Set<Direction> pullDirections = new LinkedHashSet<>();
 	private Set<Direction> pushDirections = new LinkedHashSet<>();
-	private BlockApiCache<SlottedStackStorage, Direction> handlerCache;
+	private final Map<Direction, BlockApiCache<Storage<ItemVariant>, Direction>> handlerCache = new EnumMap<>(Direction.class);
 
 	private final ContentsFilterLogic inputFilterLogic;
 	private final ContentsFilterLogic outputFilterLogic;
@@ -88,29 +87,30 @@ public class HopperUpgradeWrapper extends UpgradeWrapperBase<HopperUpgradeWrappe
 		}
 	}
 
-	private boolean pullItem(SlottedStackStorage fromHandler) {
+	private boolean pullItem(Storage<ItemVariant> fromHandler) {
 		return moveItems(fromHandler, storageWrapper.getInventoryForUpgradeProcessing(), inputFilterLogic);
 	}
 
-	private boolean pushItems(SlottedStackStorage toHandler) {
+	private boolean pushItems(Storage<ItemVariant> toHandler) {
 		return moveItems(storageWrapper.getInventoryForUpgradeProcessing(), toHandler, outputFilterLogic);
 	}
 
-	private boolean moveItems(SlottedStackStorage fromHandler, SlottedStackStorage toHandler, FilterLogic filterLogic) {
-		for (int slot = 0; slot < fromHandler.getSlotCount(); slot++) {
-			ItemStack slotStack = fromHandler.getStackInSlot(slot);
-			if (!slotStack.isEmpty() && filterLogic.matchesFilter(slotStack)) {
-				ItemVariant resource = ItemVariant.of(slotStack);
-				long extracted;
-				try (Transaction simulate = Transaction.openOuter()) {
-					extracted = fromHandler.extractSlot(slot, resource, upgradeItem.getMaxTransferStackSize(), simulate);
-				}
-				if (extracted > 0) {
-					try (Transaction ctx = Transaction.openOuter()) {
-						long inserted = toHandler.insert(resource, extracted, ctx);
-						if (inserted < extracted) {
-							fromHandler.extractSlot(slot, resource, inserted, ctx);
-							ctx.commit();
+	private boolean moveItems(Storage<ItemVariant> fromHandler, Storage<ItemVariant> toHandler, FilterLogic filterLogic) {
+		try (Transaction iteration = Transaction.openOuter()) {
+			for (StorageView<ItemVariant> view : fromHandler.nonEmptyViews()) {
+				ItemStack slotStack = view.getResource().toStack((int) view.getAmount());
+				if (!slotStack.isEmpty() && filterLogic.matchesFilter(slotStack)) {
+					ItemVariant resource = ItemVariant.of(slotStack);
+					long maxExtracted;
+					try (Transaction extractionTestTransaction = iteration.openNested()) {
+						maxExtracted = view.extract(resource, upgradeItem.getMaxTransferStackSize(), extractionTestTransaction);
+						extractionTestTransaction.abort();
+					}
+
+					try (Transaction transferTransaction = iteration.openNested()) {
+						long accepted = toHandler.insert(resource, maxExtracted, transferTransaction);
+						if (view.extract(resource, accepted, transferTransaction) == accepted) {
+							transferTransaction.commit();
 							return true;
 						}
 					}
@@ -120,20 +120,12 @@ public class HopperUpgradeWrapper extends UpgradeWrapperBase<HopperUpgradeWrappe
 		return false;
 	}
 
-	@Override
-	public void onNeighborChange(Level level, BlockPos pos, Direction direction) {
-		// TODO: I don't think this is still necessary.
-		/*if (pushDirections.contains(direction) || pullDirections.contains(direction)) {
-			updateCacheOnSide(level, pos, direction);
-		}*/
-	}
-
-	private Optional<SlottedStackStorage> getItemHandler(Level level, BlockPos pos, Direction direction) {
-		if (handlerCache == null) {
-			handlerCache = BlockApiCache.create(ItemStorage.SIDED, (ServerLevel) level, pos);
+	private Optional<Storage<ItemVariant>> getItemHandler(Level level, BlockPos pos, Direction direction) {
+		if (!handlerCache.containsKey(direction)) {
+			handlerCache.put(direction, BlockApiCache.create(SIDED, (ServerLevel) level, pos.relative(direction)));
 		}
 
-		return Optional.ofNullable(handlerCache.find(direction));
+		return Optional.ofNullable(handlerCache.get(direction).find(direction.getOpposite()));
 	}
 
 	public ContentsFilterLogic getInputFilterLogic() {

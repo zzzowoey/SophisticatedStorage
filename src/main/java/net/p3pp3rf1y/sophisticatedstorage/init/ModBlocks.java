@@ -331,10 +331,10 @@ public class ModBlocks {
 						entries.accept(flatBarrel);
 					}
 				}
-				else if (block instanceof ShulkerBoxBlock) {
+				else if (block instanceof ShulkerBoxBlock shulkerBoxBlock) {
 					if (block == SHULKER_BOX || Boolean.TRUE.equals(Config.CLIENT.showHigherTierTintedVariants.get())) {
 						for (DyeColor color : DyeColor.values()) {
-							ItemStack storageStack = SHULKER_BOX.getTintedStack(color);
+							ItemStack storageStack = shulkerBoxBlock.getTintedStack(color);
 							entries.accept(storageStack);
 						}
 						ItemStack storageStack = new ItemStack(block);

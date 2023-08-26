@@ -8,7 +8,7 @@
     "wood_name.sophisticatedstorage.crimson" : " carmesí",
     "wood_name.sophisticatedstorage.mangrove" : " de mangle",
     "wood_name.sophisticatedstorage.warped" : " distorsionado",
-    "itemGroup.sophisticatedstorage": "Sophisticated Storage",
+    "itemGroup.sophisticatedstorage.item_group": "Sophisticated Storage",
     "item.sophisticatedstorage.packing_tape": "Cinta de empaquetado",
     "item.sophisticatedstorage.storage_tool": "Herramienta de almacenes",
     "item.sophisticatedstorage.storage_tool.tooltip": "Conecta, bloquea, oculta contadores/niveles/bloqueos en almacenes",

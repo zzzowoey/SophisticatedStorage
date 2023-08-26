@@ -7,10 +7,7 @@ import com.mojang.datafixers.util.Pair;
 import io.github.fabricators_of_create.porting_lib.models.CompositeModel;
 import io.github.fabricators_of_create.porting_lib.models.DynamicFluidContainerModel;
 import io.github.fabricators_of_create.porting_lib.models.UnbakedGeometryHelper;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.BlockElement;
-import net.minecraft.client.renderer.block.model.BlockModel;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -44,25 +41,18 @@ public class CompositeElementsModel extends BlockModel {
 			return new BuiltInModel(getTransforms(), getOverrides(baker, model, spriteGetter), particleSprite, getGuiLight().lightLikeBlock());
 		}
 
-		var modelBuilder = CompositeModel.Baked.builder(this.hasAmbientOcclusion(), false, this.getGuiLight().lightLikeBlock(), particleSprite, getOverrides(baker, model, spriteGetter), this.getTransforms());
-		return modelBuilder.addQuads(bakeElements(getElements(), spriteGetter, state, location)).build();
-	}
-
-	public void bakeElements(List<BakedQuad> quads, List<BlockElement> elements, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ResourceLocation modelLocation) {
-		for (BlockElement element : elements) {
+		ItemOverrides overrides = getOverrides(baker, model, spriteGetter);
+		ItemTransforms transforms = this.getTransforms();
+		var modelBuilder = CompositeModel.Baked.builder(this.hasAmbientOcclusion(), false, this.getGuiLight().lightLikeBlock(), particleSprite, overrides, transforms);
+		for (BlockElement element : getElements()) {
 			element.faces.forEach((side, face) -> {
 				var sprite = spriteGetter.apply(this.getMaterial(face.texture));
-				quads.add(BlockModel.FACE_BAKERY.bakeQuad(element.from, element.to, face, sprite, side, modelState, element.rotation, element.shade, modelLocation));
+				var simpleModelBuilder = new SimpleBakedModel.Builder(this.hasAmbientOcclusion(), this.getGuiLight().lightLikeBlock(), false, transforms, overrides).particle(sprite);
+				simpleModelBuilder.addCulledFace(side, BlockModel.FACE_BAKERY.bakeQuad(element.from, element.to, face, sprite, side, state, element.rotation, element.shade, location));
+				modelBuilder.addLayer(simpleModelBuilder.build());
 			});
 		}
-	}
-	public List<BakedQuad> bakeElements(List<BlockElement> elements, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ResourceLocation modelLocation) {
-		if (elements.isEmpty())
-			return List.of();
-
-		var list = new ArrayList<BakedQuad>();
-		bakeElements(list, elements, spriteGetter, modelState, modelLocation);
-		return list;
+		return modelBuilder.build();
 	}
 
 	@SuppressWarnings({"java:S1874", "deprecation"}) //overriding getElements here

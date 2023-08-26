@@ -11,7 +11,7 @@
   "wood_name.sophisticatedstorage.dark_oak"": "ダークオークの",
   "wood_name.sophisticatedstorage.crimson"": "真紅の",
   "wood_name.sophisticatedstorage.warped"": "歪んだ",
-  "itemGroup.sophisticatedstorage"": "Sophisticated Storage",
+  "itemGroup.sophisticatedstorage.item_group"": "Sophisticated Storage",
   "item.sophisticatedstorage.packing_tape"": "ガムテープ",
   "item.sophisticatedstorage.storage_tool"": "ストレージツール",
   "item.sophisticatedstorage.storage_tool.tooltip"": "設置したストレージの連結、ロック、個数表示の設定を変更します。",

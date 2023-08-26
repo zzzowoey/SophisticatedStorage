@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.resources.ResourceLocation;
@@ -11,6 +12,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.block.state.properties.WoodType;
+import net.p3pp3rf1y.sophisticatedstorage.SophisticatedStorage;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -24,7 +26,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 @SuppressWarnings("java:S6548") //singleton is intended here
-public class StorageTextureManager extends SimpleJsonResourceReloadListener {
+public class StorageTextureManager extends SimpleJsonResourceReloadListener implements IdentifiableResourceReloadListener {
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
 
 	public static final StorageTextureManager INSTANCE = new StorageTextureManager();
@@ -43,6 +45,11 @@ public class StorageTextureManager extends SimpleJsonResourceReloadListener {
 
 	private StorageTextureManager() {
 		super(GSON, "storage_texture_definitions");
+	}
+
+	@Override
+	public ResourceLocation getFabricId() {
+		return SophisticatedStorage.getRL("storage_texture_manager");
 	}
 
 	@Override

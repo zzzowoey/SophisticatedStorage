@@ -1,5 +1,5 @@
 {
-    "itemGroup.sophisticatedstorage": "Sophisticated Storage",
+    "itemGroup.sophisticatedstorage.item_group": "Sophisticated Storage",
     "item.sophisticatedstorage.packing_tape": "Пакувальна стрічка",
     "item.sophisticatedstorage.storage_tool": "Інструмент зберігання",
     "item.sophisticatedstorage.storage_tool.overlay.linking": "Підключення до контролера на x:%s y:%s z:%s",

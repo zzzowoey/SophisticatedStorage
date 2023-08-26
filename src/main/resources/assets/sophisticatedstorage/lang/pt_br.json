@@ -1,5 +1,5 @@
 {
-  "itemGroup.sophisticatedstorage": "Armazenamento Sofisticado",
+  "itemGroup.sophisticatedstorage.item_group": "Armazenamento Sofisticado",
   "item.sophisticatedstorage.packing_tape": "Fita de empacotamento",
   "item.sophisticatedstorage.storage_tool": "Ferramenta de armazenamento",
   "item.sophisticatedstorage.storage_tool.overlay.linking": "Conectado ao controlador em x:%s y:%s z:%s",

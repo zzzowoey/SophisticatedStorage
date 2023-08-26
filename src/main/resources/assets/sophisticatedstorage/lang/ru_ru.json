@@ -7,7 +7,7 @@
     "wood_name.sophisticatedstorage.dark_oak" : " из тёмного дуба",
     "wood_name.sophisticatedstorage.crimson" : " из багрового дерева",
     "wood_name.sophisticatedstorage.warped" : " из искажённого дерева",
-    "itemGroup.sophisticatedstorage": "Sophisticated Storage",
+    "itemGroup.sophisticatedstorage.item_group": "Sophisticated Storage",
     "item.sophisticatedstorage.packing_tape": "Упаковочная лента",
     "item.sophisticatedstorage.storage_tool": "Ключ хранилищ",
     "item.sophisticatedstorage.storage_tool.tooltip": "Привязывает и блокирует хранилища, а также скрывает их счётчики",

@@ -46,7 +46,6 @@ public class CommonEventHandler {
 	private static final int AVERAGE_MAX_ITEM_ENTITY_DROP_COUNT = 20;
 
 	public void registerHandlers() {
-
 		ServerPlayConnectionEvents.JOIN.register(this::onPlayerLoggedIn);
 		ServerEntityWorldChangeEvents.AFTER_PLAYER_CHANGE_WORLD.register(this::onPlayerChangedDimension);
 		ServerPlayerEvents.AFTER_RESPAWN.register(this::onPlayerRespawn);
