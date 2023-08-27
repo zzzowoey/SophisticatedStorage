@@ -3,13 +3,12 @@ package net.p3pp3rf1y.sophisticatedstorage.client.render;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Either;
-import com.mojang.datafixers.util.Pair;
 import io.github.fabricators_of_create.porting_lib.models.CompositeModel;
-import io.github.fabricators_of_create.porting_lib.models.DynamicFluidContainerModel;
-import io.github.fabricators_of_create.porting_lib.models.UnbakedGeometryHelper;
-import net.minecraft.client.renderer.block.model.*;
+import net.minecraft.client.renderer.block.model.BlockElement;
+import net.minecraft.client.renderer.block.model.BlockModel;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.*;
 import net.minecraft.resources.ResourceLocation;
@@ -17,13 +16,7 @@ import net.minecraft.world.inventory.InventoryMenu;
 import net.p3pp3rf1y.sophisticatedstorage.SophisticatedStorage;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 
 public class CompositeElementsModel extends BlockModel {
@@ -48,7 +41,7 @@ public class CompositeElementsModel extends BlockModel {
 			element.faces.forEach((side, face) -> {
 				var sprite = spriteGetter.apply(this.getMaterial(face.texture));
 				var simpleModelBuilder = new SimpleBakedModel.Builder(this.hasAmbientOcclusion(), this.getGuiLight().lightLikeBlock(), false, transforms, overrides).particle(sprite);
-				simpleModelBuilder.addCulledFace(side, BlockModel.FACE_BAKERY.bakeQuad(element.from, element.to, face, sprite, side, state, element.rotation, element.shade, location));
+				simpleModelBuilder.addUnculledFace(BlockModel.FACE_BAKERY.bakeQuad(element.from, element.to, face, sprite, side, state, element.rotation, element.shade, location));
 				modelBuilder.addLayer(simpleModelBuilder.build());
 			});
 		}
