@@ -128,8 +128,6 @@ public class CompressionUpgradeItem extends UpgradeItemBase<CompressionUpgradeIt
 			save();
 		}
 
-
-
 		private int getFirstInventorySlot() {
 			return NBTHelper.getInt(upgrade, FIRST_INVENTORY_SLOT_TAG).orElse(-1);
 		}

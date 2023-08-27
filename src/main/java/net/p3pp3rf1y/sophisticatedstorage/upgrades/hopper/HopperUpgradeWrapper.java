@@ -98,19 +98,20 @@ public class HopperUpgradeWrapper extends UpgradeWrapperBase<HopperUpgradeWrappe
 	private boolean moveItems(Storage<ItemVariant> fromHandler, Storage<ItemVariant> toHandler, FilterLogic filterLogic) {
 		try (Transaction iteration = Transaction.openOuter()) {
 			for (StorageView<ItemVariant> view : fromHandler.nonEmptyViews()) {
-				ItemStack slotStack = view.getResource().toStack((int) view.getAmount());
+				ItemVariant resource = view.getResource();
+				ItemStack slotStack = resource.toStack((int) view.getAmount());
 				if (!slotStack.isEmpty() && filterLogic.matchesFilter(slotStack)) {
-					ItemVariant resource = ItemVariant.of(slotStack);
 					long maxExtracted;
 					try (Transaction extractionTestTransaction = iteration.openNested()) {
-						maxExtracted = view.extract(resource, upgradeItem.getMaxTransferStackSize(), extractionTestTransaction);
+						maxExtracted = fromHandler.extract(resource, upgradeItem.getMaxTransferStackSize(), extractionTestTransaction);
 						extractionTestTransaction.abort();
 					}
 
 					try (Transaction transferTransaction = iteration.openNested()) {
 						long accepted = toHandler.insert(resource, maxExtracted, transferTransaction);
-						if (view.extract(resource, accepted, transferTransaction) == accepted) {
+						if (fromHandler.extract(resource, accepted, transferTransaction) == accepted) {
 							transferTransaction.commit();
+							iteration.commit();
 							return true;
 						}
 					}
