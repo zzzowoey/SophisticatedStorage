@@ -27,6 +27,7 @@ import net.p3pp3rf1y.sophisticatedcore.controller.IControllableStorage;
 import net.p3pp3rf1y.sophisticatedcore.controller.ILinkable;
 import net.p3pp3rf1y.sophisticatedcore.inventory.ISlotTracker;
 import net.p3pp3rf1y.sophisticatedcore.inventory.ITrackedContentsItemHandler;
+import net.p3pp3rf1y.sophisticatedcore.inventory.InventoryHandler;
 import net.p3pp3rf1y.sophisticatedcore.inventory.ItemStackKey;
 import net.p3pp3rf1y.sophisticatedcore.settings.itemdisplay.ItemDisplaySettingsCategory;
 import net.p3pp3rf1y.sophisticatedcore.settings.memory.MemorySettingsCategory;
@@ -38,11 +39,7 @@ import net.p3pp3rf1y.sophisticatedstorage.upgrades.INeighborChangeListenerUpgrad
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -489,11 +486,13 @@ public abstract class StorageBlockEntity extends BlockEntity implements IControl
 		if (memorizesItemsWhenLocked()) {
 			getStorageWrapper().getSettingsHandler().getTypeCategory(MemorySettingsCategory.class).unselectAllSlots();
 			ItemDisplaySettingsCategory itemDisplaySettings = getStorageWrapper().getSettingsHandler().getTypeCategory(ItemDisplaySettingsCategory.class);
-			InventoryHelper.iterate(getStorageWrapper().getInventoryHandler(), (slot, stack) -> {
+			InventoryHandler inventoryHandler = getStorageWrapper().getInventoryHandler();
+			for (int slot = 0; slot < inventoryHandler.getSlotCount(); slot++) {
+				ItemStack stack = inventoryHandler.getStackInSlot(slot);
 				if (stack.isEmpty()) {
 					itemDisplaySettings.itemChanged(slot);
 				}
-			});
+			}
 		}
 		updateEmptySlots();
 		if (allowsEmptySlotsMatchingItemInsertsWhenLocked()) {

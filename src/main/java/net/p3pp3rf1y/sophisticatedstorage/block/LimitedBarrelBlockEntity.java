@@ -16,14 +16,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.p3pp3rf1y.sophisticatedcore.inventory.InventoryHandler;
 import net.p3pp3rf1y.sophisticatedcore.settings.memory.MemorySettingsCategory;
 import net.p3pp3rf1y.sophisticatedcore.upgrades.voiding.VoidUpgradeWrapper;
-import net.p3pp3rf1y.sophisticatedcore.util.*;
+import net.p3pp3rf1y.sophisticatedcore.util.ItemStackHelper;
+import net.p3pp3rf1y.sophisticatedcore.util.NBTHelper;
+import net.p3pp3rf1y.sophisticatedcore.util.RandHelper;
+import net.p3pp3rf1y.sophisticatedcore.util.WorldHelper;
 import net.p3pp3rf1y.sophisticatedstorage.init.ModBlocks;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -218,7 +217,11 @@ public class LimitedBarrelBlockEntity extends BarrelBlockEntity implements ICoun
 	public CompoundTag getUpdateTag() {
 		CompoundTag updateTag = super.getUpdateTag();
 		List<Integer> sc = new ArrayList<>();
-		InventoryHelper.iterate(getStorageWrapper().getInventoryHandler(), (slot, stack) -> sc.add(slot, stack.getCount()));
+		InventoryHandler inventoryHandler = getStorageWrapper().getInventoryHandler();
+		for (int slot = 0; slot < inventoryHandler.getSlotCount(); slot++) {
+			ItemStack stack = inventoryHandler.getStackInSlot(slot);
+			sc.add(slot, stack.getCount());
+		}
 		updateTag.putIntArray(SLOT_COUNTS_TAG, sc);
 		return updateTag;
 	}

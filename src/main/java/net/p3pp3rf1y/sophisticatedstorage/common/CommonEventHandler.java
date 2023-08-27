@@ -6,7 +6,6 @@ import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
-import net.fabricmc.fabric.api.networking.v1.S2CPlayChannelEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -25,10 +24,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.p3pp3rf1y.sophisticatedcore.inventory.InventoryHandler;
 import net.p3pp3rf1y.sophisticatedcore.network.PacketHandler;
 import net.p3pp3rf1y.sophisticatedcore.network.SyncPlayerSettingsMessage;
 import net.p3pp3rf1y.sophisticatedcore.settings.SettingsManager;
-import net.p3pp3rf1y.sophisticatedcore.util.InventoryHelper;
 import net.p3pp3rf1y.sophisticatedcore.util.WorldHelper;
 import net.p3pp3rf1y.sophisticatedstorage.Config;
 import net.p3pp3rf1y.sophisticatedstorage.block.ISneakItemInteractionBlock;
@@ -39,8 +38,6 @@ import net.p3pp3rf1y.sophisticatedstorage.client.gui.StorageTranslationHelper;
 import net.p3pp3rf1y.sophisticatedstorage.init.ModItems;
 import net.p3pp3rf1y.sophisticatedstorage.settings.StorageSettingsHandler;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class CommonEventHandler {
 	private static final int AVERAGE_MAX_ITEM_ENTITY_DROP_COUNT = 20;
@@ -117,20 +114,22 @@ public class CommonEventHandler {
 				return true;
 			}
 
-			AtomicInteger droppedItemEntityCount = new AtomicInteger(0);
-			InventoryHelper.iterate(wbe.getStorageWrapper().getInventoryHandler(), (slot, stack) -> {
+			int droppedItemEntityCount = 0;
+			InventoryHandler inventoryHandler = wbe.getStorageWrapper().getInventoryHandler();
+			for (int slot = 0; slot < inventoryHandler.getSlotCount(); slot++) {
+				ItemStack stack = inventoryHandler.getStackInSlot(slot);
 				if (stack.isEmpty()) {
-					return;
+					continue;
 				}
-				droppedItemEntityCount.addAndGet((int) Math.ceil(stack.getCount() / (double) Math.min(stack.getMaxStackSize(), AVERAGE_MAX_ITEM_ENTITY_DROP_COUNT)));
-			});
+				droppedItemEntityCount += (int) Math.ceil(stack.getCount() / (double) Math.min(stack.getMaxStackSize(), AVERAGE_MAX_ITEM_ENTITY_DROP_COUNT));
+			}
 
-			if (droppedItemEntityCount.get() > Config.SERVER.tooManyItemEntityDrops.get()) {
+			if (droppedItemEntityCount > Config.SERVER.tooManyItemEntityDrops.get()) {
 				Item packingTapeItem = ModItems.PACKING_TAPE;
 				Component packingTapeItemName = packingTapeItem.getName(new ItemStack(packingTapeItem)).copy().withStyle(ChatFormatting.GREEN);
 				player.sendSystemMessage(StorageTranslationHelper.INSTANCE.translStatusMessage("too_many_item_entity_drops",
 						state.getBlock().getName().withStyle(ChatFormatting.GREEN),
-						Component.literal(String.valueOf(droppedItemEntityCount.get())).withStyle(ChatFormatting.RED),
+						Component.literal(String.valueOf(droppedItemEntityCount)).withStyle(ChatFormatting.RED),
 						packingTapeItemName)
 				);
 
