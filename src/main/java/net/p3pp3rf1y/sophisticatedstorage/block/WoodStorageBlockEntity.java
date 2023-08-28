@@ -2,7 +2,6 @@ package net.p3pp3rf1y.sophisticatedstorage.block;
 
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -12,7 +11,6 @@ import net.minecraft.world.level.block.state.properties.WoodType;
 import net.p3pp3rf1y.sophisticatedcore.util.NBTHelper;
 import net.p3pp3rf1y.sophisticatedstorage.item.WoodStorageBlockItem;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.Optional;
@@ -85,17 +83,6 @@ public abstract class WoodStorageBlockEntity extends StorageBlockEntity {
 	public boolean shouldDropContents() {
 		return !isPacked();
 	}
-
-	// TODO:
-/*	@Nonnull
-	@Override
-	public <T> LazyOptional<T> getCapability(Capability<T> cap, @Nullable Direction side) {
-		if (isPacked() && cap == ForgeCapabilities.ITEM_HANDLER) {
-			return LazyOptional.empty();
-		}
-
-		return super.getCapability(cap, side);
-	}*/
 
 	@Override
 	public boolean canConnectStorages() {
