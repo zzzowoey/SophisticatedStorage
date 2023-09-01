@@ -32,6 +32,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -43,6 +44,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.p3pp3rf1y.sophisticatedcore.event.client.ClientLifecycleEvent;
 import net.p3pp3rf1y.sophisticatedcore.event.client.ClientRawInputEvent;
+import net.p3pp3rf1y.sophisticatedcore.util.SimpleIdentifiablePrepareableReloadListener;
 import net.p3pp3rf1y.sophisticatedstorage.SophisticatedStorage;
 import net.p3pp3rf1y.sophisticatedstorage.block.LimitedBarrelBlock;
 import net.p3pp3rf1y.sophisticatedstorage.client.gui.StorageScreen;
@@ -122,13 +124,13 @@ public class ClientEventHandler {
 		AttackBlockCallback.EVENT.register(ClientEventHandler::onLimitedBarrelClicked);
 		ClientRawInputEvent.MOUSE_SCROLLED.register(ClientEventHandler::onMouseScrolled);
 
-		/*ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(new SimpleIdentifiablePrepareableReloadListener<>(SophisticatedStorage.getRL("main")) {
+		ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(new SimpleIdentifiablePrepareableReloadListener<>(SophisticatedStorage.getRL("main")) {
 			@Override
 			protected void apply(Object object, ResourceManager resourceManager, ProfilerFiller profiler) {
 				BarrelDynamicModelBase.invalidateCache();
 				BarrelBakedModelBase.invalidateCache();
 			}
-		});*/
+		});
 	}
 
 	private static void onRegisterAdditionalModels(ResourceManager manager, Consumer<ResourceLocation> out) {

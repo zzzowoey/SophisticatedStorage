@@ -4,6 +4,7 @@ import com.mojang.datafixers.util.Pair;
 import io.github.fabricators_of_create.porting_lib.util.EnvExecutor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.core.BlockPos;
@@ -12,7 +13,10 @@ import net.minecraft.core.cauldron.CauldronInteraction;
 import net.minecraft.core.dispenser.ShulkerBoxDispenseBehavior;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -34,6 +38,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.material.Material;
 import net.p3pp3rf1y.sophisticatedcore.util.ColorHelper;
+import net.p3pp3rf1y.sophisticatedcore.util.SimpleIdentifiablePrepareableReloadListener;
 import net.p3pp3rf1y.sophisticatedstorage.Config;
 import net.p3pp3rf1y.sophisticatedstorage.SophisticatedStorage;
 import net.p3pp3rf1y.sophisticatedstorage.block.*;
@@ -354,14 +359,14 @@ public class ModBlocks {
 		registerDispenseBehavior();
 		registerCauldronInteractions();
 		registerItemGroup();
-		
-		//MinecraftForge.EVENT_BUS.addListener(ModBlocks::onResourceReload);
-	}
 
-	// TODO:
-	/*private static void onResourceReload(AddReloadListenerEvent event) {
-		ShulkerBoxFromChestRecipe.REGISTERED_RECIPES.clear();
-	}*/
+		ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(new SimpleIdentifiablePrepareableReloadListener<>(SophisticatedStorage.getRL("recipes")) {
+			@Override
+			protected void apply(Object object, ResourceManager resourceManager, ProfilerFiller profiler) {
+				ShulkerBoxFromChestRecipe.REGISTERED_RECIPES.clear();
+			}
+		});
+	}
 
 	private static void registerContainers() {
 		EnvExecutor.runWhenOn(EnvType.CLIENT, () -> () -> {
