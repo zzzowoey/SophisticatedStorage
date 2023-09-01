@@ -90,7 +90,6 @@ public class SimpleCompositeModel implements IUnbakedGeometry<SimpleCompositeMod
 		List<BlockElement> elements = new ArrayList<>();
 
 		children.forEach((name, model) -> {
-			//noinspection deprecation
 			elements.addAll(model.getElements());
 			if (model.getCustomGeometry() instanceof SimpleCompositeModel compositeModel) {
 				elements.addAll(compositeModel.getElements());
@@ -113,7 +112,6 @@ public class SimpleCompositeModel implements IUnbakedGeometry<SimpleCompositeMod
 		private final ItemOverrides overrides;
 		private final ItemTransforms transforms;
 		private final ImmutableMap<String, BakedModel> children;
-		private final ImmutableList<BakedModel> itemPasses;
 
 		public Baked(boolean isGui3d, boolean isSideLit, boolean isAmbientOcclusion, TextureAtlasSprite particle, ItemTransforms transforms, ItemOverrides overrides, ImmutableMap<String, BakedModel> children, ImmutableList<BakedModel> itemPasses) {
 			this.children = children;
@@ -123,7 +121,6 @@ public class SimpleCompositeModel implements IUnbakedGeometry<SimpleCompositeMod
 			this.particle = particle;
 			this.overrides = overrides;
 			this.transforms = transforms;
-			this.itemPasses = itemPasses;
 		}
 
 		@NotNull
@@ -143,17 +140,15 @@ public class SimpleCompositeModel implements IUnbakedGeometry<SimpleCompositeMod
 
 		@Override
 		public void emitBlockQuads(BlockAndTintGetter blockView, BlockState state, BlockPos pos, Supplier<RandomSource> randomSupplier, RenderContext context) {
-			RenderContext.BakedModelConsumer consumer = context.bakedModelConsumer();
 			for (Map.Entry<String, BakedModel> entry : children.entrySet()) {
-				consumer.accept(entry.getValue(), state);
+				entry.getValue().emitBlockQuads(blockView, state, pos, randomSupplier, context);
 			}
 		}
 
 		@Override
 		public void emitItemQuads(ItemStack stack, Supplier<RandomSource> randomSupplier, RenderContext context) {
-			RenderContext.BakedModelConsumer consumer = context.bakedModelConsumer();
 			for (Map.Entry<String, BakedModel> entry : children.entrySet()) {
-				consumer.accept(entry.getValue(), null);
+				entry.getValue().emitItemQuads(stack, randomSupplier, context);
 			}
 		}
 
@@ -187,25 +182,11 @@ public class SimpleCompositeModel implements IUnbakedGeometry<SimpleCompositeMod
 			return overrides;
 		}
 
-		@SuppressWarnings({"java:S1874", "deprecation"}) // need to override getTransforms not just call the non deprecated version here
+		@SuppressWarnings({"java:S1874"}) // need to override getTransforms not just call the non deprecated version here
 		@Override
 		public ItemTransforms getTransforms() {
 			return transforms;
 		}
-
-/*		@Override
-		public List<BakedModel> getRenderPasses(ItemStack itemStack, boolean fabulous) {
-			return itemPasses;
-		}*/
-
-/*		@Override
-		public ChunkRenderTypeSet getRenderTypes(BlockState state, RandomSource rand, ModelData data) {
-			var sets = new ArrayList<ChunkRenderTypeSet>();
-			for (Map.Entry<String, BakedModel> entry : children.entrySet()) {
-				sets.add(entry.getValue().getRenderTypes(state, rand, ModelData.EMPTY));
-			}
-			return ChunkRenderTypeSet.union(sets);
-		}*/
 	}
 
 	@SuppressWarnings("java:S6548") // singleton implementation is good here
