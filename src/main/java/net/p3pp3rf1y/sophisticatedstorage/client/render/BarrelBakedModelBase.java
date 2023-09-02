@@ -7,8 +7,6 @@ import com.google.common.cache.LoadingCache;
 import com.mojang.datafixers.util.Either;
 import com.mojang.math.Axis;
 import com.mojang.math.Transformation;
-import io.github.fabricators_of_create.porting_lib.models.QuadTransformers;
-import io.github.fabricators_of_create.porting_lib.models.util.TransformationHelper;
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachedBlockView;
@@ -42,7 +40,8 @@ import net.p3pp3rf1y.sophisticatedcore.renderdata.RenderInfo;
 import net.p3pp3rf1y.sophisticatedstorage.block.BarrelBlock;
 import net.p3pp3rf1y.sophisticatedstorage.block.BarrelBlockEntity;
 import net.p3pp3rf1y.sophisticatedstorage.block.BarrelMaterial;
-import net.p3pp3rf1y.sophisticatedstorage.client.util.LazyQuadTransformer;
+import net.p3pp3rf1y.sophisticatedstorage.client.util.QuadTransformers;
+import net.p3pp3rf1y.sophisticatedstorage.client.util.QuaternionHelper;
 import net.p3pp3rf1y.sophisticatedstorage.init.ModItems;
 import net.p3pp3rf1y.sophisticatedstorage.item.BarrelBlockItem;
 import net.p3pp3rf1y.sophisticatedstorage.item.StorageBlockItem;
@@ -60,6 +59,7 @@ import static net.fabricmc.fabric.api.renderer.v1.mesh.QuadView.VANILLA_QUAD_STR
 import static net.p3pp3rf1y.sophisticatedstorage.client.render.DisplayItemRenderer.*;
 
 public abstract class BarrelBakedModelBase implements BakedModel, FabricBakedModel, IDataModel {
+
 	private static final RenderContext.QuadTransform MOVE_TO_CORNER = QuadTransformers.applying(new Transformation(new Vector3f(-.5f, -.5f, -.5f), null, null, null));
 	public static final Map<Direction, RenderContext.QuadTransform> DIRECTION_ROTATES = Map.of(
 			Direction.UP, getDirectionRotationTransform(Direction.UP),
@@ -391,7 +391,7 @@ public abstract class BarrelBakedModelBase implements BakedModel, FabricBakedMod
 	@SuppressWarnings({"deprecation", "java:S107"})
 	private void addRenderedItemSide(BlockState state, RenderContext context, ItemStack displayItem, BakedModel model, int rotation,
 			int displayItemIndex, int displayItemCount) {
-		LazyQuadTransformer stack = new LazyQuadTransformer();
+		QuadTransformers.LazyQuadTransformer stack = new QuadTransformers.LazyQuadTransformer();
 
 		stack.add(MOVE_TO_CORNER);
 		stack.add(QuadTransformers.applying(toTransformation(model.getTransforms().getTransform(ItemDisplayContext.FIXED))));
@@ -431,10 +431,10 @@ public abstract class BarrelBakedModelBase implements BakedModel, FabricBakedMod
 			return Transformation.identity();
 		}
 
-		return new Transformation(transform.translation, TransformationHelper.quatFromXYZ(transform.rotation, true), transform.scale, null);
+		return new Transformation(transform.translation, QuaternionHelper.quatFromXYZDegree(transform.rotation), transform.scale, null);
 	}
 
-	protected abstract void rotateDisplayItemQuads(BlockState state, LazyQuadTransformer stack);
+	protected abstract void rotateDisplayItemQuads(BlockState state, QuadTransformers.LazyQuadTransformer stack);
 
 	private RenderContext.QuadTransform updateTintIndexes(int displayItemIndex) {
 		int offset = (displayItemIndex + 1) * 10;

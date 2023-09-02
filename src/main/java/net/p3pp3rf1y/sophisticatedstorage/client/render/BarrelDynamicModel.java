@@ -8,7 +8,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.p3pp3rf1y.sophisticatedstorage.block.BarrelBlock;
-import net.p3pp3rf1y.sophisticatedstorage.client.util.LazyQuadTransformer;
+import net.p3pp3rf1y.sophisticatedstorage.client.util.QuadTransformers;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -36,7 +36,7 @@ public class BarrelDynamicModel extends BarrelDynamicModelBase<BarrelDynamicMode
 		}
 
 		@Override
-		protected void rotateDisplayItemQuads(BlockState state, LazyQuadTransformer stack) {
+		protected void rotateDisplayItemQuads(BlockState state, QuadTransformers.LazyQuadTransformer stack) {
 			stack.add(DIRECTION_ROTATES.get(state.getValue(BarrelBlock.FACING)));
 		}
 
