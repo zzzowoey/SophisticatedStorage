@@ -7,8 +7,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.mojang.datafixers.util.Either;
-import io.github.fabricators_of_create.porting_lib.models.ConcatenatedListView;
-import io.github.fabricators_of_create.porting_lib.models.SimpleModelState;
+import com.mojang.math.Transformation;
 import io.github.fabricators_of_create.porting_lib.models.geometry.IGeometryLoader;
 import io.github.fabricators_of_create.porting_lib.models.geometry.IUnbakedGeometry;
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
@@ -46,7 +45,18 @@ public class SimpleCompositeModel implements IUnbakedGeometry<SimpleCompositeMod
 
 		var rootTransform = context.getRootTransform();
 		if (!rootTransform.isIdentity()) {
-			modelState = new SimpleModelState(modelState.getRotation().compose(rootTransform), modelState.isUvLocked());
+			ModelState finalModelState = modelState;
+			modelState = new ModelState() {
+				@Override
+				public Transformation getRotation() {
+					return finalModelState.getRotation().compose(rootTransform);
+				}
+
+				@Override
+				public boolean isUvLocked() {
+					return finalModelState.isUvLocked();
+				}
+			};
 		}
 
 		var bakedPartsBuilder = ImmutableMap.<String, BakedModel>builder();
@@ -126,11 +136,11 @@ public class SimpleCompositeModel implements IUnbakedGeometry<SimpleCompositeMod
 		@NotNull
 		@Override
 		public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand) {
-			List<List<BakedQuad>> quadLists = new ArrayList<>();
+			List<BakedQuad> quadLists = new ArrayList<>();
 			for (Map.Entry<String, BakedModel> entry : children.entrySet()) {
-				quadLists.add(entry.getValue().getQuads(state, side, rand));
+				quadLists.addAll(entry.getValue().getQuads(state, side, rand));
 			}
-			return ConcatenatedListView.of(quadLists);
+			return quadLists;
 		}
 
 		@Override
@@ -186,6 +196,84 @@ public class SimpleCompositeModel implements IUnbakedGeometry<SimpleCompositeMod
 		@Override
 		public ItemTransforms getTransforms() {
 			return transforms;
+		}
+
+		public static Builder builder(BlockModel owner, boolean isGui3d, TextureAtlasSprite particle, ItemOverrides overrides, ItemTransforms cameraTransforms) {
+			return builder(owner.hasAmbientOcclusion(), isGui3d, owner.getGuiLight().lightLikeBlock(), particle, overrides, cameraTransforms);
+		}
+
+		public static Builder builder(boolean isAmbientOcclusion, boolean isGui3d, boolean isSideLit, TextureAtlasSprite particle, ItemOverrides overrides, ItemTransforms cameraTransforms) {
+			return new Builder(isAmbientOcclusion, isGui3d, isSideLit, particle, overrides, cameraTransforms);
+		}
+
+		public static class Builder {
+			private final boolean isAmbientOcclusion;
+			private final boolean isGui3d;
+			private final boolean isSideLit;
+			private final List<BakedModel> children = new ArrayList<>();
+			private final List<BakedQuad> quads = new ArrayList<>();
+			private final ItemOverrides overrides;
+			private final ItemTransforms transforms;
+			private TextureAtlasSprite particle;
+
+			private Builder(boolean isAmbientOcclusion, boolean isGui3d, boolean isSideLit, TextureAtlasSprite particle, ItemOverrides overrides, ItemTransforms transforms) {
+				this.isAmbientOcclusion = isAmbientOcclusion;
+				this.isGui3d = isGui3d;
+				this.isSideLit = isSideLit;
+				this.particle = particle;
+				this.overrides = overrides;
+				this.transforms = transforms;
+			}
+
+			public void addLayer(BakedModel model) {
+				flushQuads();
+				children.add(model);
+			}
+
+			private void addLayer(List<BakedQuad> quads) {
+				var modelBuilder = new SimpleBakedModel.Builder(isAmbientOcclusion, isSideLit, isGui3d, transforms, overrides).particle(particle);
+				quads.forEach(modelBuilder::addUnculledFace);
+				children.add(modelBuilder.build());
+			}
+
+			private void flushQuads() {
+				if (!quads.isEmpty()) {
+					addLayer(quads);
+					quads.clear();
+				}
+			}
+
+			public Builder setParticle(TextureAtlasSprite particleSprite) {
+				this.particle = particleSprite;
+				return this;
+			}
+
+			public Builder addQuads(BakedQuad... quadsToAdd) {
+				flushQuads();
+				Collections.addAll(quads, quadsToAdd);
+				return this;
+			}
+
+			public Builder addQuads(Collection<BakedQuad> quadsToAdd) {
+				flushQuads();
+				quads.addAll(quadsToAdd);
+				return this;
+			}
+
+			public BakedModel build() {
+				if (!quads.isEmpty()) {
+					addLayer(quads);
+				}
+
+				var childrenBuilder = ImmutableMap.<String, BakedModel>builder();
+				var itemPassesBuilder = ImmutableList.<BakedModel>builder();
+				int i = 0;
+				for (var model : this.children) {
+					childrenBuilder.put("model_" + (i++), model);
+					itemPassesBuilder.add(model);
+				}
+				return new SimpleCompositeModel.Baked(isGui3d, isSideLit, isAmbientOcclusion, particle, transforms, overrides, childrenBuilder.build(), itemPassesBuilder.build());
+			}
 		}
 	}
 

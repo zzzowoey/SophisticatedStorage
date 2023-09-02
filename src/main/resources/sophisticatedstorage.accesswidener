@@ -15,3 +15,5 @@ mutable field net/minecraft/client/renderer/block/model/BakedQuad tintIndex I
 accessible field net/minecraft/client/renderer/block/model/BlockModel textureMap Ljava/util/Map;
 
 accessible field net/minecraft/client/Minecraft itemColors Lnet/minecraft/client/color/item/ItemColors;
+
+accessible method net/minecraft/client/resources/model/SimpleBakedModel$Builder <init> (ZZZLnet/minecraft/client/renderer/block/model/ItemTransforms;Lnet/minecraft/client/renderer/block/model/ItemOverrides;)V

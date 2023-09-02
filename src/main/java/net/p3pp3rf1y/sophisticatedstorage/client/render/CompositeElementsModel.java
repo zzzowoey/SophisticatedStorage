@@ -3,7 +3,6 @@ package net.p3pp3rf1y.sophisticatedstorage.client.render;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Either;
-import io.github.fabricators_of_create.porting_lib.models.CompositeModel;
 import net.minecraft.client.renderer.block.model.BlockElement;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
@@ -36,7 +35,7 @@ public class CompositeElementsModel extends BlockModel {
 
 		ItemOverrides overrides = getOverrides(baker, model, spriteGetter);
 		ItemTransforms transforms = this.getTransforms();
-		var modelBuilder = CompositeModel.Baked.builder(this.hasAmbientOcclusion(), false, this.getGuiLight().lightLikeBlock(), particleSprite, overrides, transforms);
+		var modelBuilder = SimpleCompositeModel.Baked.builder(this.hasAmbientOcclusion(), false, this.getGuiLight().lightLikeBlock(), particleSprite, overrides, transforms);
 		for (BlockElement element : getElements()) {
 			element.faces.forEach((side, face) -> {
 				var sprite = spriteGetter.apply(this.getMaterial(face.texture));

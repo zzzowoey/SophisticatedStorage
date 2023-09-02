@@ -10,7 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.p3pp3rf1y.sophisticatedstorage.block.LimitedBarrelBlock;
 import net.p3pp3rf1y.sophisticatedstorage.block.VerticalFacing;
-import net.p3pp3rf1y.sophisticatedstorage.client.util.LazyQuadTransformer;
+import net.p3pp3rf1y.sophisticatedstorage.client.util.QuadTransformers;
 import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
@@ -48,7 +48,7 @@ public class LimitedBarrelDynamicModel extends BarrelDynamicModelBase<LimitedBar
 		}*/
 
 		@Override
-		protected void rotateDisplayItemQuads(BlockState state, LazyQuadTransformer stack) {
+		protected void rotateDisplayItemQuads(BlockState state, QuadTransformers.LazyQuadTransformer stack) {
 			VerticalFacing verticalFacing = state.getValue(LimitedBarrelBlock.VERTICAL_FACING);
 			if (verticalFacing != VerticalFacing.NO) {
 				stack.add(DIRECTION_ROTATES.get(verticalFacing.getDirection()));
