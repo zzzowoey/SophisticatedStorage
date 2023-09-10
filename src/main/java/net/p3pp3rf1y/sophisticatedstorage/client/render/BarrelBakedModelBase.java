@@ -59,6 +59,7 @@ import static net.fabricmc.fabric.api.renderer.v1.mesh.QuadView.VANILLA_QUAD_STR
 import static net.p3pp3rf1y.sophisticatedstorage.client.render.DisplayItemRenderer.*;
 
 public abstract class BarrelBakedModelBase implements BakedModel, FabricBakedModel, IDataModel {
+
 	private static final RenderContext.QuadTransform MOVE_TO_CORNER = QuadTransformers.applying(new Transformation(new Vector3f(-.5f, -.5f, -.5f), null, null, null));
 	public static final Map<Direction, RenderContext.QuadTransform> DIRECTION_ROTATES = Map.of(
 			Direction.UP, getDirectionRotationTransform(Direction.UP),
