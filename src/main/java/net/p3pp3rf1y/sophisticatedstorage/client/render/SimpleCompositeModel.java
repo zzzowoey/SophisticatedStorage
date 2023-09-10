@@ -44,7 +44,7 @@ public class SimpleCompositeModel implements IUnbakedGeometry<SimpleCompositeMod
 		TextureAtlasSprite particle = spriteGetter.apply(particleLocation);
 
 		var rootTransform = context.getRootTransform();
-		if (!rootTransform.isIdentity()) {
+		if (!rootTransform.equals(Transformation.identity())) {
 			ModelState finalModelState = modelState;
 			modelState = new ModelState() {
 				@Override

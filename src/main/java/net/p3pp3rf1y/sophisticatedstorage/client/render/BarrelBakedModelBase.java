@@ -59,7 +59,6 @@ import static net.fabricmc.fabric.api.renderer.v1.mesh.QuadView.VANILLA_QUAD_STR
 import static net.p3pp3rf1y.sophisticatedstorage.client.render.DisplayItemRenderer.*;
 
 public abstract class BarrelBakedModelBase implements BakedModel, FabricBakedModel, IDataModel {
-
 	private static final RenderContext.QuadTransform MOVE_TO_CORNER = QuadTransformers.applying(new Transformation(new Vector3f(-.5f, -.5f, -.5f), null, null, null));
 	public static final Map<Direction, RenderContext.QuadTransform> DIRECTION_ROTATES = Map.of(
 			Direction.UP, getDirectionRotationTransform(Direction.UP),
@@ -103,7 +102,6 @@ public abstract class BarrelBakedModelBase implements BakedModel, FabricBakedMod
 		BAKED_QUADS_CACHE.invalidateAll();
 	}
 
-
 	protected final Map<String, Map<BarrelModelPart, BakedModel>> woodModelParts;
 
 	private final ItemOverrides barrelItemOverrides;
@@ -121,8 +119,8 @@ public abstract class BarrelBakedModelBase implements BakedModel, FabricBakedMod
 	private final Map<String, Map<BarrelModelPart, BakedModel>> woodPartitionedModelParts;
 	private final Cache<Integer, BakedModel> dynamicBakedModelCache = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.MINUTES).build();
 
-	private ModelBaker baker;
-	private Function<Material, TextureAtlasSprite> spriteGetter;
+	private final ModelBaker baker;
+	private final Function<Material, TextureAtlasSprite> spriteGetter;
 
 	protected BarrelBakedModelBase(ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, Map<String, Map<BarrelModelPart, BakedModel>> woodModelParts, @Nullable BakedModel flatTopModel, Map<String, Map<DynamicBarrelBakingData.DynamicPart, DynamicBarrelBakingData>> woodDynamicBakingData, Map<String, Map<BarrelModelPart, BakedModel>> woodPartitionedModelParts) {
 		this.baker = baker;

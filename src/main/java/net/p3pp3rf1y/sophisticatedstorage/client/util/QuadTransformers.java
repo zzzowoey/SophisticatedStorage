@@ -11,7 +11,7 @@ import org.joml.Vector4f;
 
 public class QuadTransformers {
     public static RenderContext.QuadTransform applying(Transformation transform) {
-        if (transform.isIdentity())
+        if (transform.equals(Transformation.identity()))
             return quad -> true;
 
         Matrix4f matrix = transform.getMatrix();
