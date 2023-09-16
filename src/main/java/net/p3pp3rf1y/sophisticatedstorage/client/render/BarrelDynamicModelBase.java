@@ -12,7 +12,11 @@ import io.github.fabricators_of_create.porting_lib.models.geometry.IUnbakedGeome
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.*;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.ModelBaker;
+import net.minecraft.client.resources.model.ModelState;
+import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.p3pp3rf1y.sophisticatedstorage.SophisticatedStorage;
@@ -20,7 +24,14 @@ import net.p3pp3rf1y.sophisticatedstorage.block.WoodStorageBlockBase;
 import org.joml.Quaternionf;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -292,8 +303,8 @@ public abstract class BarrelDynamicModelBase<T extends BarrelDynamicModelBase<T>
 		}
 
 		if (visitedModels.contains(parentModel)) {
-			SophisticatedStorage.LOGGER.warn("Found 'parent' loop while loading model '{}' in chain: {} -> {}", () -> currentModel,
-					() -> visitedModels.stream().map(Object::toString).collect(Collectors.joining(" -> ")), () -> currentModel.parentLocation);
+			SophisticatedStorage.LOGGER.warn("Found 'parent' loop while loading model '{}' in chain: {} -> {}", currentModel,
+					visitedModels.stream().map(Object::toString).collect(Collectors.joining(" -> ")), currentModel.parentLocation);
 			return false;
 		}
 
