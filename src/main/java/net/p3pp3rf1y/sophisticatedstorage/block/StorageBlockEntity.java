@@ -38,7 +38,11 @@ import net.p3pp3rf1y.sophisticatedstorage.upgrades.INeighborChangeListenerUpgrad
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Collections;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -233,9 +237,13 @@ public abstract class StorageBlockEntity extends BlockEntity implements IControl
 		super.load(tag);
 		loadStorageWrapper(tag);
 		loadSynchronizedData(tag);
-		loadControllerPos(tag);
 
-		isLinkedToController = NBTHelper.getBoolean(tag, "isLinkedToController").orElse(false);
+		// Had to add a separate tag to distinguish between a normal load and an update packet
+		if (!tag.contains("updateTag")) {
+			loadControllerPos(tag);
+
+			isLinkedToController = NBTHelper.getBoolean(tag, "isLinkedToController").orElse(false);
+		}
 	}
 
 	private void loadStorageWrapper(CompoundTag tag) {
@@ -283,18 +291,6 @@ public abstract class StorageBlockEntity extends BlockEntity implements IControl
 		return ClientboundBlockEntityDataPacket.create(this);
 	}
 
-	// TODO:
-/*	@Override
-	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
-		CompoundTag tag = pkt.getTag();
-		if (tag == null) {
-			return;
-		}
-
-		loadStorageWrapper(tag);
-		loadSynchronizedData(tag);
-	}*/
-
 	public void setUpdateBlockRender() {
 		updateBlockRender = true;
 	}
@@ -302,6 +298,8 @@ public abstract class StorageBlockEntity extends BlockEntity implements IControl
 	@Override
 	public CompoundTag getUpdateTag() {
 		CompoundTag tag = super.getUpdateTag();
+		// Had to add a separate tag to distinguish between a normal load and an update packet
+		tag.putBoolean("updateTag", true);
 		saveStorageWrapperClientData(tag);
 		saveSynchronizedData(tag);
 		return tag;
