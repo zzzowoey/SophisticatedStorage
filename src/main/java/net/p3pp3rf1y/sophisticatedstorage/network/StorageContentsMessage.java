@@ -1,15 +1,16 @@
 package net.p3pp3rf1y.sophisticatedstorage.network;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
+import javax.annotation.Nullable;
+import java.util.UUID;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Player;
 import net.p3pp3rf1y.sophisticatedcore.client.render.ClientStorageContentsTooltip;
 import net.p3pp3rf1y.sophisticatedcore.network.SimplePacketBase;
 import net.p3pp3rf1y.sophisticatedstorage.block.ItemContentsStorage;
-
-import javax.annotation.Nullable;
-import java.util.UUID;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 public class StorageContentsMessage extends SimplePacketBase {
 	private final UUID shulkerBoxUuid;
@@ -32,9 +33,10 @@ public class StorageContentsMessage extends SimplePacketBase {
 	}
 
 	@Override
+	@Environment(EnvType.CLIENT)
 	public boolean handle(Context context) {
 		context.enqueueWork(() -> {
-			LocalPlayer player = Minecraft.getInstance().player;
+			Player player = context.getClientPlayer();
 			if (player == null || contents == null) {
 				return;
 			}
