@@ -1,14 +1,15 @@
 {
   "type": "minecraft:crafting_shapeless",
+  "category": "misc",
   "conditions": [
     {
-      "type": "sophisticatedcore:item_enabled",
+      "condition": "sophisticatedcore:item_enabled",
       "itemRegistryName": "sophisticatedstorage:packing_tape"
     }
   ],
   "ingredients": [
     {
-      "tag": "forge:slimeballs"
+      "tag": "c:slimeballs"
     },
     {
       "item": "minecraft:paper"
@@ -16,5 +17,6 @@
   ],
   "result": {
     "item": "sophisticatedstorage:packing_tape"
-  }
+  },
+  "show_notification": true
 }

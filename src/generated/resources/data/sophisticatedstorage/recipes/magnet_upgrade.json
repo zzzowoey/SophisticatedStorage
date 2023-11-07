@@ -1,26 +1,27 @@
 {
-  "type": "sophisticatedcore:upgrade_next_tier",
-  "conditions": [
+  "fabric:load_conditions": [
     {
-      "type": "sophisticatedcore:item_enabled",
+      "condition": "sophisticatedcore:item_enabled",
       "itemRegistryName": "sophisticatedstorage:magnet_upgrade"
     }
   ],
+  "type": "sophisticatedcore:upgrade_next_tier",
+  "category": "misc",
   "key": {
     "E": {
-      "tag": "forge:ender_pearls"
+      "tag": "c:ender_pearls"
     },
     "I": {
-      "tag": "forge:ingots/iron"
+      "tag": "c:iron_ingots"
     },
     "L": {
-      "tag": "forge:gems/lapis"
+      "tag": "c:lapis"
     },
     "P": {
       "item": "sophisticatedstorage:pickup_upgrade"
     },
     "R": {
-      "tag": "forge:dusts/redstone"
+      "tag": "c:dusts/redstone"
     }
   },
   "pattern": [

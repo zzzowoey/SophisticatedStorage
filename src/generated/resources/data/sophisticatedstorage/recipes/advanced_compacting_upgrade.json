@@ -1,23 +1,24 @@
 {
-  "type": "sophisticatedcore:upgrade_next_tier",
-  "conditions": [
+  "fabric:load_conditions": [
     {
-      "type": "sophisticatedcore:item_enabled",
+      "condition": "sophisticatedcore:item_enabled",
       "itemRegistryName": "sophisticatedstorage:advanced_compacting_upgrade"
     }
   ],
+  "type": "sophisticatedcore:upgrade_next_tier",
+  "category": "misc",
   "key": {
     "C": {
       "item": "sophisticatedstorage:compacting_upgrade"
     },
     "D": {
-      "tag": "forge:gems/diamond"
+      "tag": "c:diamonds"
     },
     "G": {
-      "tag": "forge:ingots/gold"
+      "tag": "c:gold_ingots"
     },
     "R": {
-      "tag": "forge:dusts/redstone"
+      "tag": "c:dusts/redstone"
     }
   },
   "pattern": [

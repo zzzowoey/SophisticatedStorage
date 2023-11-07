@@ -1,14 +1,15 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "conditions": [
+  "fabric:load_conditions": [
     {
-      "type": "sophisticatedcore:item_enabled",
+      "condition": "sophisticatedcore:item_enabled",
       "itemRegistryName": "sophisticatedstorage:storage_link"
     }
   ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "key": {
     "E": {
-      "tag": "forge:ender_pearls"
+      "tag": "c:ender_pearls"
     },
     "P": {
       "tag": "minecraft:planks"
@@ -17,7 +18,7 @@
       "item": "minecraft:repeater"
     },
     "S": {
-      "tag": "forge:stone"
+      "tag": "c:stone"
     }
   },
   "pattern": [

@@ -1,14 +1,15 @@
 {
-  "type": "sophisticatedstorage:storage_tier_upgrade",
-  "conditions": [
+  "fabric:load_conditions": [
     {
-      "type": "sophisticatedcore:item_enabled",
+      "condition": "sophisticatedcore:item_enabled",
       "itemRegistryName": "sophisticatedstorage:diamond_barrel"
     }
   ],
+  "type": "sophisticatedstorage:storage_tier_upgrade",
+  "category": "misc",
   "key": {
     "D": {
-      "tag": "forge:gems/diamond"
+      "tag": "c:diamonds"
     },
     "S": {
       "item": "sophisticatedstorage:gold_barrel"
