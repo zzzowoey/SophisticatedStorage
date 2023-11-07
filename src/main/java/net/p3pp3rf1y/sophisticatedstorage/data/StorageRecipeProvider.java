@@ -1,15 +1,13 @@
 package net.p3pp3rf1y.sophisticatedstorage.data;
 
-import me.alphamode.forgetags.Tags;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
+import java.util.function.Consumer;
+
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.BlockFamily;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.LegacyUpgradeRecipeBuilder;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.SpecialRecipeBuilder;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
@@ -28,8 +26,10 @@ import net.p3pp3rf1y.sophisticatedstorage.block.WoodStorageBlockBase;
 import net.p3pp3rf1y.sophisticatedstorage.init.ModBlocks;
 import net.p3pp3rf1y.sophisticatedstorage.init.ModItems;
 import net.p3pp3rf1y.sophisticatedstorage.item.WoodStorageBlockItem;
+import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 
-import java.util.function.Consumer;
+import me.alphamode.forgetags.Tags;
 
 public class StorageRecipeProvider extends FabricRecipeProvider {
 	private static final String HAS_UPGRADE_BASE_CRITERION_NAME = "has_upgrade_base";
@@ -711,9 +711,9 @@ public class StorageRecipeProvider extends FabricRecipeProvider {
 		addQuarkChestRecipe(consumer, "mangrove_chest", WoodType.MANGROVE);
 		addQuarkChestRecipe(consumer, "spruce_chest", WoodType.SPRUCE);
 		addQuarkChestRecipe(consumer, "warped_chest", WoodType.WARPED);
-	}*/
+	}
 
-/*	private void addQuarkChestRecipe(Consumer<FinishedRecipe> consumer, String name, WoodType woodType) {
+	private void addQuarkChestRecipe(Consumer<FinishedRecipe> consumer, String name, WoodType woodType) {
 		String chestRegistryName = "quark:" + name;
 		Block chestBlock = getBlock(chestRegistryName);
 		ShapelessBasedRecipeBuilder.shapeless(RecipeCategory.MISC, WoodStorageBlockItem.setWoodType(new ItemStack(ModBlocks.CHEST_ITEM), woodType))
@@ -721,12 +721,12 @@ public class StorageRecipeProvider extends FabricRecipeProvider {
 				.requires(Blocks.REDSTONE_TORCH)
 				.condition(new ItemExistsCondition(chestRegistryName))
 				.save(consumer, SophisticatedStorage.getRL(woodType.name() + "_chest_from_quark_" + name));
-	}*/
+	}
 
 	private Block getBlock(String registryName) {
 		//noinspection ConstantConditions - could only fail in dev environment and crashing is preferred here to fix issues early
 		return BuiltInRegistries.BLOCK.get(new ResourceLocation(registryName));
-	}
+	}*/
 
 	private void addBarrelRecipes(Consumer<FinishedRecipe> consumer) {
 		WoodStorageBlockBase.CUSTOM_TEXTURE_WOOD_TYPES.forEach((woodType, blockFamily) -> woodBarrelRecipe(consumer, woodType, blockFamily.getBaseBlock(), blockFamily.get(BlockFamily.Variant.SLAB)));
