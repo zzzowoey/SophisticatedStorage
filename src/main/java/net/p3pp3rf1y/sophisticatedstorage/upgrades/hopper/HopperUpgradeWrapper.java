@@ -25,9 +25,14 @@ import net.p3pp3rf1y.sophisticatedstorage.block.StorageBlockBase;
 import net.p3pp3rf1y.sophisticatedstorage.block.VerticalFacing;
 import net.p3pp3rf1y.sophisticatedstorage.common.gui.BlockSide;
 
-import javax.annotation.Nullable;
-import java.util.*;
+import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
+import javax.annotation.Nullable;
 
 import static net.fabricmc.fabric.api.transfer.v1.item.ItemStorage.SIDED;
 

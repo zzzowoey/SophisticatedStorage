@@ -17,12 +17,12 @@ import net.p3pp3rf1y.sophisticatedcore.util.NBTHelper;
 import net.p3pp3rf1y.sophisticatedcore.util.WorldHelper;
 import net.p3pp3rf1y.sophisticatedstorage.common.gui.StorageContainerMenu;
 import net.p3pp3rf1y.sophisticatedstorage.init.ModBlocks;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import javax.annotation.Nullable;
 
 public class BarrelBlockEntity extends WoodStorageBlockEntity {
 	private static final String MATERIALS_TAG = "materials";
@@ -125,16 +125,16 @@ public class BarrelBlockEntity extends WoodStorageBlockEntity {
 		return new ModelData(this);
 	}
 
-	public class ModelData {
-		private Boolean hasMainColor;
-		private Boolean hasAccentColor;
+	public static class ModelData {
+		private final Boolean hasMainColor;
+		private final Boolean hasAccentColor;
 		private String woodName;
-		private Boolean isPacked;
-		private Boolean showsLock;
-		private Boolean showsTier;
+		private final Boolean isPacked;
+		private final Boolean showsLock;
+		private final Boolean showsTier;
 		private List<RenderInfo.DisplayItem> displayItems;
 		private List<Integer> inaccessibleSlots;
-		private Map<BarrelMaterial, ResourceLocation> materials;
+		private final Map<BarrelMaterial, ResourceLocation> materials;
 
 		public ModelData(BarrelBlockEntity tile) {
 			StorageWrapper wrapper = tile.getStorageWrapper();

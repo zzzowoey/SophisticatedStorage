@@ -3,6 +3,7 @@ package net.p3pp3rf1y.sophisticatedstorage.client;
 import com.mojang.blaze3d.platform.InputConstants;
 import committee.nova.mkb.api.IKeyBinding;
 import committee.nova.mkb.api.IKeyConflictContext;
+
 import io.github.fabricators_of_create.porting_lib.models.geometry.IGeometryLoader;
 import io.github.fabricators_of_create.porting_lib.models.geometry.RegisterGeometryLoadersCallback;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
@@ -53,7 +54,21 @@ import net.p3pp3rf1y.sophisticatedstorage.client.gui.ToolInfoOverlay;
 import net.p3pp3rf1y.sophisticatedstorage.client.init.ModBlockColors;
 import net.p3pp3rf1y.sophisticatedstorage.client.init.ModItemColors;
 import net.p3pp3rf1y.sophisticatedstorage.client.init.ModParticles;
-import net.p3pp3rf1y.sophisticatedstorage.client.render.*;
+import net.p3pp3rf1y.sophisticatedstorage.client.render.BarrelBakedModelBase;
+import net.p3pp3rf1y.sophisticatedstorage.client.render.BarrelDynamicModel;
+import net.p3pp3rf1y.sophisticatedstorage.client.render.BarrelDynamicModelBase;
+import net.p3pp3rf1y.sophisticatedstorage.client.render.BarrelRenderer;
+import net.p3pp3rf1y.sophisticatedstorage.client.render.ChestDynamicModel;
+import net.p3pp3rf1y.sophisticatedstorage.client.render.ChestItemRenderer;
+import net.p3pp3rf1y.sophisticatedstorage.client.render.ChestRenderer;
+import net.p3pp3rf1y.sophisticatedstorage.client.render.ClientStorageContentsTooltip;
+import net.p3pp3rf1y.sophisticatedstorage.client.render.ControllerRenderer;
+import net.p3pp3rf1y.sophisticatedstorage.client.render.LimitedBarrelDynamicModel;
+import net.p3pp3rf1y.sophisticatedstorage.client.render.LimitedBarrelRenderer;
+import net.p3pp3rf1y.sophisticatedstorage.client.render.ShulkerBoxDynamicModel;
+import net.p3pp3rf1y.sophisticatedstorage.client.render.ShulkerBoxItemRenderer;
+import net.p3pp3rf1y.sophisticatedstorage.client.render.ShulkerBoxRenderer;
+import net.p3pp3rf1y.sophisticatedstorage.client.render.SimpleCompositeModel;
 import net.p3pp3rf1y.sophisticatedstorage.common.gui.StorageContainerMenu;
 import net.p3pp3rf1y.sophisticatedstorage.init.ModBlocks;
 import net.p3pp3rf1y.sophisticatedstorage.init.ModItems;
@@ -64,6 +79,7 @@ import net.p3pp3rf1y.sophisticatedstorage.network.StoragePacketHandler;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+import javax.annotation.Nullable;
 
 import static committee.nova.mkb.keybinding.KeyConflictContext.GUI;
 
@@ -180,20 +196,12 @@ public class ClientEventHandler {
 	}
 
 	public static boolean handleGuiKeyPress(Screen screen, int key, int scancode, int modifiers) {
-		if (((IKeyBinding)SORT_KEYBIND).isActiveAndMatches(InputConstants.getKey(key, scancode)) && tryCallSort(screen)) {
-			return false;
-		}
-
-		return true;
+		return !((IKeyBinding) SORT_KEYBIND).isActiveAndMatches(InputConstants.getKey(key, scancode)) || !tryCallSort(screen);
 	}
 
 	public static boolean handleGuiMouseKeyPress(Screen screen, double mouseX, double mouseY, int button) {
 		InputConstants.Key input = InputConstants.Type.MOUSE.getOrCreate(button);
-		if (((IKeyBinding)SORT_KEYBIND).isActiveAndMatches(input) && tryCallSort(screen)) {
-			return false;
-		}
-
-		return true;
+		return !((IKeyBinding) SORT_KEYBIND).isActiveAndMatches(input) || !tryCallSort(screen);
 	}
 
 	private static void registerStorageLayerLoader() {
@@ -236,6 +244,7 @@ public class ClientEventHandler {
 	private static void registerTooltipComponent() {
 		TooltipComponentCallback.EVENT.register(ClientEventHandler::registerTooltipComponent);
 	}
+	@Nullable
 	private static ClientTooltipComponent registerTooltipComponent(TooltipComponent data) {
 		if (data instanceof StorageContentsTooltip storageContentsTooltip) {
 			return new ClientStorageContentsTooltip(storageContentsTooltip);

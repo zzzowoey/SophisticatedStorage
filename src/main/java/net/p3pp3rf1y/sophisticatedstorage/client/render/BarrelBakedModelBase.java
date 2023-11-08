@@ -7,12 +7,19 @@ import com.google.common.cache.LoadingCache;
 import com.mojang.datafixers.util.Either;
 import com.mojang.math.Axis;
 import com.mojang.math.Transformation;
+import org.joml.Vector3f;
+
 import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachedBlockView;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.block.model.*;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.BlockModel;
+import net.minecraft.client.renderer.block.model.FaceBakery;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.renderer.block.model.ItemTransform;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
@@ -46,17 +53,26 @@ import net.p3pp3rf1y.sophisticatedstorage.init.ModItems;
 import net.p3pp3rf1y.sophisticatedstorage.item.BarrelBlockItem;
 import net.p3pp3rf1y.sophisticatedstorage.item.StorageBlockItem;
 import net.p3pp3rf1y.sophisticatedstorage.item.WoodStorageBlockItem;
-import org.joml.Vector3f;
 
-import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 
 import static net.fabricmc.fabric.api.renderer.v1.mesh.QuadView.VANILLA_QUAD_STRIDE;
-import static net.p3pp3rf1y.sophisticatedstorage.client.render.DisplayItemRenderer.*;
+import static net.p3pp3rf1y.sophisticatedstorage.client.render.DisplayItemRenderer.BIG_2D_ITEM_SCALE;
+import static net.p3pp3rf1y.sophisticatedstorage.client.render.DisplayItemRenderer.SMALL_2D_ITEM_SCALE;
+import static net.p3pp3rf1y.sophisticatedstorage.client.render.DisplayItemRenderer.SMALL_3D_ITEM_SCALE;
+import static net.p3pp3rf1y.sophisticatedstorage.client.render.DisplayItemRenderer.getNorthBasedRotation;
 
 public abstract class BarrelBakedModelBase implements BakedModel, FabricBakedModel, IDataModel {
 
@@ -611,17 +627,6 @@ public abstract class BarrelBakedModelBase implements BakedModel, FabricBakedMod
 	public ItemOverrides getOverrides() {
 		return barrelItemOverrides;
 	}
-
-/*	@Override
-	public BakedModel applyTransform(ItemTransforms.TransformType transformType, PoseStack poseStack, boolean applyLeftHandTransform) {
-		if (transformType == ItemTransforms.TransformType.NONE) {
-			return this;
-		}
-
-		ITEM_TRANSFORMS.getTransform(transformType).apply(applyLeftHandTransform, poseStack);
-
-		return this;
-	}*/
 
 	private static class BarrelItemOverrides extends ItemOverrides {
 		private final BarrelBakedModelBase barrelBakedModel;

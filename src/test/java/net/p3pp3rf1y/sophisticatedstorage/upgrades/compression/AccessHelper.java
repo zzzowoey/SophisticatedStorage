@@ -22,7 +22,7 @@ public class AccessHelper {
 
 	static RecipeHelper.CompactingResult initCompactingResult(ItemStack result, List<ItemStack> remainingItems) {
 		try {
-		return COMPACTING_RESULT_INIT.newInstance(result, remainingItems);
+			return COMPACTING_RESULT_INIT.newInstance(result, remainingItems);
 		}
 		catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
 			throw new RuntimeException(e);

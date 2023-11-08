@@ -16,6 +16,7 @@ import net.p3pp3rf1y.sophisticatedstorage.init.ModBlocks;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import javax.annotation.Nullable;
 
 public class ControllerBlockEntity extends ControllerBlockEntityBase implements ILockable, ICountDisplay, ITierDisplay, IUpgradeDisplay {
 	private long lastDepositTime = -100;
@@ -23,11 +24,6 @@ public class ControllerBlockEntity extends ControllerBlockEntityBase implements 
 	public ControllerBlockEntity(BlockPos pos, BlockState state) {
 		super(ModBlocks.CONTROLLER_BLOCK_ENTITY_TYPE, pos, state);
 	}
-
-	/*@Override
-	public AABB getRenderBoundingBox() {
-		return new AABB(worldPosition).inflate(ControllerBlockEntityBase.SEARCH_RANGE);
-	}*/
 
 	public void depositPlayerItems(Player player, InteractionHand hand) {
 		if (getLevel() == null) {
@@ -53,6 +49,7 @@ public class ControllerBlockEntity extends ControllerBlockEntityBase implements 
 
 		ItemStack itemInHand = player.getItemInHand(hand);
 		if (!itemInHand.isEmpty() && canDepositStack(itemInHand)) {
+			// TODO: check this
 			long inserted = insert(ItemVariant.of(itemInHand), itemInHand.getCount(), null, false);
 			player.setItemInHand(hand, itemInHand.copyWithCount(itemInHand.getCount() - (int) inserted));
 		}
@@ -141,6 +138,7 @@ public class ControllerBlockEntity extends ControllerBlockEntityBase implements 
 		return List.of();
 	}
 
+	@Nullable
 	@Override
 	public SingleSlotStorage<ItemVariant> getSlot(int slot) {
 		return null;

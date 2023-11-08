@@ -26,7 +26,18 @@ import net.p3pp3rf1y.sophisticatedcore.upgrades.compacting.CompactingUpgradeCont
 import net.p3pp3rf1y.sophisticatedcore.upgrades.compacting.CompactingUpgradeItem;
 import net.p3pp3rf1y.sophisticatedcore.upgrades.compacting.CompactingUpgradeTab;
 import net.p3pp3rf1y.sophisticatedcore.upgrades.compacting.CompactingUpgradeWrapper;
-import net.p3pp3rf1y.sophisticatedcore.upgrades.cooking.*;
+import net.p3pp3rf1y.sophisticatedcore.upgrades.cooking.AutoBlastingUpgradeItem;
+import net.p3pp3rf1y.sophisticatedcore.upgrades.cooking.AutoCookingUpgradeContainer;
+import net.p3pp3rf1y.sophisticatedcore.upgrades.cooking.AutoCookingUpgradeTab;
+import net.p3pp3rf1y.sophisticatedcore.upgrades.cooking.AutoCookingUpgradeWrapper;
+import net.p3pp3rf1y.sophisticatedcore.upgrades.cooking.AutoSmeltingUpgradeItem;
+import net.p3pp3rf1y.sophisticatedcore.upgrades.cooking.AutoSmokingUpgradeItem;
+import net.p3pp3rf1y.sophisticatedcore.upgrades.cooking.BlastingUpgradeItem;
+import net.p3pp3rf1y.sophisticatedcore.upgrades.cooking.CookingUpgradeContainer;
+import net.p3pp3rf1y.sophisticatedcore.upgrades.cooking.CookingUpgradeTab;
+import net.p3pp3rf1y.sophisticatedcore.upgrades.cooking.CookingUpgradeWrapper;
+import net.p3pp3rf1y.sophisticatedcore.upgrades.cooking.SmeltingUpgradeItem;
+import net.p3pp3rf1y.sophisticatedcore.upgrades.cooking.SmokingUpgradeItem;
 import net.p3pp3rf1y.sophisticatedcore.upgrades.crafting.CraftingUpgradeContainer;
 import net.p3pp3rf1y.sophisticatedcore.upgrades.crafting.CraftingUpgradeItem;
 import net.p3pp3rf1y.sophisticatedcore.upgrades.crafting.CraftingUpgradeTab;
@@ -84,7 +95,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ModItems {
-	static List<Item> ITEMS = new ArrayList<>(); // Must be up here!
+	final static List<Item> ITEMS = new ArrayList<>(); // Must be up here!
 
 	private ModItems() {}
 
@@ -181,9 +192,7 @@ public class ModItems {
 	}
 	
 	private static void registerItemGroup() {
-		ItemGroupEvents.modifyEntriesEvent(SophisticatedStorage.CREATIVE_TAB).register(entries -> {
-			ITEMS.stream().filter(item -> item != INACCESSIBLE_SLOT).forEach(entries::accept);
-		});
+		ItemGroupEvents.modifyEntriesEvent(SophisticatedStorage.CREATIVE_TAB).register(entries -> ITEMS.stream().filter(item -> item != INACCESSIBLE_SLOT).forEach(entries::accept));
 	}
 	
 	public static void register() {

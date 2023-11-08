@@ -1,6 +1,7 @@
 package net.p3pp3rf1y.sophisticatedstorage.block;
 
 import com.google.common.collect.ImmutableMap;
+
 import net.minecraft.util.StringRepresentable;
 
 import java.util.List;
@@ -23,7 +24,7 @@ public enum BarrelMaterial implements StringRepresentable {
 
 	private final String name;
 
-	private MaterialModelPart materialModelPart;
+	private final MaterialModelPart materialModelPart;
 
 	private final BarrelMaterial[] children;
 	BarrelMaterial(String name, MaterialModelPart materialModelPart, BarrelMaterial... children) {

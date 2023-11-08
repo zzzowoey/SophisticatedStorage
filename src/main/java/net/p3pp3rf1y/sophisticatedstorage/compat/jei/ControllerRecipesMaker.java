@@ -1,6 +1,7 @@
 package net.p3pp3rf1y.sophisticatedstorage.compat.jei;
 
 import com.google.common.base.Function;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.BlockItem;

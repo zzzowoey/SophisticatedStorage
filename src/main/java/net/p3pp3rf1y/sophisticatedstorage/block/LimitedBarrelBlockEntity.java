@@ -22,7 +22,11 @@ import net.p3pp3rf1y.sophisticatedcore.util.RandHelper;
 import net.p3pp3rf1y.sophisticatedcore.util.WorldHelper;
 import net.p3pp3rf1y.sophisticatedstorage.init.ModBlocks;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -168,7 +172,7 @@ public class LimitedBarrelBlockEntity extends BarrelBlockEntity implements ICoun
 				long inserted;
 				try (Transaction ctx = Transaction.openOuter()) {
 					inserted = invHandler.insertItemOnlyToSlot(slot, resource, view.getAmount(), ctx);
-				};
+				}
 				if (inserted < view.getAmount()) {
 					try (Transaction ctx = Transaction.openOuter()) {
 						long extracted = view.extract(resource, view.getAmount() - inserted, ctx);
@@ -253,7 +257,7 @@ public class LimitedBarrelBlockEntity extends BarrelBlockEntity implements ICoun
 		if (!showCounts) {
 			tag.putBoolean("showCounts", showCounts);
 		}
-		if (slotColors.size() > 0) {
+		if (!slotColors.isEmpty()) {
 			NBTHelper.putMap(tag, "slotColors", slotColors, String::valueOf, color -> IntTag.valueOf(color.getId()));
 		}
 	}

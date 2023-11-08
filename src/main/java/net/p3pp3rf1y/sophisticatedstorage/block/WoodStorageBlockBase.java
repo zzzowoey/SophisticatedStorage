@@ -21,10 +21,10 @@ import net.p3pp3rf1y.sophisticatedstorage.item.StorageBlockItem;
 import net.p3pp3rf1y.sophisticatedstorage.item.StorageToolItem;
 import net.p3pp3rf1y.sophisticatedstorage.item.WoodStorageBlockItem;
 
-import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Supplier;
+import javax.annotation.Nullable;
 
 public abstract class WoodStorageBlockBase extends StorageBlockBase implements IAdditionalDropDataBlock {
 	public static final Map<WoodType, BlockFamily> CUSTOM_TEXTURE_WOOD_TYPES = Map.of(

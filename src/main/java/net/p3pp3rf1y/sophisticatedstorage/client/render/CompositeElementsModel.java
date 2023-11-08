@@ -3,6 +3,7 @@ package net.p3pp3rf1y.sophisticatedstorage.client.render;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Either;
+
 import net.minecraft.client.renderer.block.model.BlockElement;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
@@ -21,13 +22,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.p3pp3rf1y.sophisticatedstorage.SophisticatedStorage;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
+import javax.annotation.Nullable;
 
 public class CompositeElementsModel extends BlockModel {
 	private final List<BlockElement> elements;
@@ -109,8 +110,7 @@ public class CompositeElementsModel extends BlockModel {
 			textureName = either.right().orElse("");
 
 			if (visitedTextureReferences.contains(textureName)) {
-				String finalTextureName = textureName;
-				SophisticatedStorage.LOGGER.warn("Unable to resolve texture due to reference chain {}->{} in {}", Joiner.on("->").join(visitedTextureReferences), finalTextureName, name);
+				SophisticatedStorage.LOGGER.warn("Unable to resolve texture due to reference chain {}->{} in {}", Joiner.on("->").join(visitedTextureReferences), textureName, name);
 				return new Material(InventoryMenu.BLOCK_ATLAS, MissingTextureAtlasSprite.getLocation());
 			}
 

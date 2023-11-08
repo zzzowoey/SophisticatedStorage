@@ -29,11 +29,11 @@ import net.p3pp3rf1y.sophisticatedstorage.block.ShulkerBoxBlock;
 import net.p3pp3rf1y.sophisticatedstorage.block.StorageBlockEntity;
 import net.p3pp3rf1y.sophisticatedstorage.block.StorageWrapper;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
+import javax.annotation.Nullable;
 
 public class ShulkerBoxItem extends StorageBlockItem implements IStashStorageItem {
 	public ShulkerBoxItem(Block block) {
@@ -43,18 +43,6 @@ public class ShulkerBoxItem extends StorageBlockItem implements IStashStorageIte
 	public ShulkerBoxItem(Block block, Properties properties) {
 		super(block, properties);
 	}
-
-/*	@Override
-	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-		consumer.accept(new IClientItemExtensions() {
-			private final NonNullLazy<BlockEntityWithoutLevelRenderer> ister = NonNullLazy.of(() -> new ShulkerBoxItemRenderer(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels()));
-
-			@Override
-			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-				return ister.get();
-			}
-		});
-	}*/
 
 	@Override
 	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {

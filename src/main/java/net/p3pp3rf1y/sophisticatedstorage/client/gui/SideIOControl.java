@@ -1,6 +1,7 @@
 package net.p3pp3rf1y.sophisticatedstorage.client.gui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -16,12 +17,12 @@ import net.p3pp3rf1y.sophisticatedstorage.common.gui.BlockSide;
 import net.p3pp3rf1y.sophisticatedstorage.common.gui.SideIOContainer;
 import net.p3pp3rf1y.sophisticatedstorage.upgrades.IOMode;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.IntConsumer;
 import java.util.function.Supplier;
+import javax.annotation.Nullable;
 
 public class SideIOControl extends CompositeWidgetBase<WidgetBase> {
 

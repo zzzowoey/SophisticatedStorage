@@ -1,16 +1,16 @@
 package net.p3pp3rf1y.sophisticatedstorage.network;
 
-import javax.annotation.Nullable;
-import java.util.UUID;
-
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.p3pp3rf1y.sophisticatedcore.client.render.ClientStorageContentsTooltip;
 import net.p3pp3rf1y.sophisticatedcore.network.SimplePacketBase;
 import net.p3pp3rf1y.sophisticatedstorage.block.ItemContentsStorage;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+
+import java.util.UUID;
+import javax.annotation.Nullable;
 
 public class StorageContentsMessage extends SimplePacketBase {
 	private final UUID shulkerBoxUuid;

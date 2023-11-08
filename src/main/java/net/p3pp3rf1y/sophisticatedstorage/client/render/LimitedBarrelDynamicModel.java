@@ -1,5 +1,7 @@
 package net.p3pp3rf1y.sophisticatedstorage.client.render;
 
+import org.joml.Vector3f;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
@@ -11,11 +13,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.p3pp3rf1y.sophisticatedstorage.block.LimitedBarrelBlock;
 import net.p3pp3rf1y.sophisticatedstorage.block.VerticalFacing;
 import net.p3pp3rf1y.sophisticatedstorage.client.util.QuadTransformers;
-import org.joml.Vector3f;
 
-import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.function.Function;
+import javax.annotation.Nullable;
 
 import static net.p3pp3rf1y.sophisticatedstorage.client.render.DisplayItemRenderer.getNorthBasedRotation;
 
@@ -38,14 +39,6 @@ public class LimitedBarrelDynamicModel extends BarrelDynamicModelBase<LimitedBar
 		protected BarrelModelPart getBasePart(@Nullable BlockState state) {
 			return BarrelModelPart.BASE;
 		}
-
-/*		@Override
-		protected int getInWorldBlockHash(BlockState state, ModelData data) {
-			int hash = super.getInWorldBlockHash(state, data);
-			hash = hash * 31 + state.getValue(LimitedBarrelBlock.HORIZONTAL_FACING).get2DDataValue();
-			hash = hash * 31 + state.getValue(LimitedBarrelBlock.VERTICAL_FACING).getIndex();
-			return hash;
-		}*/
 
 		@Override
 		protected void rotateDisplayItemQuads(BlockState state, QuadTransformers.LazyQuadTransformer stack) {

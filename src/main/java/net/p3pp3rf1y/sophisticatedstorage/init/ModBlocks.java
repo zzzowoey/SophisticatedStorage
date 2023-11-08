@@ -1,6 +1,7 @@
 package net.p3pp3rf1y.sophisticatedstorage.init;
 
 import com.mojang.datafixers.util.Pair;
+
 import io.github.fabricators_of_create.porting_lib.util.EnvExecutor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
@@ -41,7 +42,20 @@ import net.p3pp3rf1y.sophisticatedcore.util.ColorHelper;
 import net.p3pp3rf1y.sophisticatedcore.util.SimpleIdentifiablePrepareableReloadListener;
 import net.p3pp3rf1y.sophisticatedstorage.Config;
 import net.p3pp3rf1y.sophisticatedstorage.SophisticatedStorage;
-import net.p3pp3rf1y.sophisticatedstorage.block.*;
+import net.p3pp3rf1y.sophisticatedstorage.block.BarrelBlock;
+import net.p3pp3rf1y.sophisticatedstorage.block.BarrelBlockEntity;
+import net.p3pp3rf1y.sophisticatedstorage.block.ChestBlock;
+import net.p3pp3rf1y.sophisticatedstorage.block.ChestBlockEntity;
+import net.p3pp3rf1y.sophisticatedstorage.block.ControllerBlock;
+import net.p3pp3rf1y.sophisticatedstorage.block.ControllerBlockEntity;
+import net.p3pp3rf1y.sophisticatedstorage.block.ITintableBlockItem;
+import net.p3pp3rf1y.sophisticatedstorage.block.LimitedBarrelBlock;
+import net.p3pp3rf1y.sophisticatedstorage.block.LimitedBarrelBlockEntity;
+import net.p3pp3rf1y.sophisticatedstorage.block.ShulkerBoxBlock;
+import net.p3pp3rf1y.sophisticatedstorage.block.ShulkerBoxBlockEntity;
+import net.p3pp3rf1y.sophisticatedstorage.block.StorageLinkBlock;
+import net.p3pp3rf1y.sophisticatedstorage.block.StorageLinkBlockEntity;
+import net.p3pp3rf1y.sophisticatedstorage.block.WoodStorageBlockBase;
 import net.p3pp3rf1y.sophisticatedstorage.client.gui.LimitedBarrelScreen;
 import net.p3pp3rf1y.sophisticatedstorage.client.gui.LimitedBarrelSettingsScreen;
 import net.p3pp3rf1y.sophisticatedstorage.client.gui.StorageScreen;
@@ -50,7 +64,12 @@ import net.p3pp3rf1y.sophisticatedstorage.common.gui.LimitedBarrelContainerMenu;
 import net.p3pp3rf1y.sophisticatedstorage.common.gui.LimitedBarrelSettingsContainerMenu;
 import net.p3pp3rf1y.sophisticatedstorage.common.gui.StorageContainerMenu;
 import net.p3pp3rf1y.sophisticatedstorage.common.gui.StorageSettingsContainerMenu;
-import net.p3pp3rf1y.sophisticatedstorage.crafting.*;
+import net.p3pp3rf1y.sophisticatedstorage.crafting.BarrelMaterialRecipe;
+import net.p3pp3rf1y.sophisticatedstorage.crafting.FlatTopBarrelToggleRecipe;
+import net.p3pp3rf1y.sophisticatedstorage.crafting.ShulkerBoxFromChestRecipe;
+import net.p3pp3rf1y.sophisticatedstorage.crafting.SmithingStorageUpgradeRecipe;
+import net.p3pp3rf1y.sophisticatedstorage.crafting.StorageDyeRecipe;
+import net.p3pp3rf1y.sophisticatedstorage.crafting.StorageTierUpgradeRecipe;
 import net.p3pp3rf1y.sophisticatedstorage.item.BarrelBlockItem;
 import net.p3pp3rf1y.sophisticatedstorage.item.ChestBlockItem;
 import net.p3pp3rf1y.sophisticatedstorage.item.ShulkerBoxItem;
@@ -64,8 +83,8 @@ import java.util.function.BiPredicate;
 import static net.p3pp3rf1y.sophisticatedstorage.block.WoodStorageBlockBase.CUSTOM_TEXTURE_WOOD_TYPES;
 
 public class ModBlocks {
-	static List<Pair<String, Block>> BLOCKS = new ArrayList<>(); // Must be up here!
-	static List<Pair<String, Item>> ITEMS = new ArrayList<>(); // Must be up here!
+	final static List<Pair<String, Block>> BLOCKS = new ArrayList<>(); // Must be up here!
+	final static List<Pair<String, Item>> ITEMS = new ArrayList<>(); // Must be up here!
 
 	private static final String LIMITED_BARREL_NAME = "limited_barrel";
 

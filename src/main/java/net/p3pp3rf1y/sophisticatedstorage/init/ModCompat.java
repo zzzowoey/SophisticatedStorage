@@ -1,13 +1,13 @@
 package net.p3pp3rf1y.sophisticatedstorage.init;
 
+import net.fabricmc.loader.api.FabricLoader;
+import net.p3pp3rf1y.sophisticatedcore.compat.ICompat;
+import net.p3pp3rf1y.sophisticatedstorage.SophisticatedStorage;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
-
-import net.p3pp3rf1y.sophisticatedcore.compat.ICompat;
-import net.p3pp3rf1y.sophisticatedstorage.SophisticatedStorage;
-import net.fabricmc.loader.api.FabricLoader;
 
 public class ModCompat {
 	private ModCompat() {}

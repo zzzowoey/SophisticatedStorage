@@ -18,9 +18,9 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.p3pp3rf1y.sophisticatedstorage.Config;
 import net.p3pp3rf1y.sophisticatedstorage.init.ModBlocks;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import javax.annotation.Nullable;
 
 public class ShulkerBoxBlockEntity extends StorageBlockEntity {
 	private AnimationStatus animationStatus = AnimationStatus.CLOSED;

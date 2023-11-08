@@ -10,7 +10,11 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.*;
+import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.LegacyUpgradeRecipe;
+import net.minecraft.world.item.crafting.ShapedRecipe;
+import net.minecraft.world.item.crafting.SmithingRecipe;
 import net.p3pp3rf1y.sophisticatedcore.Config;
 import net.p3pp3rf1y.sophisticatedcore.compat.common.ClientRecipeHelper;
 import net.p3pp3rf1y.sophisticatedstorage.SophisticatedStorage;
@@ -57,7 +61,7 @@ public class TierUpgradeRecipesMaker {
 				}
 				ItemStack result = recipe.assemble(craftinginventory, Minecraft.getInstance().level.registryAccess());
 				//noinspection ConstantConditions
-				ResourceLocation id = new ResourceLocation(SophisticatedStorage.ID, "tier_upgrade_" + BuiltInRegistries.ITEM.getKey(storageItem.getItem()).getPath() + result.getOrCreateTag().toString().toLowerCase(Locale.ROOT).replaceAll("[{\",}:\s]", "_"));
+				ResourceLocation id = new ResourceLocation(SophisticatedStorage.ID, "tier_upgrade_" + BuiltInRegistries.ITEM.getKey(storageItem.getItem()).getPath() + result.getOrCreateTag().toString().toLowerCase(Locale.ROOT).replaceAll("[{\",}: ]", "_"));
 
 				itemGroupRecipes.add(new ShapedRecipe(id, "", recipe.category(), recipe.getWidth(), recipe.getHeight(), ingredientsCopy, result));
 			});
@@ -95,7 +99,7 @@ public class TierUpgradeRecipesMaker {
 
 				ItemStack result = recipe.assemble(container, Minecraft.getInstance().level.registryAccess());
 				//noinspection ConstantConditions
-				ResourceLocation id = new ResourceLocation(SophisticatedStorage.ID, "tier_upgrade_" + BuiltInRegistries.ITEM.getKey(storageItem.getItem()).getPath() + result.getOrCreateTag().toString().toLowerCase(Locale.ROOT).replaceAll("[{\",}:\s]", "_"));
+				ResourceLocation id = new ResourceLocation(SophisticatedStorage.ID, "tier_upgrade_" + BuiltInRegistries.ITEM.getKey(storageItem.getItem()).getPath() + result.getOrCreateTag().toString().toLowerCase(Locale.ROOT).replaceAll("[{\",}: ]", "_"));
 
 				itemGroupRecipes.add(new LegacyUpgradeRecipe(id, Ingredient.of(storageItem), recipe.addition, result));
 			});

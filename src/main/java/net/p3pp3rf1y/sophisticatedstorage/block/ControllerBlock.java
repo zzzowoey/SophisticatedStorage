@@ -23,9 +23,9 @@ import net.p3pp3rf1y.sophisticatedcore.util.WorldHelper;
 import net.p3pp3rf1y.sophisticatedstorage.client.gui.StorageTranslationHelper;
 import net.p3pp3rf1y.sophisticatedstorage.item.StorageTierUpgradeItem;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import javax.annotation.Nullable;
 
 public class ControllerBlock extends Block implements ISneakItemInteractionBlock, EntityBlock {
 	public ControllerBlock() {

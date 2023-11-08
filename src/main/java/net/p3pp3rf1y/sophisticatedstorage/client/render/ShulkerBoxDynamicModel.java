@@ -2,6 +2,7 @@ package net.p3pp3rf1y.sophisticatedstorage.client.render;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
+
 import io.github.fabricators_of_create.porting_lib.models.geometry.IGeometryLoader;
 import io.github.fabricators_of_create.porting_lib.models.geometry.IUnbakedGeometry;
 import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachedBlockView;
@@ -27,10 +28,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.p3pp3rf1y.sophisticatedstorage.SophisticatedStorage;
 import net.p3pp3rf1y.sophisticatedstorage.block.ShulkerBoxBlockEntity;
 
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
+import javax.annotation.Nullable;
 
 public class ShulkerBoxDynamicModel implements IUnbakedGeometry<ShulkerBoxDynamicModel> {
 	private static final String BLOCK_BREAK_FOLDER = "block/break/";
@@ -41,11 +42,6 @@ public class ShulkerBoxDynamicModel implements IUnbakedGeometry<ShulkerBoxDynami
 	public BakedModel bake(BlockModel context, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation, boolean isGui3d) {
 		return new ShulkerBoxBakedModel();
 	}
-
-/*	@Override
-	public Collection<Material> getMaterials(IGeometryBakingContext context, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors) {
-		return Collections.emptySet();
-	}*/
 
 	private static class ShulkerBoxBakedModel implements BakedModel, IDataModel {
 		@Override

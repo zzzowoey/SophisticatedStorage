@@ -9,8 +9,8 @@ public class HopperUpgradeItem extends UpgradeItemBase<HopperUpgradeWrapper> {
 
 	private final IntSupplier inputFilterSlotCount;
 	private final IntSupplier outputFilterSlotCount;
-	private IntSupplier transferSpeedTicks;
-	private IntSupplier maxTransferStackSize;
+	private final IntSupplier transferSpeedTicks;
+	private final IntSupplier maxTransferStackSize;
 	public static final UpgradeType<HopperUpgradeWrapper> TYPE = new UpgradeType<>(HopperUpgradeWrapper::new);
 
 	public HopperUpgradeItem(IntSupplier inputFilterSlotCount, IntSupplier outputFilterSlotCount, IntSupplier transferSpeedTicks, IntSupplier maxTransferStackSize) {

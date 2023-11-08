@@ -1,6 +1,8 @@
 package net.p3pp3rf1y.sophisticatedstorage.network;
 
-import java.util.function.Function;
+import me.pepperbell.simplenetworking.C2SPacket;
+import me.pepperbell.simplenetworking.S2CPacket;
+import me.pepperbell.simplenetworking.SimpleChannel;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -11,9 +13,7 @@ import net.minecraft.world.phys.Vec3;
 import net.p3pp3rf1y.sophisticatedcore.network.SimplePacketBase;
 import net.p3pp3rf1y.sophisticatedstorage.SophisticatedStorage;
 
-import me.pepperbell.simplenetworking.C2SPacket;
-import me.pepperbell.simplenetworking.S2CPacket;
-import me.pepperbell.simplenetworking.SimpleChannel;
+import java.util.function.Function;
 
 public class StoragePacketHandler {
 	private static int index = 0;

@@ -1,6 +1,7 @@
 package net.p3pp3rf1y.sophisticatedstorage.client.gui;
 
 import com.mojang.blaze3d.platform.Window;
+
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;

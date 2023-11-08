@@ -1,11 +1,11 @@
 package net.p3pp3rf1y.sophisticatedstorage.network;
 
-import java.util.UUID;
-
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.p3pp3rf1y.sophisticatedcore.network.SimplePacketBase;
 import net.p3pp3rf1y.sophisticatedstorage.block.ItemContentsStorage;
+
+import java.util.UUID;
 
 public class RequestStorageContentsMessage extends SimplePacketBase {
 	private final UUID storageUuid;

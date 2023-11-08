@@ -1,10 +1,11 @@
 package net.p3pp3rf1y.sophisticatedstorage.common.gui;
 
-import net.minecraft.core.Direction;
-import net.p3pp3rf1y.sophisticatedstorage.block.VerticalFacing;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import net.minecraft.core.Direction;
+import net.p3pp3rf1y.sophisticatedstorage.block.VerticalFacing;
 
 import java.util.List;
 
@@ -70,7 +71,7 @@ class BlockSideTest {
 		Assertions.assertEquals(toDirectionParams.expectedDirection, toDirectionParams.side.toDirection(toDirectionParams.baseHorizontalDirection, toDirectionParams.baseVerticalFacing));
 	}
 
-	private record ToDirectionParams(BlockSide side, Direction baseHorizontalDirection, VerticalFacing baseVerticalFacing, Direction expectedDirection) {}
+	public record ToDirectionParams(BlockSide side, Direction baseHorizontalDirection, VerticalFacing baseVerticalFacing, Direction expectedDirection) {}
 
 	private static List<ToDirectionParams> toDirectionConvertsCorrectly() {
 		return List.of(

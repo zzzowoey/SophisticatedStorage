@@ -11,9 +11,9 @@ import net.minecraft.world.level.block.state.properties.WoodType;
 import net.p3pp3rf1y.sophisticatedcore.util.NBTHelper;
 import net.p3pp3rf1y.sophisticatedstorage.item.WoodStorageBlockItem;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.Optional;
+import javax.annotation.Nullable;
 
 public abstract class WoodStorageBlockEntity extends StorageBlockEntity {
 	private static final String PACKED_TAG = "packed";
@@ -100,7 +100,7 @@ public abstract class WoodStorageBlockEntity extends StorageBlockEntity {
 	}
 
 	@Override
-	public @org.jetbrains.annotations.Nullable Object getRenderAttachmentData() {
+	public @Nullable Object getRenderAttachmentData() {
 		return new ModelData(this);
 	}
 

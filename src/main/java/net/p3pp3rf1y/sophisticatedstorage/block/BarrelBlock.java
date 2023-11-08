@@ -50,11 +50,11 @@ import net.p3pp3rf1y.sophisticatedstorage.common.gui.StorageContainerMenu;
 import net.p3pp3rf1y.sophisticatedstorage.init.ModBlocks;
 import net.p3pp3rf1y.sophisticatedstorage.item.BarrelBlockItem;
 
-import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.Random;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import javax.annotation.Nullable;
 
 public class BarrelBlock extends WoodStorageBlockBase {
 	public static final DirectionProperty FACING = BlockStateProperties.FACING;
@@ -198,7 +198,7 @@ public class BarrelBlock extends WoodStorageBlockBase {
 	}
 
 	@Override
-	public void setPlacedBy(Level level, BlockPos pos, BlockState state, @org.jetbrains.annotations.Nullable LivingEntity placer, ItemStack stack) {
+	public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
 		super.setPlacedBy(level, pos, state, placer, stack);
 		WorldHelper.getBlockEntity(level, pos, BarrelBlockEntity.class).ifPresent(barrel -> {
 			Map<BarrelMaterial, ResourceLocation> materials = BarrelBlockItem.getMaterials(stack);
@@ -218,7 +218,7 @@ public class BarrelBlock extends WoodStorageBlockBase {
 		WorldHelper.getBlockEntity(level, pos, StorageBlockEntity.class).ifPresent(StorageBlockEntity::recheckOpen);
 	}
 
-
+	@SuppressWarnings("deprecation")
 	@Override
 	public BlockState rotate(BlockState state, Rotation rotation) {
 		return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));

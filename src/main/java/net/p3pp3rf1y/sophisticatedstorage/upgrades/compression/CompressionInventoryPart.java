@@ -2,6 +2,7 @@ package net.p3pp3rf1y.sophisticatedstorage.upgrades.compression;
 
 import com.mojang.datafixers.util.Function4;
 import com.mojang.datafixers.util.Pair;
+
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
@@ -19,13 +20,18 @@ import net.p3pp3rf1y.sophisticatedcore.util.TransactionCallback;
 import net.p3pp3rf1y.sophisticatedstorage.Config;
 import net.p3pp3rf1y.sophisticatedstorage.SophisticatedStorage;
 
-import javax.annotation.Nullable;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import javax.annotation.Nullable;
 
 import static net.p3pp3rf1y.sophisticatedcore.util.MathHelper.intMaxCappedAddition;
 import static net.p3pp3rf1y.sophisticatedcore.util.MathHelper.intMaxCappedMultiply;
@@ -409,7 +415,7 @@ public class CompressionInventoryPart implements IInventoryPartHandler {
 
 			countBeforeChange = calculatedStack.getCount();
 			int toSet = getCountChangeLeavingSpaceBeforeMaxInt(countBeforeChange - extractCount, slotCalculated, calculatedStack);
-			calculatedStack.setCount((int) toSet);
+			calculatedStack.setCount(toSet);
 
 			calculatedStacks.put(slotCalculated, calculatedStack);
 

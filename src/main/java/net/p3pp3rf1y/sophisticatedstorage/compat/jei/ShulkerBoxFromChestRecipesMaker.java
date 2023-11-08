@@ -54,6 +54,7 @@ public class ShulkerBoxFromChestRecipesMaker {
 					for (ItemStack ingredientItem : ingredientItems) {
 						if (ingredientItem.getItem() instanceof ChestBlockItem) {
 							isChestIngredient = true;
+							break;
 						}
 					}
 					if (isChestIngredient) {

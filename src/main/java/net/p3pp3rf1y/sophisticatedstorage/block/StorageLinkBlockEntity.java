@@ -11,11 +11,11 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.p3pp3rf1y.sophisticatedcore.controller.ILinkable;
 import net.p3pp3rf1y.sophisticatedstorage.init.ModBlocks;
 
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import javax.annotation.Nullable;
 
 public class StorageLinkBlockEntity extends BlockEntity implements ILinkable {
 	@Nullable

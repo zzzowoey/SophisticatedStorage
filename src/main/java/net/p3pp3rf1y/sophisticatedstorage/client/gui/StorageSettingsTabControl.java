@@ -1,6 +1,7 @@
 package net.p3pp3rf1y.sophisticatedstorage.client.gui;
 
 import com.google.common.collect.ImmutableMap;
+
 import net.p3pp3rf1y.sophisticatedcore.client.gui.Tab;
 import net.p3pp3rf1y.sophisticatedcore.client.gui.utils.Position;
 import net.p3pp3rf1y.sophisticatedcore.settings.SettingsContainerBase;

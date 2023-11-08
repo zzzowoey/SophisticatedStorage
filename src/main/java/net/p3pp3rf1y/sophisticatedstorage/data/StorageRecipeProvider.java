@@ -1,7 +1,9 @@
 package net.p3pp3rf1y.sophisticatedstorage.data;
 
-import java.util.function.Consumer;
+import me.alphamode.forgetags.Tags;
 
+import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.BlockFamily;
 import net.minecraft.data.recipes.FinishedRecipe;
@@ -26,10 +28,8 @@ import net.p3pp3rf1y.sophisticatedstorage.block.WoodStorageBlockBase;
 import net.p3pp3rf1y.sophisticatedstorage.init.ModBlocks;
 import net.p3pp3rf1y.sophisticatedstorage.init.ModItems;
 import net.p3pp3rf1y.sophisticatedstorage.item.WoodStorageBlockItem;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 
-import me.alphamode.forgetags.Tags;
+import java.util.function.Consumer;
 
 public class StorageRecipeProvider extends FabricRecipeProvider {
 	private static final String HAS_UPGRADE_BASE_CRITERION_NAME = "has_upgrade_base";

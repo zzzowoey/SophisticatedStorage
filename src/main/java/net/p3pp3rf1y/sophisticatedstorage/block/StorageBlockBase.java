@@ -1,6 +1,8 @@
 package net.p3pp3rf1y.sophisticatedstorage.block;
 
 import com.mojang.math.Axis;
+import org.joml.Vector3f;
+
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
@@ -36,11 +38,10 @@ import net.p3pp3rf1y.sophisticatedcore.util.InventoryHelper;
 import net.p3pp3rf1y.sophisticatedcore.util.RegistryHelper;
 import net.p3pp3rf1y.sophisticatedcore.util.WorldHelper;
 import net.p3pp3rf1y.sophisticatedstorage.SophisticatedStorage;
-import org.joml.Vector3f;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Supplier;
+import javax.annotation.Nullable;
 
 public abstract class StorageBlockBase extends Block implements IStorageBlock, ISneakItemInteractionBlock, EntityBlock {
 	public static final BooleanProperty TICKING = BooleanProperty.create("ticking");
@@ -200,6 +201,7 @@ public abstract class StorageBlockBase extends Block implements IStorageBlock, I
 		return false;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
 		WorldHelper.getBlockEntity(level, pos, StorageBlockEntity.class).ifPresent(be -> be.onNeighborChange(neighborPos));

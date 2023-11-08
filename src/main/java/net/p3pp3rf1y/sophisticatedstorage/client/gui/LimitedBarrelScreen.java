@@ -1,6 +1,7 @@
 package net.p3pp3rf1y.sophisticatedstorage.client.gui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;

@@ -54,8 +54,8 @@ public abstract class StorageSettingsHandler extends SettingsHandler {
 	}
 
 	@Override
-	public ISettingsCategory instantiateGlobalSettingsCategory(CompoundTag categoryNbt, Consumer<CompoundTag> saveNbt) {
-		return new MainSettingsCategory(categoryNbt, saveNbt, SOPHISTICATED_STORAGE_SETTINGS_PLAYER_TAG);
+	public ISettingsCategory<?> instantiateGlobalSettingsCategory(CompoundTag categoryNbt, Consumer<CompoundTag> saveNbt) {
+		return new MainSettingsCategory<>(categoryNbt, saveNbt, SOPHISTICATED_STORAGE_SETTINGS_PLAYER_TAG);
 	}
 
 	@Override
