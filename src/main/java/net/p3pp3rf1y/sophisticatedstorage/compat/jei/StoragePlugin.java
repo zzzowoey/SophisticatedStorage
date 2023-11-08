@@ -17,6 +17,7 @@ import mezz.jei.api.registration.ISubtypeRegistration;
 import mezz.jei.api.runtime.IJeiRuntime;
 
 import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
@@ -137,7 +138,7 @@ public class StoragePlugin implements IModPlugin {
 	@Override
 	public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
 		IRecipeManager recipeManager = jeiRuntime.getRecipeManager();
-		ClientRecipeHelper.getRecipeByKey(ModBlocks.CONTROLLER_ITEM.builtInRegistryHolder().key().registry()).ifPresent(controllerRecipe -> {
+		ClientRecipeHelper.getRecipeByKey(BuiltInRegistries.ITEM.getKey(ModBlocks.CONTROLLER_ITEM)).ifPresent(controllerRecipe -> {
 			if (controllerRecipe instanceof CraftingRecipe craftingRecipe) {
 				recipeManager.hideRecipes(RecipeTypes.CRAFTING, Collections.singleton(craftingRecipe));
 			}

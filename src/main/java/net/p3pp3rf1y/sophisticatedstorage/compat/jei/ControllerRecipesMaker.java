@@ -4,6 +4,7 @@ import com.google.common.base.Function;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -23,7 +24,7 @@ public class ControllerRecipesMaker {
 	private ControllerRecipesMaker() {}
 
 	public static List<CraftingRecipe> getRecipes() {
-		return ClientRecipeHelper.getRecipeByKey(ModBlocks.CONTROLLER_ITEM.builtInRegistryHolder().key().registry()).map((Function<Recipe<?>, List<CraftingRecipe>>) r -> {
+		return ClientRecipeHelper.getRecipeByKey(BuiltInRegistries.ITEM.getKey(ModBlocks.CONTROLLER_ITEM)).map((Function<Recipe<?>, List<CraftingRecipe>>) r -> {
 			if (!(r instanceof ShapedRecipe originalRecipe)) {
 				return new ArrayList<>();
 			}
