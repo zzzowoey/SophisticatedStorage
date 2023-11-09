@@ -1,52 +1,56 @@
 {
-  "schemaVersion": 1,
-  "id": "sophisticatedstorage",
-  "version": "${mod_version}",
-
-  "name": "Sophisticated Storage",
-  "description": "Fancy and functional storage containers.",
-
-  "license": "GNU General Public License v3.0",
-  "icon": "logo.png",
-  "authors": [
-    "P3pp3rF1y",
-    "Ridanisaurus",
-    "Salandora"
-  ],
-  "contact": {
-    "homepage": "https://www.curseforge.com/minecraft/mc-mods/sophisticated-backpacks",
-    "issues": "https://github.com/P3pp3rF1y/SophisticatedBackpacks/issues",
-    "sources": "https://github.com/P3pp3rF1y/SophisticatedBackpacks/"
-  },
-
-  "environment": "*",
-  "entrypoints": {
-    "main": [
-      "net.p3pp3rf1y.sophisticatedstorage.SophisticatedStorage"
+    "schemaVersion": 1,
+    "id": "sophisticatedstorage",
+    "version": "${mod_version}",
+    "name": "Sophisticated Storage",
+    "description": "Fancy and functional storage containers.",
+    "license": "GNU General Public License v3.0",
+    "icon": "logo.png",
+    "authors": [
+        "P3pp3rF1y",
+        "Ridanisaurus",
+        "Salandora"
     ],
-    "client": [
-      "net.p3pp3rf1y.sophisticatedstorage.client.SophisticatedStorageClient"
-    ],
-    "fabric-datagen": [
-      "net.p3pp3rf1y.sophisticatedstorage.data.SophisticatedStorageData"
-    ]
-  },
-
-  "mixins": [ "sophisticatedstorage.mixins.json" ],
-  "accessWidener": "sophisticatedstorage.accesswidener",
-
-  "depends": {
-    "fabricloader": ">=${loader_version}",
-    "fabric-api": ">=${fabric_version}",
-    "minecraft": "${minecraft_version}",
-    "sophisticatedcore": ">=${sc_version}",
-    "mkb": "${mkb_version}",
-    
-    "porting_lib_model_loader": ">=${port_lib_model_loader_version}"
-  },
-
-  "custom": {
-    "loom:injected_interfaces": {
+    "contact": {
+        "homepage": "https://www.curseforge.com/minecraft/mc-mods/sophisticated-backpacks",
+        "issues": "https://github.com/Salandora/SophisticatedStorage/issues",
+        "sources": "https://github.com/Salandora/SophisticatedStorage/"
+    },
+    "environment": "*",
+    "entrypoints": {
+        "main": [
+            "net.p3pp3rf1y.sophisticatedstorage.SophisticatedStorage"
+        ],
+        "client": [
+            "net.p3pp3rf1y.sophisticatedstorage.client.SophisticatedStorageClient"
+        ],
+        "fabric-datagen": [
+            "net.p3pp3rf1y.sophisticatedstorage.data.SophisticatedStorageData"
+        ],
+        "jei_mod_plugin": [
+            "net.p3pp3rf1y.sophisticatedstorage.compat.jei.StoragePlugin"
+        ]
+    },
+    "mixins": ["sophisticatedstorage.mixins.json"],
+    "accessWidener": "sophisticatedstorage.accesswidener",
+    "depends": {
+        "fabricloader": ">=${loader_version}",
+        "fabric-api": ">=${fabric_version}",
+        "minecraft": "${minecraft_version}",
+        "sophisticatedcore": ">=${sc_version}",
+        "mkb": "${mkb_version}",
+        "porting_lib_model_loader": ">=${port_lib_model_loader_version}"
+    },
+    "suggests": {
+        "modsmenu": "*"
+    },
+    "custom": {
+        "modmenu": {
+            "parent": {
+                "id": "sophisticatedmods",
+                "name": "Sophisticated Mods",
+                "description": "Group of P3pp3rf1y's Sophisticated Mods"
+            }
+        }
     }
-  }
 }
