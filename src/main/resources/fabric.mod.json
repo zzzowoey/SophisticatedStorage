@@ -25,7 +25,7 @@
             "net.p3pp3rf1y.sophisticatedstorage.client.SophisticatedStorageClient"
         ],
         "fabric-datagen": [
-            "net.p3pp3rf1y.sophisticatedstorage.data.SophisticatedStorageData"
+            "net.p3pp3rf1y.sophisticatedstorage.data.DataGenerators"
         ],
         "jei_mod_plugin": [
             "net.p3pp3rf1y.sophisticatedstorage.compat.jei.StoragePlugin"

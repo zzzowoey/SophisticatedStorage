@@ -7,9 +7,7 @@ import com.google.common.cache.LoadingCache;
 import com.mojang.datafixers.util.Either;
 import com.mojang.math.Axis;
 import com.mojang.math.Transformation;
-import org.joml.Vector3f;
 
-import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachedBlockView;
 import net.minecraft.client.Minecraft;
@@ -53,6 +51,7 @@ import net.p3pp3rf1y.sophisticatedstorage.init.ModItems;
 import net.p3pp3rf1y.sophisticatedstorage.item.BarrelBlockItem;
 import net.p3pp3rf1y.sophisticatedstorage.item.StorageBlockItem;
 import net.p3pp3rf1y.sophisticatedstorage.item.WoodStorageBlockItem;
+import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -74,7 +73,7 @@ import static net.p3pp3rf1y.sophisticatedstorage.client.render.DisplayItemRender
 import static net.p3pp3rf1y.sophisticatedstorage.client.render.DisplayItemRenderer.SMALL_3D_ITEM_SCALE;
 import static net.p3pp3rf1y.sophisticatedstorage.client.render.DisplayItemRenderer.getNorthBasedRotation;
 
-public abstract class BarrelBakedModelBase implements BakedModel, FabricBakedModel, IDataModel {
+public abstract class BarrelBakedModelBase implements BakedModel, IDataModel {
 
 	private static final RenderContext.QuadTransform MOVE_TO_CORNER = QuadTransformers.applying(new Transformation(new Vector3f(-.5f, -.5f, -.5f), null, null, null));
 	public static final Map<Direction, RenderContext.QuadTransform> DIRECTION_ROTATES = Map.of(
@@ -99,6 +98,7 @@ public abstract class BarrelBakedModelBase implements BakedModel, FabricBakedMod
 	private static final Map<Integer, RenderContext.QuadTransform> DISPLAY_ROTATIONS = new HashMap<>();
 	private static final ItemTransforms ITEM_TRANSFORMS = createItemTransforms();
 	private static final List<BarrelMaterial> PARTICLE_ICON_MATERIAL_PRIORITY = List.of(BarrelMaterial.ALL, BarrelMaterial.ALL_BUT_TRIM, BarrelMaterial.TOP_ALL, BarrelMaterial.TOP);
+
 	@SuppressWarnings("java:S4738") //ItemTransforms require Guava ImmutableMap to be passed in so no way to change that to java Map
 	private static ItemTransforms createItemTransforms() {
 		return new ItemTransforms(
@@ -119,6 +119,8 @@ public abstract class BarrelBakedModelBase implements BakedModel, FabricBakedMod
 		BAKED_QUADS_CACHE.invalidateAll();
 	}
 
+	private final ModelBaker baker;
+	private final Function<Material, TextureAtlasSprite> spriteGetter;
 	protected final Map<String, Map<BarrelModelPart, BakedModel>> woodModelParts;
 
 	private final ItemOverrides barrelItemOverrides;
@@ -135,9 +137,6 @@ public abstract class BarrelBakedModelBase implements BakedModel, FabricBakedMod
 	private final Map<String, Map<DynamicBarrelBakingData.DynamicPart, DynamicBarrelBakingData>> woodDynamicBakingData;
 	private final Map<String, Map<BarrelModelPart, BakedModel>> woodPartitionedModelParts;
 	private final Cache<Integer, BakedModel> dynamicBakedModelCache = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.MINUTES).build();
-
-	private final ModelBaker baker;
-	private final Function<Material, TextureAtlasSprite> spriteGetter;
 
 	protected BarrelBakedModelBase(ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, Map<String, Map<BarrelModelPart, BakedModel>> woodModelParts, @Nullable BakedModel flatTopModel, Map<String, Map<DynamicBarrelBakingData.DynamicPart, DynamicBarrelBakingData>> woodDynamicBakingData, Map<String, Map<BarrelModelPart, BakedModel>> woodPartitionedModelParts) {
 		this.baker = baker;
@@ -570,13 +569,11 @@ public abstract class BarrelBakedModelBase implements BakedModel, FabricBakedMod
 		return false;
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public TextureAtlasSprite getParticleIcon() {
 		return getWoodModelParts(null, false).getOrDefault(BarrelModelPart.BASE, Minecraft.getInstance().getModelManager().getMissingModel()).getParticleIcon();
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public ItemTransforms getTransforms() {
 		return ITEM_TRANSFORMS;

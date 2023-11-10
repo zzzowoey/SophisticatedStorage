@@ -36,6 +36,7 @@ public class ControllerRecipesMaker {
 				ingredientsCopy.add(i, getExpandedIngredient(ingredient));
 				i++;
 			}
+			// TODO: Check
 			return Collections.singletonList(new ShapedRecipe(originalRecipe.getId(), "", originalRecipe.category(), originalRecipe.getWidth(), originalRecipe.getHeight(), ingredientsCopy, originalRecipe.getResultItem(Minecraft.getInstance().level.registryAccess())));
 		}).orElse(Collections.emptyList());
 	}
@@ -47,7 +48,7 @@ public class ControllerRecipesMaker {
 		for (ItemStack ingredientItem : ingredientItems) {
 			Item item = ingredientItem.getItem();
 			if (item instanceof BlockItem itemBase && (item == ModBlocks.BARREL_ITEM || item == ModBlocks.CHEST_ITEM)) {
-				if (Config.SERVER.enabledItems.isItemEnabled(itemBase)) {
+				if (Config.COMMON.enabledItems.isItemEnabled(itemBase)) {
 					storages.add(new ItemStack(itemBase.getBlock()));
 				}
 			}

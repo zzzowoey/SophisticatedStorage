@@ -24,8 +24,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class BarrelMaterialRecipe extends CustomRecipe {
-	public BarrelMaterialRecipe(ResourceLocation registryName, CraftingBookCategory craftingBookCategory) {
-		super(registryName, craftingBookCategory);
+	public BarrelMaterialRecipe(ResourceLocation registryName, CraftingBookCategory category) {
+		super(registryName, category);
 	}
 
 	@Override
@@ -86,7 +86,7 @@ public class BarrelMaterialRecipe extends CustomRecipe {
 	}
 
 	@Override
-	public ItemStack assemble(CraftingContainer container, RegistryAccess registryManager) {
+	public ItemStack assemble(CraftingContainer container, RegistryAccess registryAccess) {
 		int barrelColumn = -1;
 		int barrelRow = -1;
 		ItemStack barrelStackCopy = ItemStack.EMPTY;

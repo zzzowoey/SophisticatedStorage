@@ -30,5 +30,6 @@
     "recipes": [
       "sophisticatedstorage:mangrove_chest"
     ]
-  }
+  },
+  "sends_telemetry_event": true
 }

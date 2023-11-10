@@ -30,5 +30,6 @@
     "recipes": [
       "sophisticatedstorage:gold_to_netherite_tier_upgrade"
     ]
-  }
+  },
+  "sends_telemetry_event": true
 }

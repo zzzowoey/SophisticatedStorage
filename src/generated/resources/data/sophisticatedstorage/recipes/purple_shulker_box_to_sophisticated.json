@@ -1,6 +1,5 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "category": "misc",
   "conditions": [
     {
       "condition": "sophisticatedcore:item_enabled",
@@ -18,6 +17,5 @@
   "result": {
     "item": "sophisticatedstorage:shulker_box",
     "nbt": "{accentColor:8991416,mainColor:8991416}"
-  },
-  "show_notification": true
+  }
 }

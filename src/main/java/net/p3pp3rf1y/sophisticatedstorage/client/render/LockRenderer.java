@@ -2,9 +2,6 @@ package net.p3pp3rf1y.sophisticatedstorage.client.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
 
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -13,6 +10,10 @@ import net.minecraft.client.resources.model.Material;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.p3pp3rf1y.sophisticatedstorage.SophisticatedStorage;
 import net.p3pp3rf1y.sophisticatedstorage.block.StorageBlockEntity;
+
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 import java.util.function.BooleanSupplier;
 
@@ -26,7 +27,7 @@ public class LockRenderer {
 			return;
 		}
 		poseStack.pushPose();
-		poseStack.translate(0.5 - 0.5/16D, yOffset, -0.001);
+		poseStack.translate(0.5 - 0.5 / 16D, yOffset, -0.001);
 		poseStack.scale(1 / 16F, 1 / 16F, 1 / 16F);
 		poseStack.pushPose();
 		VertexConsumer vertexConsumer;
@@ -38,7 +39,6 @@ public class LockRenderer {
 		} else {
 			vertexConsumer = LockRenderer.LOCK_TEXTURE.buffer(bufferSource, RenderType::entityCutoutNoCull);
 		}
-
 
 		PoseStack.Pose pose = poseStack.last();
 		Vector3f normal = new Vector3f(0, 1, 0);

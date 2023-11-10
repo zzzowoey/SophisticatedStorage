@@ -30,5 +30,6 @@
     "recipes": [
       "sophisticatedstorage:limited_diamond_barrel_3"
     ]
-  }
+  },
+  "sends_telemetry_event": true
 }

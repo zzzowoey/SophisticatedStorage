@@ -30,5 +30,6 @@
     "recipes": [
       "sophisticatedstorage:iron_to_gold_tier_upgrade"
     ]
-  }
+  },
+  "sends_telemetry_event": true
 }

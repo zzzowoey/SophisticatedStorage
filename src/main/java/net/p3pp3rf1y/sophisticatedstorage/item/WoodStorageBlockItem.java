@@ -18,6 +18,8 @@ import net.p3pp3rf1y.sophisticatedcore.client.gui.utils.TranslationHelper;
 import net.p3pp3rf1y.sophisticatedcore.util.NBTHelper;
 import net.p3pp3rf1y.sophisticatedstorage.block.ItemContentsStorage;
 import net.p3pp3rf1y.sophisticatedstorage.block.StorageBlockEntity;
+import net.p3pp3rf1y.sophisticatedstorage.block.StorageWrapper;
+import net.p3pp3rf1y.sophisticatedstorage.common.CapabilityStorageWrapper;
 
 import java.util.List;
 import java.util.Locale;
@@ -47,7 +49,8 @@ public class WoodStorageBlockItem extends StorageBlockItem {
 		super.appendHoverText(stack, worldIn, tooltip, flagIn);
 		if (isPacked(stack)) {
 			if (flagIn == TooltipFlag.Default.ADVANCED) {
-				CapabilityStorageWrapper.get(stack).flatMap(IStorageWrapper::getContentsUuid).ifPresent(uuid -> tooltip.add(Component.literal("UUID: " + uuid).withStyle(ChatFormatting.DARK_GRAY)));
+				CapabilityStorageWrapper.get(stack).flatMap(IStorageWrapper::getContentsUuid)
+						.ifPresent(uuid -> tooltip.add(Component.literal("UUID: " + uuid).withStyle(ChatFormatting.DARK_GRAY)));
 			}
 			if (!Screen.hasShiftDown()) {
 				tooltip.add(Component.translatable(
@@ -116,22 +119,20 @@ public class WoodStorageBlockItem extends StorageBlockItem {
 		return Component.translatable(descriptionId, Component.translatable("wood_name.sophisticatedstorage." + woodType.name().toLowerCase(Locale.ROOT)), " ");
 	}
 
-	public static class Wrapper extends StackStorageWrapper {
-		public Wrapper(ItemStack stack) {
-			super(stack);
-
-			UUID uuid = NBTHelper.getUniqueId(stack, "uuid").orElse(null);
-			if (uuid != null) {
-				CompoundTag compoundtag = ItemContentsStorage.get().getOrCreateStorageContents(uuid).getCompound(StorageBlockEntity.STORAGE_WRAPPER_TAG);
-				this.load(compoundtag);
-				// TODO: Need to check this
-				this.setContentsUuid(uuid); //setting here because client side the uuid isn't in contentsnbt before this data is synced from server and it would create a new one otherwise
+	public static StorageWrapper initWrapper(ItemStack stack) {
+		UUID uuid = NBTHelper.getUniqueId(stack, "uuid").orElse(null);
+		StorageWrapper storageWrapper = new StackStorageWrapper(stack) {
+			@Override
+			protected boolean isAllowedInStorage(ItemStack stack) {
+				return false;
 			}
+		};
+		if (uuid != null) {
+			CompoundTag compoundtag = ItemContentsStorage.get().getOrCreateStorageContents(uuid).getCompound(StorageBlockEntity.STORAGE_WRAPPER_TAG);
+			storageWrapper.load(compoundtag);
+			storageWrapper.setContentsUuid(uuid); //setting here because client side the uuid isn't in contentsnbt before this data is synced from server and it would create a new one otherwise
 		}
 
-		@Override
-		protected boolean isAllowedInStorage(ItemStack stack) {
-			return false;
-		}
+		return storageWrapper;
 	}
 }

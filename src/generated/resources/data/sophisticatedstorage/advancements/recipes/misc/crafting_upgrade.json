@@ -30,5 +30,6 @@
     "recipes": [
       "sophisticatedstorage:crafting_upgrade"
     ]
-  }
+  },
+  "sends_telemetry_event": true
 }

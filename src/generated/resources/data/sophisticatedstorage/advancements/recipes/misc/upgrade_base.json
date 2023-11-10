@@ -28,5 +28,6 @@
     "recipes": [
       "sophisticatedstorage:upgrade_base"
     ]
-  }
+  },
+  "sends_telemetry_event": true
 }

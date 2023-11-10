@@ -30,5 +30,6 @@
     "recipes": [
       "sophisticatedstorage:blasting_upgrade"
     ]
-  }
+  },
+  "sends_telemetry_event": true
 }

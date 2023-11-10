@@ -42,7 +42,7 @@ public class ChestRenderer extends StorageRenderer<ChestBlockEntity> {
 	private final ModelPart lidPart;
 	private final ModelPart bottomPart;
 	private final ModelPart lockPart;
-	private final DisplayItemRenderer displayItemRenderer = new DisplayItemRenderer(0.5 * (14.01 / 16), new Vec3(-1/16D, 0,  -0.0075));
+	private final DisplayItemRenderer displayItemRenderer = new DisplayItemRenderer(0.5 * (14.01 / 16), new Vec3(-1 / 16D, 0, -0.0075));
 
 	public ChestRenderer(BlockEntityRendererProvider.Context context) {
 		ModelPart modelpart = context.bakeLayer(ClientEventHandler.CHEST_LAYER);

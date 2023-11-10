@@ -30,5 +30,6 @@
     "recipes": [
       "sophisticatedstorage:hopper_upgrade"
     ]
-  }
+  },
+  "sends_telemetry_event": true
 }

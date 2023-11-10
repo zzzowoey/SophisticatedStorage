@@ -56,13 +56,12 @@ public class CustomTintTerrainParticleData extends ParticleType<CustomTintTerrai
 			reader.expect('|');
 			BlockState blockState = Objects.requireNonNull(BlockStateParser.parseForBlock(BuiltInRegistries.BLOCK.asLookup(), reader, false).blockState());
 			reader.expect('|');
-			BlockPos pos = fromString(reader.readUnquotedString());
-			return new CustomTintTerrainParticleData(blockState, pos);
+			return new CustomTintTerrainParticleData(blockState, fromString(reader.readUnquotedString()));
 		}
 
 		private BlockPos fromString(String value) {
 			String[] split = value.split(",");
-			return new BlockPos(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
+			return BlockPos.containing(Double.parseDouble(split[0]), Double.parseDouble(split[1]), Double.parseDouble(split[2]));
 		}
 
 		@Override

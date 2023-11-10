@@ -30,5 +30,6 @@
     "recipes": [
       "sophisticatedstorage:dark_oak_limited_barrel_1"
     ]
-  }
+  },
+  "sends_telemetry_event": true
 }

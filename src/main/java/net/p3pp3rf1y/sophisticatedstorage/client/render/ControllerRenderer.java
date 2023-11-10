@@ -5,9 +5,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Axis;
-import org.joml.Matrix3f;
-import org.joml.Matrix4f;
-import org.joml.Quaternionf;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -29,6 +26,9 @@ import net.p3pp3rf1y.sophisticatedcore.util.InventoryHelper;
 import net.p3pp3rf1y.sophisticatedstorage.block.ControllerBlockEntity;
 import net.p3pp3rf1y.sophisticatedstorage.init.ModItems;
 import net.p3pp3rf1y.sophisticatedstorage.item.StorageToolItem;
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 
 import java.util.OptionalDouble;
 
@@ -78,9 +78,9 @@ public class ControllerRenderer implements BlockEntityRenderer<ControllerBlockEn
 			poseStack.translate(-0.45f, 0.45f, 0);
 
 			poseStack.scale(scale, -scale, (float) zScale);
-			fontRenderer.drawInBatch("Order: " + storageOrder, 0, 0, DyeColor.WHITE.getTextColor(), false, poseStack.last().pose(), bufferSource, Font.DisplayMode.NORMAL, 0, 15728880);
+			fontRenderer.drawInBatch("Order: " + storageOrder, 0, 0, DyeColor.WHITE.getTextColor(), false, poseStack.last().pose(), bufferSource, Font.DisplayMode.SEE_THROUGH, 0, 15728880);
 			poseStack.translate(0, 10, 0);
-			fontRenderer.drawInBatch("Slots: " + controller.getSlots(storageOrder - 1), 0, 0, DyeColor.WHITE.getTextColor(), false, poseStack.last().pose(), bufferSource, Font.DisplayMode.NORMAL, 0, 15728880);
+			fontRenderer.drawInBatch("Slots: " + controller.getSlots(storageOrder - 1), 0, 0, DyeColor.WHITE.getTextColor(), false, poseStack.last().pose(), bufferSource, Font.DisplayMode.SEE_THROUGH, 0, 15728880);
 			poseStack.popPose();
 
 			storageOrder++;

@@ -30,5 +30,6 @@
     "recipes": [
       "sophisticatedstorage:black_shulker_box_to_sophisticated"
     ]
-  }
+  },
+  "sends_telemetry_event": true
 }

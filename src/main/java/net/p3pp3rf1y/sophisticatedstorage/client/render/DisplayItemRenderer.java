@@ -4,8 +4,6 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -15,12 +13,14 @@ import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.RandomSupport;
+import net.minecraft.world.level.levelgen.ThreadSafeLegacyRandomSource;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -31,6 +31,8 @@ import net.p3pp3rf1y.sophisticatedstorage.block.StorageBlockBase;
 import net.p3pp3rf1y.sophisticatedstorage.block.StorageBlockEntity;
 import net.p3pp3rf1y.sophisticatedstorage.client.util.QuaternionHelper;
 import net.p3pp3rf1y.sophisticatedstorage.init.ModItems;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import java.util.HashSet;
 import java.util.List;
@@ -45,6 +47,7 @@ public class DisplayItemRenderer {
 	static final float SMALL_2D_ITEM_SCALE = 0.25f;
 	static final float UPGRADE_ITEM_SCALE = 0.125f;
 	private static final ItemStack INACCESSIBLE_SLOT_STACK = new ItemStack(ModItems.INACCESSIBLE_SLOT);
+	private static final RandomSource RAND = new ThreadSafeLegacyRandomSource(RandomSupport.generateUniqueSeed());
 	private final double yCenterTranslation;
 	private final Vec3 upgradesOffset;
 
@@ -176,11 +179,10 @@ public class DisplayItemRenderer {
 		if (itemModel.isCustomRenderer()) {
 			return transformBoundsCornersAndCalculateOffset(itemModel, getBoundsCornersFromShape(block, level), additionalScale);
 		} else {
-			return transformBoundsCornersAndCalculateOffset(itemModel, getBoundsCornersFromModel(itemModel, level), additionalScale);
+			return transformBoundsCornersAndCalculateOffset(itemModel, getBoundsCornersFromModel(itemModel), additionalScale);
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	private static double transformBoundsCornersAndCalculateOffset(BakedModel itemModel, Set<Vector3f> points, float additionalScale) {
 		ItemTransform transform = itemModel.getTransforms().getTransform(ItemDisplayContext.FIXED);
 		points = scalePoints(points, transform.scale);
@@ -197,7 +199,7 @@ public class DisplayItemRenderer {
 		return getCornerPointsRelativeToCenter(shape.bounds());
 	}
 
-	private static Set<Vector3f> getBoundsCornersFromModel(BakedModel itemModel, Level level) {
+	private static Set<Vector3f> getBoundsCornersFromModel(BakedModel itemModel) {
 		float minX = 2;
 		float minY = 2;
 		float minZ = 2;
@@ -206,7 +208,7 @@ public class DisplayItemRenderer {
 		float maxZ = -2;
 
 		for (Direction direction : Direction.values()) {
-			List<BakedQuad> quads = itemModel.getQuads(null, direction, level.random);
+			List<BakedQuad> quads = itemModel.getQuads(null, direction, RAND);
 			for (BakedQuad quad : quads) {
 				int i = 0;
 				int[] verts = quad.getVertices();
@@ -224,7 +226,7 @@ public class DisplayItemRenderer {
 				}
 			}
 		}
-		List<BakedQuad> quads = itemModel.getQuads(null, null, level.random);
+		List<BakedQuad> quads = itemModel.getQuads(null, null, RAND);
 		for (BakedQuad quad : quads) {
 			int i = 0;
 			int[] verts = quad.getVertices();

@@ -1,6 +1,5 @@
 package net.p3pp3rf1y.sophisticatedstorage.compat.jei;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -9,6 +8,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.ShapedRecipe;
@@ -66,12 +66,12 @@ public class ShulkerBoxFromChestRecipesMaker {
 					}
 					i++;
 				}
-				ItemStack result = originalRecipe.assemble(craftinginventory, Minecraft.getInstance().level.registryAccess());
+				ItemStack result = ClientRecipeHelper.assemble(originalRecipe, craftinginventory);
 				//noinspection ConstantConditions
 				ResourceLocation newId = new ResourceLocation(SophisticatedStorage.ID, "shulker_from_" + BuiltInRegistries.ITEM.getKey(chestItem.getItem()).getPath()
 						+ result.getOrCreateTag().toString().toLowerCase(Locale.ROOT).replaceAll("[^a-z\\d/._-]", "_"));
 
-				recipes.add(new ShapedRecipe(newId, "", originalRecipe.category(), originalRecipe.getWidth(), originalRecipe.getHeight(), ingredientsCopy, result));
+				recipes.add(new ShapedRecipe(newId, "", CraftingBookCategory.MISC, originalRecipe.getWidth(), originalRecipe.getHeight(), ingredientsCopy, result));
 			});
 		}));
 
@@ -86,7 +86,7 @@ public class ShulkerBoxFromChestRecipesMaker {
 			for (ItemStack ingredientItem : ingredientItems) {
 				Item item = ingredientItem.getItem();
 				if (item instanceof ChestBlockItem chestBlockItem) {
-					if (Config.SERVER.enabledItems.isItemEnabled(chestBlockItem)) {
+					if (Config.COMMON.enabledItems.isItemEnabled(chestBlockItem)) {
 						chestItems.add(new ItemStack(chestBlockItem.getBlock()));
 					}
 				}

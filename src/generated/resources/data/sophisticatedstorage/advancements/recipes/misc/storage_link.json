@@ -30,5 +30,6 @@
     "recipes": [
       "sophisticatedstorage:storage_link"
     ]
-  }
+  },
+  "sends_telemetry_event": true
 }

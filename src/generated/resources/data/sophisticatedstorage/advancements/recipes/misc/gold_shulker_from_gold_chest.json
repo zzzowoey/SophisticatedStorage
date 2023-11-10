@@ -30,5 +30,6 @@
     "recipes": [
       "sophisticatedstorage:gold_shulker_from_gold_chest"
     ]
-  }
+  },
+  "sends_telemetry_event": true
 }

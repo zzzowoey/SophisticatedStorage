@@ -66,8 +66,8 @@ public class CompositeElementsModel extends BlockModel {
 	}
 
 	@Override
-	public void resolveParents(Function<ResourceLocation, UnbakedModel> models) {
-		super.resolveParents(models);
+	public void resolveParents(Function<ResourceLocation, UnbakedModel> modelGetter) {
+		super.resolveParents(modelGetter);
 
 		copyElementsFromAllIncludedModels();
 		copyTexturesFromAllIncludedModels();

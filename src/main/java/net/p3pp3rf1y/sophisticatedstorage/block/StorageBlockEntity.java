@@ -1,8 +1,11 @@
 package net.p3pp3rf1y.sophisticatedstorage.block;
 
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientChunkEvents;
+import io.github.fabricators_of_create.porting_lib.transfer.item.SlottedStackStorage;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerBlockEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
+import net.fabricmc.fabric.api.lookup.v1.block.BlockApiLookup;
 import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachmentBlockEntity;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
@@ -24,6 +27,7 @@ import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.p3pp3rf1y.sophisticatedcore.controller.IControllableStorage;
 import net.p3pp3rf1y.sophisticatedcore.controller.ILinkable;
+import net.p3pp3rf1y.sophisticatedcore.inventory.CachedFailedInsertInventoryHandler;
 import net.p3pp3rf1y.sophisticatedcore.inventory.ISlotTracker;
 import net.p3pp3rf1y.sophisticatedcore.inventory.ITrackedContentsItemHandler;
 import net.p3pp3rf1y.sophisticatedcore.inventory.InventoryHandler;
@@ -46,7 +50,8 @@ import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public abstract class StorageBlockEntity extends BlockEntity implements IControllableStorage, ILinkable, ILockable, Nameable, ITierDisplay, IUpgradeDisplay, RenderAttachmentBlockEntity {
+public abstract class StorageBlockEntity extends BlockEntity
+		implements IControllableStorage, ILinkable, ILockable, Nameable, ITierDisplay, IUpgradeDisplay, RenderAttachmentBlockEntity {
 	public static final String STORAGE_WRAPPER_TAG = "storageWrapper";
 	private final StorageWrapper storageWrapper;
 	@Nullable
@@ -64,6 +69,8 @@ public abstract class StorageBlockEntity extends BlockEntity implements IControl
 
 	private boolean chunkBeingUnloaded = false;
 
+	@Nullable
+	private SlottedStackStorage itemHandlerCap;
 	private boolean locked = false;
 	private boolean showLock = true;
 	private boolean showTier = true;
@@ -145,8 +152,12 @@ public abstract class StorageBlockEntity extends BlockEntity implements IControl
 		};
 		storageWrapper.setUpgradeCachesInvalidatedHandler(this::onUpgradeCachesInvalidated);
 
-		ClientChunkEvents.CHUNK_UNLOAD.register((level, levelChunk) -> this.onChunkUnloaded());
-		ServerChunkEvents.CHUNK_UNLOAD.register((level, levelChunk) -> this.onChunkUnloaded());
+		ServerChunkEvents.CHUNK_UNLOAD.register((level, chunk) -> onChunkUnloaded());
+		ServerBlockEntityEvents.BLOCK_ENTITY_UNLOAD.register((be, world) -> {
+			if (be == this) {
+				invalidateCaps();
+			}
+		});
 	}
 
 	protected void onUpgradeCachesInvalidated() {
@@ -356,13 +367,26 @@ public abstract class StorageBlockEntity extends BlockEntity implements IControl
 		setChanged();
 	}
 
-	// TODO:
+	@Nullable
+	public <T, C> T getCapability(BlockApiLookup<T, C> cap, @Nullable C opt) {
+		if (cap == ItemStorage.SIDED) {
+			if (itemHandlerCap == null) {
+				itemHandlerCap = new CachedFailedInsertInventoryHandler(getStorageWrapper().getInventoryForInputOutput(), () -> level != null ? level.getGameTime() : 0);
+			}
+			//noinspection unchecked
+			return (T) itemHandlerCap;
+		}
+		return null;
+	}
+
+	public void invalidateCaps() {
+		invalidateStorageCap();
+	}
+
 	private void invalidateStorageCap() {
-/*		if (itemHandlerCap != null) {
-			LazyOptional<IItemHandler> tempItemHandlerCap = itemHandlerCap;
+		if (itemHandlerCap != null) {
 			itemHandlerCap = null;
-			tempItemHandlerCap.invalidate();
-		}*/
+		}
 	}
 
 	public boolean shouldDropContents() {
@@ -541,11 +565,27 @@ public abstract class StorageBlockEntity extends BlockEntity implements IControl
 	}
 
 	public void onNeighborChange(BlockPos neighborPos) {
-		Direction direction = Direction.fromNormal(Integer.signum(neighborPos.getX() - worldPosition.getX()), Integer.signum(neighborPos.getY() - worldPosition.getY()), Integer.signum(neighborPos.getZ() - worldPosition.getZ()));
+		Direction direction = getNeighborDirection(neighborPos);
 		if (direction == null) {
 			return;
 		}
 		storageWrapper.getUpgradeHandler().getWrappersThatImplement(INeighborChangeListenerUpgrade.class).forEach(upgrade -> upgrade.onNeighborChange(level, worldPosition, direction));
+	}
+
+	@Nullable
+	private Direction getNeighborDirection(BlockPos neighborPos) {
+		Direction direction = null;
+		int normalX = Integer.signum(neighborPos.getX() - worldPosition.getX());
+		int normalY = Integer.signum(neighborPos.getY() - worldPosition.getY());
+		int normalZ = Integer.signum(neighborPos.getZ() - worldPosition.getZ());
+		for (Direction value : Direction.values()) {
+			Vec3i normal = value.getNormal();
+			if (normal.getX() == normalX && normal.getY() == normalY && normal.getZ() == normalZ) {
+				direction = value;
+				break;
+			}
+		}
+		return direction;
 	}
 
 	private static class ContentsFilteredItemHandler implements ITrackedContentsItemHandler {

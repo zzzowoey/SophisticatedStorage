@@ -56,6 +56,7 @@ import net.p3pp3rf1y.sophisticatedstorage.item.StorageBlockItem;
 import net.p3pp3rf1y.sophisticatedstorage.item.StorageToolItem;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
 

@@ -30,5 +30,6 @@
     "recipes": [
       "sophisticatedstorage:auto_smoking_upgrade"
     ]
-  }
+  },
+  "sends_telemetry_event": true
 }

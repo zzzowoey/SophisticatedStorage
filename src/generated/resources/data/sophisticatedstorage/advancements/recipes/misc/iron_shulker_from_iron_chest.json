@@ -30,5 +30,6 @@
     "recipes": [
       "sophisticatedstorage:iron_shulker_from_iron_chest"
     ]
-  }
+  },
+  "sends_telemetry_event": true
 }

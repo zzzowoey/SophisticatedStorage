@@ -30,5 +30,6 @@
     "recipes": [
       "sophisticatedstorage:oak_limited_barrel_2"
     ]
-  }
+  },
+  "sends_telemetry_event": true
 }

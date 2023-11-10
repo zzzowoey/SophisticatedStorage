@@ -37,7 +37,7 @@ public class OpenStorageInventoryMessage extends SimplePacketBase {
 			player.openMenu(
 					MenuProviderHelper.createMenuProvider(
 							(w, ctx, pl) -> {
-								if (pl.level.getBlockState(pos).getBlock() instanceof LimitedBarrelBlock) {
+								if (pl.getLevel().getBlockState(pos).getBlock() instanceof LimitedBarrelBlock) {
 									return new LimitedBarrelContainerMenu(w, pl, pos);
 								} else {
 									return new StorageContainerMenu(w, pl, pos);

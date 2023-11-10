@@ -30,5 +30,6 @@
     "recipes": [
       "sophisticatedstorage:warped_limited_barrel_3"
     ]
-  }
+  },
+  "sends_telemetry_event": true
 }

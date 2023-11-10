@@ -1,8 +1,6 @@
 package net.p3pp3rf1y.sophisticatedstorage.block;
 
 import com.mojang.math.Axis;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -40,6 +38,9 @@ import net.p3pp3rf1y.sophisticatedstorage.common.gui.LimitedBarrelContainerMenu;
 import net.p3pp3rf1y.sophisticatedstorage.common.gui.StorageContainerMenu;
 import net.p3pp3rf1y.sophisticatedstorage.init.ModBlocks;
 import net.p3pp3rf1y.sophisticatedstorage.item.BarrelBlockItem;
+
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import java.util.List;
 import java.util.Optional;
@@ -169,7 +170,7 @@ public class LimitedBarrelBlock extends BarrelBlock {
 			return 0;
 		}
 
-		Vector3f blockCoords = new Vector3f(hitResult.getLocation().subtract(pos.getX(), pos.getY(), pos.getZ()).toVector3f());
+		Vector3f blockCoords = hitResult.getLocation().subtract(pos.getX(), pos.getY(), pos.getZ()).toVector3f();
 		blockCoords.add(-0.5f, -0.5f, -0.5f); // move to corner
 		VerticalFacing verticalFacing = getVerticalFacing(state);
 		if (verticalFacing != VerticalFacing.NO) {
@@ -224,6 +225,7 @@ public class LimitedBarrelBlock extends BarrelBlock {
 	private Optional<BlockHitResult> getHitResult(Player player) {
 		double d = Minecraft.getInstance().gameMode.getPickRange();
 		HitResult hitResult = player.pick(d, 0, false);
+		// HitResult hitResult = player.pick(player.getBlockReach(), 0, false);
 		return hitResult instanceof BlockHitResult blockHitResult ? Optional.of(blockHitResult) : Optional.empty();
 	}
 

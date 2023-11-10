@@ -114,15 +114,12 @@ public class ClientEventHandler {
 
 		ClientEventHandler.registerLayer();
 		ClientEventHandler.registerTooltipComponent();
-
 		ClientEventHandler.registerOverlay();
-
 		ClientEventHandler.registerEntityRenderers();
 		ClientEventHandler.registerItemRenderers();
-
 		ClientEventHandler.registerKeyMappings();
-
 		ClientEventHandler.registerStorageLayerLoader();
+		ClientEventHandler.onRegisterReloadListeners();
 
 		PreparableModelLoadingPlugin.register(((resourceManager, executor) -> CompletableFuture.completedFuture(resourceManager)), (resourceManager, context) -> onRegisterAdditionalModels(resourceManager, context::addModels));
 
@@ -139,14 +136,6 @@ public class ClientEventHandler {
 
 		AttackBlockCallback.EVENT.register(ClientEventHandler::onLimitedBarrelClicked);
 		ClientRawInputEvent.MOUSE_SCROLLED.register(ClientEventHandler::onMouseScrolled);
-
-		ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(new SimpleIdentifiablePrepareableReloadListener<>(SophisticatedStorage.getRL("main")) {
-			@Override
-			protected void apply(Object object, ResourceManager resourceManager, ProfilerFiller profiler) {
-				BarrelDynamicModelBase.invalidateCache();
-				BarrelBakedModelBase.invalidateCache();
-			}
-		});
 	}
 
 	private static void onRegisterAdditionalModels(ResourceManager manager, Consumer<ResourceLocation> out) {
@@ -160,22 +149,6 @@ public class ClientEventHandler {
 				out.accept(new ResourceLocation(modelName.getNamespace(), modelName.getPath().substring("models/".length()).replace(".json", "")));
 			}
 		});
-	}
-
-	private static InteractionResult onLimitedBarrelClicked(Player player, Level level, InteractionHand hand, BlockPos pos, Direction direction) {
-		if (!player.isCreative()) {
-			return InteractionResult.PASS;
-		}
-
-		BlockState state = level.getBlockState(pos);
-		if (!(state.getBlock() instanceof LimitedBarrelBlock limitedBarrel)) {
-			return InteractionResult.PASS;
-		}
-		if (limitedBarrel.isLookingAtFront(player, pos, state)) {
-			return InteractionResult.SUCCESS;
-		}
-
-		return InteractionResult.PASS;
 	}
 
 	private static InteractionResult onMouseScrolled(Minecraft mc, double delta) {
@@ -193,6 +166,25 @@ public class ClientEventHandler {
 		}
 		StoragePacketHandler.sendToServer(new ScrolledToolMessage(delta > 0));
 		return InteractionResult.SUCCESS;
+	}
+
+	private static InteractionResult onLimitedBarrelClicked(Player player, Level level, InteractionHand hand, BlockPos pos, Direction direction) {
+		BlockState state = level.getBlockState(pos);
+		if (!(state.getBlock() instanceof LimitedBarrelBlock limitedBarrel)) {
+			return InteractionResult.PASS;
+		}
+		if (limitedBarrel.isLookingAtFront(player, pos, state)) {
+			if (player.isCreative()) {
+				return InteractionResult.SUCCESS;
+			} else {
+				if (player.getDestroySpeed(state) < 2) {
+					Minecraft.getInstance().gameMode.destroyDelay = 5;
+					return InteractionResult.FAIL;
+				}
+			}
+		}
+
+		return InteractionResult.PASS;
 	}
 
 	public static boolean handleGuiKeyPress(Screen screen, int key, int scancode, int modifiers) {
@@ -231,6 +223,16 @@ public class ClientEventHandler {
 		loaders.put(SophisticatedStorage.getRL("simple_composite"), SimpleCompositeModel.Loader.INSTANCE);
 	}
 
+	private static void onRegisterReloadListeners() {
+		ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(new SimpleIdentifiablePrepareableReloadListener<>(SophisticatedStorage.getRL("main")) {
+			@Override
+			protected void apply(Object object, ResourceManager resourceManager, ProfilerFiller profiler) {
+				BarrelDynamicModelBase.invalidateCache();
+				BarrelBakedModelBase.invalidateCache();
+			}
+		});
+	}
+
 	public static void registerLayer() {
 		EntityModelLayerRegistry.registerModelLayer(CHEST_LAYER, () -> ChestRenderer.createSingleBodyLayer(true));
 	}
@@ -263,7 +265,7 @@ public class ClientEventHandler {
 		BlockEntityRenderers.register(ModBlocks.SHULKER_BOX_BLOCK_ENTITY_TYPE, ShulkerBoxRenderer::new);
 		BlockEntityRenderers.register(ModBlocks.CONTROLLER_BLOCK_ENTITY_TYPE, context -> new ControllerRenderer());
 
-		BlockRenderLayerMap.INSTANCE.putBlocks(RenderType.cutout(), ModBlocks.getBlocksByPredicate((id, block) -> id.contains("barrel")).toArray(new Block[0]));
+		BlockRenderLayerMap.INSTANCE.putBlocks(RenderType.cutout(), ModBlocks.getBlocksByPredicate((id, block) -> id.getPath().contains("barrel")).toArray(new Block[0]));
 	}
 
 	private static void registerItemRenderers() {

@@ -30,5 +30,6 @@
     "recipes": [
       "sophisticatedstorage:acacia_limited_barrel_4"
     ]
-  }
+  },
+  "sends_telemetry_event": true
 }

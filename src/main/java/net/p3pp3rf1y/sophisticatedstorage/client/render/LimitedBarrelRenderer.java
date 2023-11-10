@@ -1,8 +1,6 @@
 package net.p3pp3rf1y.sophisticatedstorage.client.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import org.joml.Vector3f;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -18,6 +16,8 @@ import net.p3pp3rf1y.sophisticatedstorage.block.LimitedBarrelBlock;
 import net.p3pp3rf1y.sophisticatedstorage.block.LimitedBarrelBlockEntity;
 import net.p3pp3rf1y.sophisticatedstorage.block.StorageBlockBase;
 import net.p3pp3rf1y.sophisticatedstorage.block.VerticalFacing;
+
+import org.joml.Vector3f;
 
 import java.util.List;
 

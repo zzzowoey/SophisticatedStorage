@@ -28,5 +28,6 @@
     "recipes": [
       "sophisticatedstorage:packing_tape"
     ]
-  }
+  },
+  "sends_telemetry_event": true
 }

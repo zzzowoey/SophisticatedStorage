@@ -63,7 +63,7 @@ public abstract class WoodStorageBlockEntity extends StorageBlockEntity {
 		if (displayName != null) {
 			return displayName;
 		}
-		return getWoodType().map(this::makeWoodStorageDescriptionId).orElse(getBlockState().getBlock().getName());
+		return makeWoodStorageDescriptionId(getWoodType().orElse(null));
 	}
 
 	private Component makeWoodStorageDescriptionId(WoodType wt) {

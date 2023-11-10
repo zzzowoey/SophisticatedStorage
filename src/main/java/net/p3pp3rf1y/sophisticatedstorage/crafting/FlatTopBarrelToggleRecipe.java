@@ -14,8 +14,8 @@ import net.p3pp3rf1y.sophisticatedstorage.init.ModBlocks;
 import net.p3pp3rf1y.sophisticatedstorage.item.BarrelBlockItem;
 
 public class FlatTopBarrelToggleRecipe extends CustomRecipe {
-	public FlatTopBarrelToggleRecipe(ResourceLocation registryName, CraftingBookCategory craftingBookCategory) {
-		super(registryName, craftingBookCategory);
+	public FlatTopBarrelToggleRecipe(ResourceLocation registryName, CraftingBookCategory category) {
+		super(registryName, category);
 	}
 
 	@Override
@@ -38,7 +38,7 @@ public class FlatTopBarrelToggleRecipe extends CustomRecipe {
 	}
 
 	@Override
-	public ItemStack assemble(CraftingContainer container, RegistryAccess registryManager) {
+	public ItemStack assemble(CraftingContainer container, RegistryAccess registryAccess) {
 		for (int i = 0; i < container.getContainerSize(); i++) {
 			ItemStack item = container.getItem(i);
 			if (item.isEmpty()) {

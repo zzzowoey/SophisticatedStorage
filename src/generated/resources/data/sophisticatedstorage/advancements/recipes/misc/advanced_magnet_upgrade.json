@@ -30,5 +30,6 @@
     "recipes": [
       "sophisticatedstorage:advanced_magnet_upgrade"
     ]
-  }
+  },
+  "sends_telemetry_event": true
 }

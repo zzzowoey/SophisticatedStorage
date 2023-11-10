@@ -7,9 +7,9 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.BlockFamily;
 import net.minecraft.data.recipes.FinishedRecipe;
-import net.minecraft.data.recipes.LegacyUpgradeRecipeBuilder;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.SpecialRecipeBuilder;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
@@ -55,7 +55,7 @@ public class StorageRecipeProvider extends FabricRecipeProvider {
 		addUpgradeRecipes(consumer);
 		addTierUpgradeItemRecipes(consumer);
 
-		ShapelessBasedRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.PACKING_TAPE)
+		ShapelessBasedRecipeBuilder.shapeless(ModItems.PACKING_TAPE)
 				.requires(Tags.Items.SLIMEBALLS)
 				.requires(Items.PAPER)
 				.unlockedBy("has_slime", has(Tags.Items.SLIMEBALLS))
@@ -105,9 +105,10 @@ public class StorageRecipeProvider extends FabricRecipeProvider {
 				.unlockedBy("has_gold_" + RegistryHelper.getItemKey(goldTierItem).getPath(), has(goldTierItem))
 				.save(consumer);
 
-		new LegacyUpgradeRecipeBuilder(ModBlocks.SMITHING_STORAGE_UPGRADE_RECIPE_SERIALIZER, Ingredient.of(diamondTierItem),
-				Ingredient.of(Items.NETHERITE_INGOT), RecipeCategory.MISC, netheriteTierItem)
-				.unlocks("has_diamond_" + RegistryHelper.getItemKey(baseTierItem).getPath(), has(diamondTierItem))
+		ShapelessBasedRecipeBuilder.shapeless(netheriteTierItem, ModBlocks.STORAGE_TIER_UPGRADE_SHAPELESS_RECIPE_SERIALIZER)
+				.requires(Ingredient.of(diamondTierItem))
+				.requires(Tags.Items.INGOTS_NETHERITE)
+				.unlockedBy("has_diamond_" + RegistryHelper.getItemKey(baseTierItem).getPath(), has(diamondTierItem))
 				.save(consumer, RegistryHelper.getItemKey(netheriteTierItem));
 	}
 
@@ -123,7 +124,7 @@ public class StorageRecipeProvider extends FabricRecipeProvider {
 				.unlockedBy("has_base_tier_wooden_storage", has(ModBlocks.BASE_TIER_WOODEN_STORAGE_TAG))
 				.save(consumer);
 
-		ShapelessBasedRecipeBuilder.shapeless(RecipeCategory.MISC, ModBlocks.STORAGE_LINK_ITEM, 3)
+		ShapelessBasedRecipeBuilder.shapeless(ModBlocks.STORAGE_LINK_ITEM, 3)
 				.requires(ModBlocks.CONTROLLER_ITEM)
 				.requires(Tags.Items.ENDER_PEARLS)
 				.unlockedBy("has_controller", has(ModBlocks.CONTROLLER_ITEM))
@@ -162,7 +163,7 @@ public class StorageRecipeProvider extends FabricRecipeProvider {
 				.unlockedBy("has_shulker_shell", has(Items.SHULKER_SHELL))
 				.save(consumer);
 
-		ShapelessBasedRecipeBuilder.shapeless(RecipeCategory.MISC, ModBlocks.SHULKER_BOX_ITEM)
+		ShapelessBasedRecipeBuilder.shapeless(ModBlocks.SHULKER_BOX_ITEM)
 				.requires(Items.SHULKER_BOX).requires(Items.REDSTONE_TORCH)
 				.save(consumer, "shulker_box_from_vanilla_shulker_box");
 
@@ -268,7 +269,7 @@ public class StorageRecipeProvider extends FabricRecipeProvider {
 				.unlockedBy("has_basic_to_gold_tier_upgrade", has(ModItems.BASIC_TO_GOLD_TIER_UPGRADE))
 				.save(consumer);
 
-		ShapelessBasedRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.BASIC_TO_NETHERITE_TIER_UPGRADE)
+		ShapelessBasedRecipeBuilder.shapeless(ModItems.BASIC_TO_NETHERITE_TIER_UPGRADE)
 				.requires(ModItems.BASIC_TO_DIAMOND_TIER_UPGRADE)
 				.requires(Tags.Items.INGOTS_NETHERITE)
 				.unlockedBy("has_basic_to_diamond_tier_upgrade", has(ModItems.BASIC_TO_DIAMOND_TIER_UPGRADE))
@@ -292,7 +293,7 @@ public class StorageRecipeProvider extends FabricRecipeProvider {
 				.unlockedBy("has_iron_to_gold_tier_upgrade", has(ModItems.IRON_TO_GOLD_TIER_UPGRADE))
 				.save(consumer);
 
-		ShapelessBasedRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.IRON_TO_NETHERITE_TIER_UPGRADE)
+		ShapelessBasedRecipeBuilder.shapeless(ModItems.IRON_TO_NETHERITE_TIER_UPGRADE)
 				.requires(ModItems.IRON_TO_DIAMOND_TIER_UPGRADE)
 				.requires(Tags.Items.INGOTS_NETHERITE)
 				.unlockedBy("has_iron_to_diamond_tier_upgrade", has(ModItems.IRON_TO_DIAMOND_TIER_UPGRADE))
@@ -307,13 +308,13 @@ public class StorageRecipeProvider extends FabricRecipeProvider {
 				.unlockedBy(HAS_REDSTONE_TORCH_CRITERION_NAME, has(Items.REDSTONE_TORCH))
 				.save(consumer);
 
-		ShapelessBasedRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.GOLD_TO_NETHERITE_TIER_UPGRADE)
+		ShapelessBasedRecipeBuilder.shapeless(ModItems.GOLD_TO_NETHERITE_TIER_UPGRADE)
 				.requires(ModItems.GOLD_TO_DIAMOND_TIER_UPGRADE)
 				.requires(Tags.Items.INGOTS_NETHERITE)
 				.unlockedBy("has_gold_to_diamond_tier_upgrade", has(ModItems.GOLD_TO_DIAMOND_TIER_UPGRADE))
 				.save(consumer);
 
-		ShapelessBasedRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.DIAMOND_TO_NETHERITE_TIER_UPGRADE)
+		ShapelessBasedRecipeBuilder.shapeless(ModItems.DIAMOND_TO_NETHERITE_TIER_UPGRADE)
 				.requires(Items.REDSTONE_TORCH)
 				.requires(Tags.Items.INGOTS_NETHERITE)
 				.unlockedBy(HAS_REDSTONE_TORCH_CRITERION_NAME, has(Items.REDSTONE_TORCH))
@@ -690,7 +691,7 @@ public class StorageRecipeProvider extends FabricRecipeProvider {
 	private void addChestRecipes(Consumer<FinishedRecipe> consumer) {
 		WoodStorageBlockBase.CUSTOM_TEXTURE_WOOD_TYPES.forEach((woodType, blockFamily) -> woodChestRecipe(consumer, woodType, blockFamily.getBaseBlock()));
 
-		ShapelessBasedRecipeBuilder.shapeless(RecipeCategory.MISC, WoodStorageBlockItem.setWoodType(new ItemStack(ModBlocks.CHEST_ITEM), WoodType.OAK))
+		ShapelessBasedRecipeBuilder.shapeless(WoodStorageBlockItem.setWoodType(new ItemStack(ModBlocks.CHEST_ITEM), WoodType.OAK))
 				.requires(Blocks.CHEST)
 				.requires(Blocks.REDSTONE_TORCH)
 				.unlockedBy("has_vanilla_chest", has(Blocks.CHEST))
@@ -731,7 +732,7 @@ public class StorageRecipeProvider extends FabricRecipeProvider {
 	private void addBarrelRecipes(Consumer<FinishedRecipe> consumer) {
 		WoodStorageBlockBase.CUSTOM_TEXTURE_WOOD_TYPES.forEach((woodType, blockFamily) -> woodBarrelRecipe(consumer, woodType, blockFamily.getBaseBlock(), blockFamily.get(BlockFamily.Variant.SLAB)));
 
-		ShapelessBasedRecipeBuilder.shapeless(RecipeCategory.MISC, WoodStorageBlockItem.setWoodType(new ItemStack(ModBlocks.BARREL_ITEM), WoodType.SPRUCE))
+		ShapelessBasedRecipeBuilder.shapeless(WoodStorageBlockItem.setWoodType(new ItemStack(ModBlocks.BARREL_ITEM), WoodType.SPRUCE))
 				.requires(Blocks.BARREL)
 				.requires(Blocks.REDSTONE_TORCH)
 				.unlockedBy("has_vanilla_barrel", has(Blocks.BARREL))
@@ -808,7 +809,7 @@ public class StorageRecipeProvider extends FabricRecipeProvider {
 	private void tintedShulkerBoxRecipe(Consumer<FinishedRecipe> consumer, Block vanillaShulkerBox, DyeColor dyeColor) {
 		//noinspection ConstantConditions
 		String vanillaShulkerBoxName = BuiltInRegistries.BLOCK.getKey(vanillaShulkerBox).getPath();
-		ShapelessBasedRecipeBuilder.shapeless(RecipeCategory.MISC, ModBlocks.SHULKER_BOX.getTintedStack(dyeColor)).requires(vanillaShulkerBox).requires(Items.REDSTONE_TORCH)
+		ShapelessBasedRecipeBuilder.shapeless(ModBlocks.SHULKER_BOX.getTintedStack(dyeColor)).requires(vanillaShulkerBox).requires(Items.REDSTONE_TORCH)
 				.unlockedBy("has_" + vanillaShulkerBoxName, has(vanillaShulkerBox))
 				.save(consumer, SophisticatedStorage.getRL(vanillaShulkerBoxName + "_to_sophisticated"));
 	}

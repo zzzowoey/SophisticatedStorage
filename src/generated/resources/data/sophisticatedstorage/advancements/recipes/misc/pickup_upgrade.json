@@ -30,5 +30,6 @@
     "recipes": [
       "sophisticatedstorage:pickup_upgrade"
     ]
-  }
+  },
+  "sends_telemetry_event": true
 }

@@ -30,5 +30,6 @@
     "recipes": [
       "sophisticatedstorage:limited_gold_barrel_4"
     ]
-  }
+  },
+  "sends_telemetry_event": true
 }

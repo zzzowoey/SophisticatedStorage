@@ -28,5 +28,6 @@
     "recipes": [
       "sophisticatedstorage:controller"
     ]
-  }
+  },
+  "sends_telemetry_event": true
 }

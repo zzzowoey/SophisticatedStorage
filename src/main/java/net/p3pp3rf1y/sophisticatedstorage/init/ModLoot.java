@@ -1,3 +1,4 @@
+/*
 package net.p3pp3rf1y.sophisticatedstorage.init;
 
 import net.minecraft.core.Registry;
@@ -15,3 +16,4 @@ public class ModLoot {
 		Registry.register(BuiltInRegistries.LOOT_FUNCTION_TYPE, SophisticatedStorage.getRL("copy_storage_data"), COPY_STORAGE_DATA);
 	}
 }
+*/

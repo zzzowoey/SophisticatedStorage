@@ -30,5 +30,6 @@
     "recipes": [
       "sophisticatedstorage:netherite_shulker_from_netherite_chest"
     ]
-  }
+  },
+  "sends_telemetry_event": true
 }

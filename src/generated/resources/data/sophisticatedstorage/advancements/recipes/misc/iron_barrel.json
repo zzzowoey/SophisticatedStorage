@@ -30,5 +30,6 @@
     "recipes": [
       "sophisticatedstorage:iron_barrel"
     ]
-  }
+  },
+  "sends_telemetry_event": true
 }

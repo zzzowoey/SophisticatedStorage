@@ -14,8 +14,8 @@ import net.p3pp3rf1y.sophisticatedstorage.init.ModBlocks;
 import java.util.List;
 
 public class StorageDyeRecipe extends StorageDyeRecipeBase {
-	public StorageDyeRecipe(ResourceLocation registryName, CraftingBookCategory craftingBookCategory) {
-		super(registryName, craftingBookCategory);
+	public StorageDyeRecipe(ResourceLocation registryName, CraftingBookCategory category) {
+		super(registryName, category);
 	}
 
 	@Override

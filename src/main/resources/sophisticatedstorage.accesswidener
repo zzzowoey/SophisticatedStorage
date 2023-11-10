@@ -17,3 +17,7 @@ accessible field net/minecraft/client/renderer/block/model/BlockModel textureMap
 accessible field net/minecraft/client/Minecraft itemColors Lnet/minecraft/client/color/item/ItemColors;
 
 accessible method net/minecraft/client/resources/model/SimpleBakedModel$Builder <init> (ZZZLnet/minecraft/client/renderer/block/model/ItemTransforms;Lnet/minecraft/client/renderer/block/model/ItemOverrides;)V
+
+accessible field net/minecraft/client/multiplayer/MultiPlayerGameMode destroyDelay I
+
+accessible field net/minecraft/world/item/crafting/ShapelessRecipe result Lnet/minecraft/world/item/ItemStack;
