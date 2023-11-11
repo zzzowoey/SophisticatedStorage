@@ -136,6 +136,7 @@ public class StorageTextureManager extends SimpleJsonResourceReloadListener impl
 		return result;
 	}
 
+	@SuppressWarnings("unused")
 	public Collection<Material> getUniqueChestMaterials() {
 		Set<Material> uniqueMaterials = new HashSet<>();
 		woodChestMaterials.values().forEach(chestMaterials -> uniqueMaterials.addAll(chestMaterials.values()));

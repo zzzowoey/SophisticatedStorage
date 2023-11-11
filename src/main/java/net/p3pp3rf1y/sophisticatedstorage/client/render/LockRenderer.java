@@ -2,6 +2,9 @@ package net.p3pp3rf1y.sophisticatedstorage.client.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -10,10 +13,6 @@ import net.minecraft.client.resources.model.Material;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.p3pp3rf1y.sophisticatedstorage.SophisticatedStorage;
 import net.p3pp3rf1y.sophisticatedstorage.block.StorageBlockEntity;
-
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
 
 import java.util.function.BooleanSupplier;
 
@@ -33,7 +32,6 @@ public class LockRenderer {
 		VertexConsumer vertexConsumer;
 		boolean translucentRender = !blockEntity.shouldShowLock() && holdsCorrectItem.getAsBoolean();
 		if (translucentRender) {
-			//noinspection resource
 			TextureAtlasSprite sprite = LockRenderer.LOCK_TEXTURE.sprite();
 			vertexConsumer = sprite.wrap(bufferSource.getBuffer(RenderType.entityTranslucent(sprite.atlasLocation())));
 		} else {

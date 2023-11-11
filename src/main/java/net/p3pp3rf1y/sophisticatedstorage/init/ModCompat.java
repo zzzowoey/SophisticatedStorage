@@ -1,25 +1,22 @@
 package net.p3pp3rf1y.sophisticatedstorage.init;
 
 import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.Version;
-import net.fabricmc.loader.api.VersionParsingException;
 import net.fabricmc.loader.api.metadata.version.VersionInterval;
 import net.fabricmc.loader.impl.util.version.VersionIntervalImpl;
-import net.fabricmc.loader.impl.util.version.VersionParser;
 import net.p3pp3rf1y.sophisticatedcore.compat.ICompat;
 import net.p3pp3rf1y.sophisticatedstorage.SophisticatedStorage;
 
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
+import javax.annotation.Nullable;
 
 public class ModCompat {
 	private ModCompat() {}
 
-	private static final String RUBIDIUM_MOD_ID = "rubidium";
+	// private static final String RUBIDIUM_MOD_ID = "rubidium";
 
 	private static final Map<CompatInfo, Supplier<Callable<ICompat>>> compatFactories = new HashMap<>();
 

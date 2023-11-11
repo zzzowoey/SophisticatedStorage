@@ -66,7 +66,7 @@ public abstract class WoodStorageBlockEntity extends StorageBlockEntity {
 		return makeWoodStorageDescriptionId(getWoodType().orElse(null));
 	}
 
-	private Component makeWoodStorageDescriptionId(WoodType wt) {
+	private Component makeWoodStorageDescriptionId(@Nullable WoodType wt) {
 		String id = Util.makeDescriptionId("block", Objects.requireNonNull(BuiltInRegistries.BLOCK.getKey(getBlockState().getBlock())));
 		return WoodStorageBlockItem.getDisplayName(id, wt);
 	}

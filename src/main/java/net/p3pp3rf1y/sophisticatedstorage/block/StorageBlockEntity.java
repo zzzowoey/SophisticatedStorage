@@ -97,13 +97,14 @@ public abstract class StorageBlockEntity extends BlockEntity
 			@Override
 			public ItemStack getWrappedStorageStack() {
 				BlockPos pos = getBlockPos();
+				//noinspection DataFlowIssue
 				return getBlockState().getBlock().getCloneItemStack(getLevel(), pos, getBlockState());
 			}
 
 			@Override
 			protected void onUpgradeRefresh() {
-				if (!isDroppingContents && level != null && !level.isClientSide && getBlockState().getBlock() instanceof IStorageBlock storageBlock) {
-					storageBlock.setTicking(level, getBlockPos(), getBlockState(), !storageWrapper.getUpgradeHandler().getWrappersThatImplement(ITickableUpgrade.class).isEmpty());
+				if (!isDroppingContents && getLevel() != null && !getLevel().isClientSide && getBlockState().getBlock() instanceof IStorageBlock storageBlock) {
+					storageBlock.setTicking(getLevel(), getBlockPos(), getBlockState(), !storageWrapper.getUpgradeHandler().getWrappersThatImplement(ITickableUpgrade.class).isEmpty());
 				}
 			}
 
@@ -367,6 +368,7 @@ public abstract class StorageBlockEntity extends BlockEntity
 		setChanged();
 	}
 
+	@SuppressWarnings("unused")
 	@Nullable
 	public <T, C> T getCapability(BlockApiLookup<T, C> cap, @Nullable C opt) {
 		if (cap == ItemStorage.SIDED) {
@@ -569,7 +571,8 @@ public abstract class StorageBlockEntity extends BlockEntity
 		if (direction == null) {
 			return;
 		}
-		storageWrapper.getUpgradeHandler().getWrappersThatImplement(INeighborChangeListenerUpgrade.class).forEach(upgrade -> upgrade.onNeighborChange(level, worldPosition, direction));
+		//noinspection DataFlowIssue
+		storageWrapper.getUpgradeHandler().getWrappersThatImplement(INeighborChangeListenerUpgrade.class).forEach(upgrade -> upgrade.onNeighborChange(getLevel(), worldPosition, direction));
 	}
 
 	@Nullable

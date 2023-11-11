@@ -59,7 +59,7 @@ public class CompositeElementsModel extends BlockModel {
 		return modelBuilder.build();
 	}
 
-	@SuppressWarnings({"java:S1874", "deprecation"}) //overriding getElements here
+	@SuppressWarnings("java:S1874") //overriding getElements here
 	@Override
 	public List<BlockElement> getElements() {
 		return elements;
@@ -73,7 +73,7 @@ public class CompositeElementsModel extends BlockModel {
 		copyTexturesFromAllIncludedModels();
 	}
 
-	@SuppressWarnings({"java:S1874", "deprecation"}) //need to call getElements even though deprecated
+	@SuppressWarnings("java:S1874") //need to call getElements even though deprecated
 	private void copyElementsFromAllIncludedModels() {
 		if (parent != null) {
 			elements.addAll(parent.getElements());

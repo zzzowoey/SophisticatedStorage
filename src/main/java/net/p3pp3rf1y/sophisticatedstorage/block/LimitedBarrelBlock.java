@@ -1,6 +1,8 @@
 package net.p3pp3rf1y.sophisticatedstorage.block;
 
 import com.mojang.math.Axis;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -38,9 +40,6 @@ import net.p3pp3rf1y.sophisticatedstorage.common.gui.LimitedBarrelContainerMenu;
 import net.p3pp3rf1y.sophisticatedstorage.common.gui.StorageContainerMenu;
 import net.p3pp3rf1y.sophisticatedstorage.init.ModBlocks;
 import net.p3pp3rf1y.sophisticatedstorage.item.BarrelBlockItem;
-
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
 import java.util.List;
 import java.util.Optional;

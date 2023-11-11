@@ -1,5 +1,7 @@
 package net.p3pp3rf1y.sophisticatedstorage.client.render;
 
+import org.joml.Vector3f;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
@@ -11,8 +13,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.p3pp3rf1y.sophisticatedstorage.block.LimitedBarrelBlock;
 import net.p3pp3rf1y.sophisticatedstorage.block.VerticalFacing;
 import net.p3pp3rf1y.sophisticatedstorage.client.util.QuadTransformers;
-
-import org.joml.Vector3f;
 
 import java.util.Map;
 import java.util.function.Function;

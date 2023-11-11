@@ -9,7 +9,6 @@ import net.p3pp3rf1y.sophisticatedstorage.block.ItemContentsStorage;
 import net.p3pp3rf1y.sophisticatedstorage.block.StorageBlockEntity;
 import net.p3pp3rf1y.sophisticatedstorage.block.StorageWrapper;
 
-import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.UUID;
 import javax.annotation.Nullable;

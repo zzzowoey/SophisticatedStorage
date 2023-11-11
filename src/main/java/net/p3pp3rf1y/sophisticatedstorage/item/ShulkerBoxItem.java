@@ -93,49 +93,6 @@ public class ShulkerBoxItem extends StorageBlockItem implements IStashStorageIte
 		});
 	}
 
-	// TODO: Check the lookup implementation
-	/*@Override
-	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
-		return new ICapabilityProvider() {
-			private IStorageWrapper wrapper = null;
-
-			@Nonnull
-			@Override
-			public <T> LazyOptional<T> getCapability(Capability<T> cap, @Nullable Direction side) {
-				if (stack.getCount() == 1 && cap == CapabilityStorageWrapper.getCapabilityInstance()) {
-					initWrapper();
-					return LazyOptional.of(() -> wrapper).cast();
-				}
-				return LazyOptional.empty();
-			}
-
-			private void initWrapper() {
-				if (wrapper == null) {
-					UUID uuid = NBTHelper.getUniqueId(stack, "uuid").orElse(null);
-					StorageWrapper storageWrapper = new StackStorageWrapper(stack) {
-						@Override
-						protected boolean isAllowedInStorage(ItemStack stack) {
-							//TODO add config with other things that can't go in
-							//TODO add backpacks compat so that they can't go in
-							Block block = Block.byItem(stack.getItem());
-							return !(block instanceof ShulkerBoxBlock) && !(block instanceof net.minecraft.world.level.block.ShulkerBoxBlock);
-						}
-					};
-					if (uuid != null) {
-						CompoundTag compoundtag = ItemContentsStorage.get().getOrCreateStorageContents(uuid).getCompound(StorageBlockEntity.STORAGE_WRAPPER_TAG);
-						storageWrapper.load(compoundtag);
-						storageWrapper.setContentsUuid(uuid); //setting here because client side the uuid isn't in contentsnbt before this data is synced from server and it would create a new one otherwise
-					}
-					wrapper = storageWrapper;
-				}
-			}
-		};
-	}*/
-
-	private Optional<UUID> getContentsUuid(ItemStack stack) {
-		return NBTHelper.getUniqueId(stack, "uuid");
-	}
-
 	@Override
 	public Optional<TooltipComponent> getInventoryTooltip(ItemStack stack) {
 		return Optional.of(new StorageContentsTooltip(stack));

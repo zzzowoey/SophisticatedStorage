@@ -7,6 +7,7 @@ import com.google.common.cache.LoadingCache;
 import com.mojang.datafixers.util.Either;
 import com.mojang.math.Axis;
 import com.mojang.math.Transformation;
+import org.joml.Vector3f;
 
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachedBlockView;
@@ -31,10 +32,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.inventory.InventoryMenu;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -51,7 +50,6 @@ import net.p3pp3rf1y.sophisticatedstorage.init.ModItems;
 import net.p3pp3rf1y.sophisticatedstorage.item.BarrelBlockItem;
 import net.p3pp3rf1y.sophisticatedstorage.item.StorageBlockItem;
 import net.p3pp3rf1y.sophisticatedstorage.item.WoodStorageBlockItem;
-import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -65,6 +63,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import static net.fabricmc.fabric.api.renderer.v1.mesh.QuadView.VANILLA_QUAD_STRIDE;
@@ -124,7 +123,6 @@ public abstract class BarrelBakedModelBase implements BakedModel, IDataModel {
 	protected final Map<String, Map<BarrelModelPart, BakedModel>> woodModelParts;
 
 	private final ItemOverrides barrelItemOverrides;
-	private Item barrelItem = Items.AIR;
 	@Nullable
 	private String barrelWoodName = null;
 	private boolean barrelHasMainColor = false;
@@ -133,7 +131,6 @@ public abstract class BarrelBakedModelBase implements BakedModel, IDataModel {
 	private boolean barrelShowsTier = true;
 	private Map<BarrelMaterial, ResourceLocation> barrelMaterials = new EnumMap<>(BarrelMaterial.class);
 
-	private boolean flatTop = false;
 	private final Map<String, Map<DynamicBarrelBakingData.DynamicPart, DynamicBarrelBakingData>> woodDynamicBakingData;
 	private final Map<String, Map<BarrelModelPart, BakedModel>> woodPartitionedModelParts;
 	private final Cache<Integer, BakedModel> dynamicBakedModelCache = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.MINUTES).build();
@@ -206,12 +203,13 @@ public abstract class BarrelBakedModelBase implements BakedModel, IDataModel {
 
 	@Override
 	public void emitItemQuads(ItemStack stack, Supplier<RandomSource> random, RenderContext context) {
-		emitQuads(null, null, null, stack, random, context, barrelHasMainColor, barrelHasAccentColor, barrelIsPacked, barrelShowsTier, barrelWoodName,
-				barrelMaterials, null);
+		emitQuads(null, null, null, stack, random, context, barrelHasMainColor, barrelHasAccentColor, barrelIsPacked, barrelShowsTier,
+				barrelWoodName,	barrelMaterials, null);
 	}
 
-	private void emitQuads(@Nullable BlockAndTintGetter blockView, @Nullable BlockState state, @Nullable BlockPos pos, @Nullable ItemStack stack, Supplier<RandomSource> random, RenderContext context, boolean hasMainColor, boolean hasAccentColor, boolean isPacked, boolean showsTier, String woodName,
-						   Map<BarrelMaterial, ResourceLocation> materials, @Nullable BarrelBlockEntity.ModelData extraData) {
+	private void emitQuads(@Nullable BlockAndTintGetter blockView, @Nullable BlockState state, @Nullable BlockPos pos, @Nullable ItemStack stack,
+			Supplier<RandomSource> random, RenderContext context, boolean hasMainColor, boolean hasAccentColor, boolean isPacked, boolean showsTier,
+			String woodName, Map<BarrelMaterial, ResourceLocation> materials, @Nullable BarrelBlockEntity.ModelData extraData) {
 		boolean isBakedDynamically = !materials.isEmpty() && woodDynamicBakingData.containsKey(woodName);
 		Set<BarrelMaterial.MaterialModelPart> materialModelParts = materials.keySet().stream().map(BarrelMaterial::getMaterialModelPart).collect(Collectors.toSet());
 		boolean rendersUsingSplitModel = materialModelParts.contains(BarrelMaterial.MaterialModelPart.CORE) || materialModelParts.contains(BarrelMaterial.MaterialModelPart.TRIM);
@@ -251,7 +249,9 @@ public abstract class BarrelBakedModelBase implements BakedModel, IDataModel {
 			if (showsLocked(extraData)) {
 				addPartQuads(blockView, state, pos, stack, random, context, modelParts, BarrelModelPart.LOCKED);
 			}
-			addDisplayItemQuads(state, context, extraData);
+			if (extraData != null) {
+				addDisplayItemQuads(state, context, extraData);
+			}
 		}
 	}
 
@@ -356,7 +356,7 @@ public abstract class BarrelBakedModelBase implements BakedModel, IDataModel {
 		return extraData != null && extraData.showsTier();
 	}
 
-	private void addDisplayItemQuads(@Nullable BlockState state, RenderContext context, BarrelBlockEntity.ModelData data) {
+	private void addDisplayItemQuads(@Nullable BlockState state, RenderContext context, @Nonnull BarrelBlockEntity.ModelData data) {
 		if (state == null || !(state.getBlock() instanceof BarrelBlock barrelBlock)) {
 			return;
 		}
@@ -649,8 +649,6 @@ public abstract class BarrelBakedModelBase implements BakedModel, IDataModel {
 					.orElse(barrelBakedModel.barrelHasAccentColor && barrelBakedModel.barrelHasMainColor ? null : WoodType.ACACIA.name());
 			barrelBakedModel.barrelIsPacked = WoodStorageBlockItem.isPacked(stack);
 			barrelBakedModel.barrelShowsTier = StorageBlockItem.showsTier(stack);
-			barrelBakedModel.barrelItem = stack.getItem();
-			barrelBakedModel.flatTop = flatTop;
 			barrelBakedModel.barrelMaterials = BarrelBlockItem.getMaterials(stack);
 			return barrelBakedModel;
 		}
