@@ -102,7 +102,7 @@ public class HopperUpgradeWrapper extends UpgradeWrapperBase<HopperUpgradeWrappe
 
 		return false;
 	}
-	// TODO: Fix
+	// TODO: Necessary?
 	private boolean pushStackToContainer(WorldlyContainer worldlyContainer, Direction face, ItemStack extractedStack, ITrackedContentsItemHandler fromHandler, int slotToExtractFrom) {
 		for (int containerSlot = 0; containerSlot < worldlyContainer.getContainerSize(); containerSlot++) {
 			if (worldlyContainer.canPlaceItemThroughFace(containerSlot, extractedStack, face)) {

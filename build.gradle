@@ -151,8 +151,9 @@ def recipeViewers(DependencyHandler deps) {
     // EMI
     deps.modCompileOnly("dev.emi:emi-fabric:$emi_version") { transitive = false }
     // JEI
-    deps.modCompileOnly("mezz.jei:jei-$minecraft_version-common-api:$jei_version") { transitive = false }
-    deps.modCompileOnly("mezz.jei:jei-$minecraft_version-fabric-api:$jei_version") { transitive = false }
+    deps.modCompileOnlyApi("mezz.jei:jei-$minecraft_version-common-api:$jei_version") { transitive = false }
+    deps.modCompileOnlyApi("mezz.jei:jei-$minecraft_version-fabric-api:$jei_version") { transitive = false }
+    deps.modCompileOnly("mezz.jei:jei-$minecraft_version-fabric:$jei_version") { transitive = false }
     // REI
     deps.modCompileOnly("me.shedaniel:RoughlyEnoughItems-api-fabric:$rei_version")
     deps.modCompileOnly("me.shedaniel:RoughlyEnoughItems-default-plugin-fabric:$rei_version")

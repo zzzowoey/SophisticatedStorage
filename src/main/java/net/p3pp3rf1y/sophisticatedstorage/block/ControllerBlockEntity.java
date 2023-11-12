@@ -49,9 +49,10 @@ public class ControllerBlockEntity extends ControllerBlockEntityBase implements 
 
 		ItemStack itemInHand = player.getItemInHand(hand);
 		if (!itemInHand.isEmpty() && canDepositStack(itemInHand)) {
-			// TODO: check this
-			long inserted = insert(ItemVariant.of(itemInHand), itemInHand.getCount(), null, false);
-			player.setItemInHand(hand, itemInHand.copyWithCount(itemInHand.getCount() - (int) inserted));
+			try (Transaction ctx = Transaction.openOuter()) {
+				long inserted = insert(ItemVariant.of(itemInHand), itemInHand.getCount(), ctx, false);
+				player.setItemInHand(hand, itemInHand.copyWithCount(itemInHand.getCount() - (int) inserted));
+			}
 		}
 	}
 

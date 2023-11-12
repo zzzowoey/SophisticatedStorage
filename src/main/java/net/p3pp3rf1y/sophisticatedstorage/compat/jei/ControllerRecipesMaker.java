@@ -1,13 +1,14 @@
 package net.p3pp3rf1y.sophisticatedstorage.compat.jei;
 
 import com.google.common.base.Function;
+import mezz.jei.library.util.RecipeUtil;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
@@ -36,8 +37,7 @@ public class ControllerRecipesMaker {
 				ingredientsCopy.add(i, getExpandedIngredient(ingredient));
 				i++;
 			}
-			// TODO: Check
-			return Collections.singletonList(new ShapedRecipe(originalRecipe.getId(), "", originalRecipe.category(), originalRecipe.getWidth(), originalRecipe.getHeight(), ingredientsCopy, originalRecipe.getResultItem(Minecraft.getInstance().level.registryAccess())));
+			return Collections.singletonList(new ShapedRecipe(originalRecipe.getId(), "", CraftingBookCategory.MISC, originalRecipe.getWidth(), originalRecipe.getHeight(), ingredientsCopy, RecipeUtil.getResultItem(originalRecipe)));
 		}).orElse(Collections.emptyList());
 	}
 
