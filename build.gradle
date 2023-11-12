@@ -14,7 +14,9 @@ plugins {
     id "fabric-loom" version "1.2.+"
 
     id "io.github.juuxel.loom-vineflower" version "1.11.0" // Vineflower, a better decompiler
+
     id "io.github.p03w.machete" version "1.+" // automatic jar compressing on build
+    id "org.sonarqube" version "4.3.1.3277"
 
     id "maven-publish"
 }
@@ -25,10 +27,9 @@ if (findProject(':SophisticatedCore') != null) {
 
 group = mod_group_id
 version = "${project.minecraft_version}-${project.mod_version}.${getBuildNumber()}${getStable()}"
-archivesBaseName = mod_id
 
 base {
-    archivesName = project.mod_id + "-" + project.minecraft_version
+    archivesName = project.mod_id
 }
 
 repositories {
@@ -73,7 +74,7 @@ repositories {
     maven { url = "https://www.cursemaven.com" } // Balm, CraftingTweaks
     /*maven {
         name = "GitHubPackages"
-        url = uri("https://maven.pkg.github.com/p3pp3rf1y/sophisticatedcore")
+        url = uri("https://maven.pkg.github.com/Salandora/sophisticatedstorage")
         credentials {
             username = System.getenv("USERNAME")
             password = System.getenv("READ_PACKAGES_TOKEN")
@@ -114,7 +115,6 @@ def setup(DependencyHandler deps) {
 }
 
 def devEnv(DependencyHandler deps) {
-    //deps.modLocalRuntime("maven.modrinth:lazydfu:$lazy_dfu_version")
     deps.modLocalRuntime("com.terraformersmc:modmenu:$modmenu_version")
     deps.modLocalRuntime("curse.maven:config-menus-forge-544048:$config_menu_version")
 }
@@ -230,12 +230,12 @@ loom {
     }
 }
 
-/*test {
+test {
     useJUnitPlatform()
     testLogging {
         events "passed", "skipped", "failed"
     }
-}*/
+}
 
 if (project.tasks.findByName("generateResources")) {
     generateResources.dependsOn runDatagen
@@ -257,7 +257,7 @@ tasks.withType(ProcessResources).configureEach {
             mkb_version         : project.mkb_mod_version
     ]
     for (String module in port_lib_modules.split(","))
-        properties.put("port_lib_${module.trim()}_version".toString(), port_lib_version)
+        replaceProperties.put("port_lib_${module.trim()}_version".toString(), port_lib_version)
 
     inputs.properties replaceProperties
 
@@ -323,18 +323,18 @@ publishing {
     }
     publications {
         gpr(MavenPublication) {
-            artifactId = mod_id
+            artifactId = base.archivesName
             from(components.java)
         }
     }
 }
 
-/*sonarqube {
+sonarqube {
     properties {
         property "sonar.projectName", "${mod_id}"
         property "sonar.projectKey", "${sonar_project_key}"
     }
-}*/
+}
 
 task printVersionName {
   println "version:" + project.version
