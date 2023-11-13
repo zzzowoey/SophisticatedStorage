@@ -16,6 +16,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.p3pp3rf1y.sophisticatedcore.client.gui.utils.TranslationHelper;
 import net.p3pp3rf1y.sophisticatedcore.controller.ILinkable;
+import net.p3pp3rf1y.sophisticatedcore.util.ItemBase;
 import net.p3pp3rf1y.sophisticatedcore.util.NBTHelper;
 import net.p3pp3rf1y.sophisticatedcore.util.RegistryHelper;
 import net.p3pp3rf1y.sophisticatedcore.util.WorldHelper;
@@ -32,7 +33,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import javax.annotation.Nullable;
 
-public class StorageToolItem extends Item {
+public class StorageToolItem extends ItemBase {
 
 	private static final String CONTROLLER_POS_TAG = "controllerPos";
 	private static final String MODE_TAG = "mode";

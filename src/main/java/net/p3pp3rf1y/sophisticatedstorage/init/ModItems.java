@@ -3,7 +3,6 @@ package net.p3pp3rf1y.sophisticatedstorage.init;
 import io.github.fabricators_of_create.porting_lib.util.EnvExecutor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -86,6 +85,8 @@ import net.p3pp3rf1y.sophisticatedcore.upgrades.xppump.XpPumpUpgradeContainer;
 import net.p3pp3rf1y.sophisticatedcore.upgrades.xppump.XpPumpUpgradeItem;
 import net.p3pp3rf1y.sophisticatedcore.upgrades.xppump.XpPumpUpgradeTab;
 import net.p3pp3rf1y.sophisticatedcore.upgrades.xppump.XpPumpUpgradeWrapper;
+import net.p3pp3rf1y.sophisticatedcore.util.BlockItemBase;
+import net.p3pp3rf1y.sophisticatedcore.util.ItemBase;
 import net.p3pp3rf1y.sophisticatedstorage.Config;
 import net.p3pp3rf1y.sophisticatedstorage.SophisticatedStorage;
 import net.p3pp3rf1y.sophisticatedstorage.client.gui.StorageButtonDefinitions;
@@ -198,19 +199,24 @@ public class ModItems {
 	public static final StorageTierUpgradeItem DIAMOND_TO_NETHERITE_TIER_UPGRADE = register("diamond_to_netherite_tier_upgrade", () ->
 			new StorageTierUpgradeItem(StorageTierUpgradeItem.TierUpgrade.DIAMOND_TO_NETHERITE));
 
-	public static final Item UPGRADE_BASE = register("upgrade_base", () -> new Item(new Item.Properties().stacksTo(16)));
+	public static final ItemBase UPGRADE_BASE = register("upgrade_base", () -> new ItemBase(new Item.Properties().stacksTo(16)));
 
-	public static final Item PACKING_TAPE = register("packing_tape", () -> new Item(new Item.Properties().stacksTo(1).durability(4)));
-	public static final Item STORAGE_TOOL = register("storage_tool", StorageToolItem::new);
-	public static final Item DEBUG_TOOL = register("debug_tool", () -> new Item(new Item.Properties().stacksTo(1)));
+	public static final ItemBase PACKING_TAPE = register("packing_tape", () -> new ItemBase(new Item.Properties().stacksTo(1).durability(4)));
+	public static final ItemBase STORAGE_TOOL = register("storage_tool", StorageToolItem::new);
+	public static final ItemBase DEBUG_TOOL = register("debug_tool", () -> new ItemBase(new Item.Properties().stacksTo(1)));
 	public static final Item INACCESSIBLE_SLOT = register("inaccessible_slot", () -> new Item(new Item.Properties().stacksTo(1)));
 
 	public static final LootItemFunctionType COPY_STORAGE_DATA = registerLootFunction("copy_storage_data", () ->
 			new LootItemFunctionType(new CopyStorageDataFunction.Serializer()));
 
+	@SuppressWarnings("unused")
 	public static final CreativeModeTab CREATIVE_TAB = FabricItemGroup.builder(SophisticatedStorage.getRL("item_group"))
 			.icon(() -> WoodStorageBlockItem.setWoodType(new ItemStack(ModBlocks.GOLD_BARREL_ITEM), WoodType.SPRUCE))
 			.title(Component.translatable("itemGroup.sophisticatedstorage"))
+			.displayItems((featureFlags, output) -> {
+				ITEMS.values().stream().filter(i -> i instanceof ItemBase).forEach(i -> ((ItemBase) i).addCreativeTabItems(output::accept));
+				ModBlocks.ITEMS.values().stream().filter(i -> i instanceof BlockItemBase).forEach(i -> ((BlockItemBase) i).addCreativeTabItems(output::accept));
+			})
 			.build();
 
 
@@ -223,13 +229,14 @@ public class ModItems {
 		return Registry.register(BuiltInRegistries.LOOT_FUNCTION_TYPE, SophisticatedStorage.getRL(id), supplier.get());
 	}
 
-	private static void registerItemGroup() {
-		ItemGroupEvents.modifyEntriesEvent(CREATIVE_TAB).register(entries -> ITEMS.values().stream().filter(item -> item != INACCESSIBLE_SLOT).forEach(entries::accept));
-	}
+/*	private static void registerItemGroup() {
+		ItemGroupEvents.modifyEntriesEvent(CREATIVE_TAB).register(entries ->
+				ITEMS.values().stream().filter(item -> item != INACCESSIBLE_SLOT).forEach(entries::accept));
+	}*/
 
 	public static void register() {
 		registerContainers();
-		registerItemGroup();
+//		registerItemGroup();
 	}
 
 	private static final UpgradeContainerType<PickupUpgradeWrapper, ContentsFilteredUpgradeContainer<PickupUpgradeWrapper>> PICKUP_BASIC_TYPE = new UpgradeContainerType<>(ContentsFilteredUpgradeContainer::new);

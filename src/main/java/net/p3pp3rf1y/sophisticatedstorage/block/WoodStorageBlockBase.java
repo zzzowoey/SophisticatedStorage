@@ -8,14 +8,18 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.phys.BlockHitResult;
+import net.p3pp3rf1y.sophisticatedcore.util.ColorHelper;
 import net.p3pp3rf1y.sophisticatedcore.util.NBTHelper;
 import net.p3pp3rf1y.sophisticatedcore.util.WorldHelper;
+import net.p3pp3rf1y.sophisticatedstorage.Config;
+import net.p3pp3rf1y.sophisticatedstorage.init.ModBlocks;
 import net.p3pp3rf1y.sophisticatedstorage.init.ModItems;
 import net.p3pp3rf1y.sophisticatedstorage.item.StorageBlockItem;
 import net.p3pp3rf1y.sophisticatedstorage.item.StorageToolItem;
@@ -23,6 +27,7 @@ import net.p3pp3rf1y.sophisticatedstorage.item.WoodStorageBlockItem;
 
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
@@ -78,6 +83,34 @@ public abstract class WoodStorageBlockBase extends StorageBlockBase implements I
 			stack.setHoverName(wbe.getCustomName());
 		}
 		wbe.getWoodType().ifPresent(n -> WoodStorageBlockItem.setWoodType(stack, n));
+	}
+
+	@Override
+	public void addCreativeTabItems(Consumer<ItemStack> itemConsumer) {
+		CUSTOM_TEXTURE_WOOD_TYPES.keySet().forEach(woodType -> itemConsumer.accept(WoodStorageBlockItem.setWoodType(new ItemStack(this), woodType)));
+
+		if (isBasicTier() || Boolean.TRUE.equals(Config.CLIENT.showHigherTierTintedVariants.get())) {
+			for (DyeColor color : DyeColor.values()) {
+				ItemStack storageStack = new ItemStack(this);
+				if (storageStack.getItem() instanceof ITintableBlockItem tintableBlockItem) {
+					tintableBlockItem.setMainColor(storageStack, ColorHelper.getColor(color.getTextureDiffuseColors()));
+					tintableBlockItem.setAccentColor(storageStack, ColorHelper.getColor(color.getTextureDiffuseColors()));
+				}
+				itemConsumer.accept(storageStack);
+			}
+			ItemStack storageStack = new ItemStack(this);
+			if (storageStack.getItem() instanceof ITintableBlockItem tintableBlockItem) {
+				tintableBlockItem.setMainColor(storageStack, ColorHelper.getColor(DyeColor.YELLOW.getTextureDiffuseColors()));
+				tintableBlockItem.setAccentColor(storageStack, ColorHelper.getColor(DyeColor.LIME.getTextureDiffuseColors()));
+			}
+			itemConsumer.accept(storageStack);
+		}
+	}
+
+	private boolean isBasicTier() {
+		return this == ModBlocks.BARREL || this == ModBlocks.CHEST
+				|| this == ModBlocks.LIMITED_BARREL_1 || this == ModBlocks.LIMITED_BARREL_2
+				|| this == ModBlocks.LIMITED_BARREL_3 || this == ModBlocks.LIMITED_BARREL_4;
 	}
 
 	@Override

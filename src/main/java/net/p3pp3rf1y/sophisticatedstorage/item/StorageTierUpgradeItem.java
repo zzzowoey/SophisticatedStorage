@@ -10,7 +10,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
@@ -30,6 +29,7 @@ import net.minecraft.world.level.block.state.properties.WoodType;
 import net.p3pp3rf1y.sophisticatedcore.client.gui.utils.TranslationHelper;
 import net.p3pp3rf1y.sophisticatedcore.inventory.InventoryHandler;
 import net.p3pp3rf1y.sophisticatedcore.util.ColorHelper;
+import net.p3pp3rf1y.sophisticatedcore.util.ItemBase;
 import net.p3pp3rf1y.sophisticatedcore.util.WorldHelper;
 import net.p3pp3rf1y.sophisticatedstorage.block.BarrelBlock;
 import net.p3pp3rf1y.sophisticatedstorage.block.LimitedBarrelBlock;
@@ -48,7 +48,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import javax.annotation.Nullable;
 
-public class StorageTierUpgradeItem extends Item {
+public class StorageTierUpgradeItem extends ItemBase {
 
 	private final TierUpgrade tier;
 	private final boolean hasTooltip;

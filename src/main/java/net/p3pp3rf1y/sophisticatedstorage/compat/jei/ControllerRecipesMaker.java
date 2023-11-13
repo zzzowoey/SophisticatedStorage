@@ -5,7 +5,6 @@ import mezz.jei.library.util.RecipeUtil;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
@@ -13,8 +12,8 @@ import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.ShapedRecipe;
-import net.p3pp3rf1y.sophisticatedcore.Config;
 import net.p3pp3rf1y.sophisticatedcore.compat.common.ClientRecipeHelper;
+import net.p3pp3rf1y.sophisticatedcore.util.BlockItemBase;
 import net.p3pp3rf1y.sophisticatedstorage.init.ModBlocks;
 
 import java.util.ArrayList;
@@ -47,10 +46,8 @@ public class ControllerRecipesMaker {
 		NonNullList<ItemStack> storages = NonNullList.create();
 		for (ItemStack ingredientItem : ingredientItems) {
 			Item item = ingredientItem.getItem();
-			if (item instanceof BlockItem itemBase && (item == ModBlocks.BARREL_ITEM || item == ModBlocks.CHEST_ITEM)) {
-				if (Config.COMMON.enabledItems.isItemEnabled(itemBase)) {
-					storages.add(new ItemStack(itemBase.getBlock()));
-				}
+			if (item instanceof BlockItemBase itemBase && (item == ModBlocks.BARREL_ITEM || item == ModBlocks.CHEST_ITEM)) {
+				itemBase.addCreativeTabItems(storages::add);
 			}
 		}
 		if (!storages.isEmpty()) {

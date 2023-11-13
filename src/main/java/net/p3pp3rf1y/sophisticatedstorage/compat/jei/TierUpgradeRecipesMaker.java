@@ -14,7 +14,6 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
-import net.p3pp3rf1y.sophisticatedcore.Config;
 import net.p3pp3rf1y.sophisticatedcore.compat.common.ClientRecipeHelper;
 import net.p3pp3rf1y.sophisticatedstorage.SophisticatedStorage;
 import net.p3pp3rf1y.sophisticatedstorage.crafting.StorageTierUpgradeRecipe;
@@ -88,9 +87,7 @@ public class TierUpgradeRecipesMaker {
 			for (ItemStack ingredientItem : ingredientItems) {
 				Item item = ingredientItem.getItem();
 				if (item instanceof StorageBlockItem storageBlockItem) {
-					if (Config.COMMON.enabledItems.isItemEnabled(storageBlockItem)) {
-						storageItems.add(new ItemStack(storageBlockItem.getBlock()));
-					}
+					storageBlockItem.addCreativeTabItems(storageItems::add);
 				}
 			}
 		}

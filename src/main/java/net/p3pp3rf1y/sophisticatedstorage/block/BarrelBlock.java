@@ -34,6 +34,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -49,9 +50,11 @@ import net.p3pp3rf1y.sophisticatedstorage.client.particle.CustomTintTerrainParti
 import net.p3pp3rf1y.sophisticatedstorage.common.gui.StorageContainerMenu;
 import net.p3pp3rf1y.sophisticatedstorage.init.ModBlocks;
 import net.p3pp3rf1y.sophisticatedstorage.item.BarrelBlockItem;
+import net.p3pp3rf1y.sophisticatedstorage.item.WoodStorageBlockItem;
 
 import java.util.Map;
 import java.util.Random;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
@@ -69,6 +72,18 @@ public class BarrelBlock extends WoodStorageBlockBase {
 	public BarrelBlock(Supplier<Integer> numberOfInventorySlotsSupplier, Supplier<Integer> numberOfUpgradeSlotsSupplier, Properties properties, Function<StateDefinition<Block, BlockState>, BlockState> getDefaultState) {
 		super(properties.noOcclusion(), numberOfInventorySlotsSupplier, numberOfUpgradeSlotsSupplier);
 		registerDefaultState(getDefaultState.apply(stateDefinition));
+	}
+
+	@Override
+	public void addCreativeTabItems(Consumer<ItemStack> itemConsumer) {
+		super.addCreativeTabItems(itemConsumer);
+		if (this != ModBlocks.BARREL) {
+			return;
+		}
+
+		ItemStack flatBarrel = WoodStorageBlockItem.setWoodType(new ItemStack(this), WoodType.ACACIA);
+		BarrelBlockItem.toggleFlatTop(flatBarrel);
+		itemConsumer.accept(flatBarrel);
 	}
 
 	@SuppressWarnings("deprecation")

@@ -34,16 +34,18 @@ import net.p3pp3rf1y.sophisticatedcore.renderdata.RenderInfo;
 import net.p3pp3rf1y.sophisticatedcore.renderdata.UpgradeRenderDataType;
 import net.p3pp3rf1y.sophisticatedcore.upgrades.UpgradeHandler;
 import net.p3pp3rf1y.sophisticatedcore.upgrades.UpgradeItemBase;
+import net.p3pp3rf1y.sophisticatedcore.util.BlockBase;
 import net.p3pp3rf1y.sophisticatedcore.util.InventoryHelper;
 import net.p3pp3rf1y.sophisticatedcore.util.RegistryHelper;
 import net.p3pp3rf1y.sophisticatedcore.util.WorldHelper;
 import net.p3pp3rf1y.sophisticatedstorage.SophisticatedStorage;
 
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
-public abstract class StorageBlockBase extends Block implements IStorageBlock, ISneakItemInteractionBlock, EntityBlock {
+public abstract class StorageBlockBase extends BlockBase implements IStorageBlock, ISneakItemInteractionBlock, EntityBlock {
 	public static final BooleanProperty TICKING = BooleanProperty.create("ticking");
 	protected final Supplier<Integer> numberOfInventorySlotsSupplier;
 	protected final Supplier<Integer> numberOfUpgradeSlotsSupplier;
@@ -56,6 +58,11 @@ public abstract class StorageBlockBase extends Block implements IStorageBlock, I
 
 	@Override
 	public abstract StorageBlockEntity newBlockEntity(BlockPos pos, BlockState state);
+
+	@Override
+	public void addCreativeTabItems(Consumer<ItemStack> itemConsumer) {
+		itemConsumer.accept(new ItemStack(this));
+	}
 
 	@Nullable
 	protected static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(BlockEntityType<A> typePassedIn, BlockEntityType<E> typeExpected, BlockEntityTicker<? super E> blockEntityTicker) {

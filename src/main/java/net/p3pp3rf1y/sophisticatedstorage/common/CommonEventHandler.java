@@ -18,7 +18,6 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -28,6 +27,7 @@ import net.p3pp3rf1y.sophisticatedcore.inventory.InventoryHandler;
 import net.p3pp3rf1y.sophisticatedcore.network.PacketHandler;
 import net.p3pp3rf1y.sophisticatedcore.network.SyncPlayerSettingsMessage;
 import net.p3pp3rf1y.sophisticatedcore.settings.SettingsManager;
+import net.p3pp3rf1y.sophisticatedcore.util.ItemBase;
 import net.p3pp3rf1y.sophisticatedcore.util.WorldHelper;
 import net.p3pp3rf1y.sophisticatedstorage.Config;
 import net.p3pp3rf1y.sophisticatedstorage.block.ISneakItemInteractionBlock;
@@ -126,7 +126,7 @@ public class CommonEventHandler {
 			}
 
 			if (droppedItemEntityCount > Config.SERVER.tooManyItemEntityDrops.get()) {
-				Item packingTapeItem = ModItems.PACKING_TAPE;
+				ItemBase packingTapeItem = ModItems.PACKING_TAPE;
 				Component packingTapeItemName = packingTapeItem.getName(new ItemStack(packingTapeItem)).copy().withStyle(ChatFormatting.GREEN);
 				player.sendSystemMessage(StorageTranslationHelper.INSTANCE.translStatusMessage("too_many_item_entity_drops",
 						state.getBlock().getName().withStyle(ChatFormatting.GREEN),

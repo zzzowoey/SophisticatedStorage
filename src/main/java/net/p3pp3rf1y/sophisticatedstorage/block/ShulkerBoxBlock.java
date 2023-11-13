@@ -47,6 +47,7 @@ import net.p3pp3rf1y.sophisticatedcore.util.ColorHelper;
 import net.p3pp3rf1y.sophisticatedcore.util.MenuProviderHelper;
 import net.p3pp3rf1y.sophisticatedcore.util.NBTHelper;
 import net.p3pp3rf1y.sophisticatedcore.util.WorldHelper;
+import net.p3pp3rf1y.sophisticatedstorage.Config;
 import net.p3pp3rf1y.sophisticatedstorage.client.particle.CustomTintTerrainParticleData;
 import net.p3pp3rf1y.sophisticatedstorage.common.gui.StorageContainerMenu;
 import net.p3pp3rf1y.sophisticatedstorage.init.ModBlocks;
@@ -56,6 +57,7 @@ import net.p3pp3rf1y.sophisticatedstorage.item.StorageBlockItem;
 import net.p3pp3rf1y.sophisticatedstorage.item.StorageToolItem;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
@@ -155,6 +157,24 @@ public class ShulkerBoxBlock extends StorageBlockBase implements IAdditionalDrop
 
 			be.setChanged();
 		});
+	}
+
+	@Override
+	public void addCreativeTabItems(Consumer<ItemStack> itemConsumer) {
+		itemConsumer.accept(new ItemStack(this));
+
+		if (this == ModBlocks.SHULKER_BOX || Boolean.TRUE.equals(Config.CLIENT.showHigherTierTintedVariants.get())) {
+			for (DyeColor color : DyeColor.values()) {
+				ItemStack storageStack = getTintedStack(color);
+				itemConsumer.accept(storageStack);
+			}
+			ItemStack storageStack = new ItemStack(this);
+			if (storageStack.getItem() instanceof ITintableBlockItem tintableBlockItem) {
+				tintableBlockItem.setMainColor(storageStack, ColorHelper.getColor(DyeColor.YELLOW.getTextureDiffuseColors()));
+				tintableBlockItem.setAccentColor(storageStack, ColorHelper.getColor(DyeColor.LIME.getTextureDiffuseColors()));
+			}
+			itemConsumer.accept(storageStack);
+		}
 	}
 
 	public ItemStack getTintedStack(DyeColor color) {

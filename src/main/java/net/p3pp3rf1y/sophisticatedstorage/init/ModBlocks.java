@@ -2,7 +2,6 @@ package net.p3pp3rf1y.sophisticatedstorage.init;
 
 import io.github.fabricators_of_create.porting_lib.util.EnvExecutor;
 import net.fabricmc.api.EnvType;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -22,7 +21,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Item.Properties;
 import net.minecraft.world.item.ItemStack;
@@ -37,7 +35,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.material.Material;
-import net.p3pp3rf1y.sophisticatedcore.util.ColorHelper;
+import net.p3pp3rf1y.sophisticatedcore.util.BlockItemBase;
 import net.p3pp3rf1y.sophisticatedcore.util.SimpleIdentifiablePrepareableReloadListener;
 import net.p3pp3rf1y.sophisticatedstorage.Config;
 import net.p3pp3rf1y.sophisticatedstorage.SophisticatedStorage;
@@ -54,7 +52,6 @@ import net.p3pp3rf1y.sophisticatedstorage.block.ShulkerBoxBlock;
 import net.p3pp3rf1y.sophisticatedstorage.block.ShulkerBoxBlockEntity;
 import net.p3pp3rf1y.sophisticatedstorage.block.StorageLinkBlock;
 import net.p3pp3rf1y.sophisticatedstorage.block.StorageLinkBlockEntity;
-import net.p3pp3rf1y.sophisticatedstorage.block.WoodStorageBlockBase;
 import net.p3pp3rf1y.sophisticatedstorage.client.gui.LimitedBarrelScreen;
 import net.p3pp3rf1y.sophisticatedstorage.client.gui.LimitedBarrelSettingsScreen;
 import net.p3pp3rf1y.sophisticatedstorage.client.gui.StorageScreen;
@@ -81,8 +78,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiPredicate;
 import java.util.function.Supplier;
-
-import static net.p3pp3rf1y.sophisticatedstorage.block.WoodStorageBlockBase.CUSTOM_TEXTURE_WOOD_TYPES;
 
 public class ModBlocks {
 	public final static Map<ResourceLocation, Block> BLOCKS = new LinkedHashMap<>(); // Must be up here!
@@ -218,11 +213,11 @@ public class ModBlocks {
 	private static final String CONTROLLER_REG_NAME = "controller";
 	public static final ControllerBlock CONTROLLER = register(CONTROLLER_REG_NAME, ControllerBlock::new);
 
-	public static final BlockItem CONTROLLER_ITEM = registerItem(CONTROLLER_REG_NAME, () -> new BlockItem(CONTROLLER, new Properties()));
+	public static final BlockItemBase CONTROLLER_ITEM = registerItem(CONTROLLER_REG_NAME, () -> new BlockItemBase(CONTROLLER, new Properties()));
 
 	private static final String STORAGE_LINK_REG_NAME = "storage_link";
 	public static final StorageLinkBlock STORAGE_LINK = register(STORAGE_LINK_REG_NAME, StorageLinkBlock::new);
-	public static final BlockItem STORAGE_LINK_ITEM = registerItem(STORAGE_LINK_REG_NAME, () -> new BlockItem(STORAGE_LINK, new Properties()));
+	public static final BlockItemBase STORAGE_LINK_ITEM = registerItem(STORAGE_LINK_REG_NAME, () -> new BlockItemBase(STORAGE_LINK, new Properties()));
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//
@@ -319,7 +314,7 @@ public class ModBlocks {
 		return Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, SophisticatedStorage.getRL(id), supplier.get());
 	}
 
-	private static void registerItemGroup() {
+/*	private static void registerItemGroup() {
 		ItemGroupEvents.modifyEntriesEvent(ModItems.CREATIVE_TAB).register(entries -> {
 			BLOCKS.values().forEach(block -> {
 				if (block instanceof WoodStorageBlockBase) {
@@ -374,14 +369,14 @@ public class ModBlocks {
 				}
 			});
 		});
-	}
+	}*/
 
 
 	public static void register() {
 		registerContainers();
 		registerDispenseBehavior();
 		registerCauldronInteractions();
-		registerItemGroup();
+//		registerItemGroup();
 
 		ResourceManagerHelper.get(PackType.CLIENT_RESOURCES).registerReloadListener(new SimpleIdentifiablePrepareableReloadListener<>(SophisticatedStorage.getRL("recipes")) {
 			@Override
