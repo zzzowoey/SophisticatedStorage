@@ -29,6 +29,9 @@
         ],
         "jei_mod_plugin": [
             "net.p3pp3rf1y.sophisticatedstorage.compat.jei.StoragePlugin"
+        ],
+        "jade": [
+            "net.p3pp3rf1y.sophisticatedstorage.compat.jade.StorageJadePlugin"
         ]
     },
     "mixins": ["sophisticatedstorage.mixins.json"],
