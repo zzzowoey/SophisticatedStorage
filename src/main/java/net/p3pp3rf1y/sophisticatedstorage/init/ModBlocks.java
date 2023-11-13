@@ -76,7 +76,7 @@ import net.p3pp3rf1y.sophisticatedstorage.item.WoodStorageBlockItem;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiPredicate;
@@ -85,8 +85,8 @@ import java.util.function.Supplier;
 import static net.p3pp3rf1y.sophisticatedstorage.block.WoodStorageBlockBase.CUSTOM_TEXTURE_WOOD_TYPES;
 
 public class ModBlocks {
-	public final static Map<ResourceLocation, Block> BLOCKS = new HashMap<>(); // Must be up here!
-	public final static Map<ResourceLocation, Item> ITEMS = new HashMap<>(); // Must be up here!
+	public final static Map<ResourceLocation, Block> BLOCKS = new LinkedHashMap<>(); // Must be up here!
+	public final static Map<ResourceLocation, Item> ITEMS = new LinkedHashMap<>(); // Must be up here!
 
 	private static final String LIMITED_BARREL_NAME = "limited_barrel";
 

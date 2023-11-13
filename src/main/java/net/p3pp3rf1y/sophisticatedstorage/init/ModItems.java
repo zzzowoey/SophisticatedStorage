@@ -99,12 +99,12 @@ import net.p3pp3rf1y.sophisticatedstorage.upgrades.hopper.HopperUpgradeItem;
 import net.p3pp3rf1y.sophisticatedstorage.upgrades.hopper.HopperUpgradeTab;
 import net.p3pp3rf1y.sophisticatedstorage.upgrades.hopper.HopperUpgradeWrapper;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
 public class ModItems {
-	final static Map<ResourceLocation, Item> ITEMS = new HashMap<>(); // Must be up here!
+	final static Map<ResourceLocation, Item> ITEMS = new LinkedHashMap<>(); // Must be up here!
 
 	private ModItems() {}
 
