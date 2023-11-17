@@ -46,7 +46,7 @@
         "porting_lib_model_loader": ">=${port_lib_model_loader_version}"
     },
     "suggests": {
-        "modsmenu": "*"
+        "modmenu": "*"
     },
     "custom": {
         "modmenu": {
