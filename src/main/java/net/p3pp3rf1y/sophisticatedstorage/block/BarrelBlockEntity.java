@@ -126,6 +126,7 @@ public class BarrelBlockEntity extends WoodStorageBlockEntity {
 	}
 
 	public static class ModelData {
+		public static ModelData EMPTY = new ModelData(null);
 		private final Boolean hasMainColor;
 		private final Boolean hasAccentColor;
 		private String woodName;
@@ -136,25 +137,40 @@ public class BarrelBlockEntity extends WoodStorageBlockEntity {
 		private List<Integer> inaccessibleSlots;
 		private final Map<BarrelMaterial, ResourceLocation> materials;
 
-		public ModelData(BarrelBlockEntity tile) {
-			StorageWrapper wrapper = tile.getStorageWrapper();
-			this.hasMainColor = wrapper.hasMainColor();
-			this.hasAccentColor = wrapper.hasAccentColor();
+		public ModelData(@Nullable BarrelBlockEntity tile) {
+			if (tile != null) {
+				StorageWrapper wrapper = tile.getStorageWrapper();
+				this.hasMainColor = wrapper.hasMainColor();
+				this.hasAccentColor = wrapper.hasAccentColor();
 
-			Optional<WoodType> woodType = tile.getWoodType();
-			if (woodType.isPresent() || !(hasMainColor && hasAccentColor)) {
-				this.woodName = woodType.orElse(WoodType.ACACIA).name();
+				Optional<WoodType> woodType = tile.getWoodType();
+				if (woodType.isPresent() || !(hasMainColor && hasAccentColor)) {
+					this.woodName = woodType.orElse(WoodType.ACACIA).name();
+				}
+
+				if (!tile.hasFullyDynamicRenderer()) {
+					this.displayItems = wrapper.getRenderInfo().getItemDisplayRenderInfo().getDisplayItems();
+					this.inaccessibleSlots = wrapper.getRenderInfo().getItemDisplayRenderInfo().getInaccessibleSlots();
+				}
+
+				this.isPacked = tile.isPacked();
+				this.showsLock = tile.isLocked() && tile.shouldShowLock();
+				this.showsTier = tile.shouldShowTier();
+				this.materials = tile.getMaterials();
+			} else {
+				this.hasMainColor = false;
+				this.hasAccentColor = false;
+
+				this.woodName = null;
+
+				this.displayItems = null;
+				this.inaccessibleSlots = null;
+
+				this.isPacked = false;
+				this.showsLock = false;
+				this.showsTier = false;
+				this.materials = null;
 			}
-
-			if (!tile.hasFullyDynamicRenderer()) {
-				this.displayItems = wrapper.getRenderInfo().getItemDisplayRenderInfo().getDisplayItems();
-				this.inaccessibleSlots = wrapper.getRenderInfo().getItemDisplayRenderInfo().getInaccessibleSlots();
-			}
-
-			this.isPacked = tile.isPacked();
-			this.showsLock = tile.isLocked() && tile.shouldShowLock();
-			this.showsTier = tile.shouldShowTier();
-			this.materials = tile.getMaterials();
 		}
 
 		// Getters for fields (you can generate these automatically in most IDEs)

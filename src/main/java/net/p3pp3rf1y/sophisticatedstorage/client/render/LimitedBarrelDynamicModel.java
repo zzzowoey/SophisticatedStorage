@@ -2,6 +2,7 @@ package net.p3pp3rf1y.sophisticatedstorage.client.render;
 
 import org.joml.Vector3f;
 
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
@@ -10,10 +11,12 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
+import net.p3pp3rf1y.sophisticatedstorage.block.BarrelBlockEntity;
 import net.p3pp3rf1y.sophisticatedstorage.block.LimitedBarrelBlock;
 import net.p3pp3rf1y.sophisticatedstorage.block.VerticalFacing;
 import net.p3pp3rf1y.sophisticatedstorage.client.util.QuadTransformers;
 
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import javax.annotation.Nullable;
@@ -41,12 +44,21 @@ public class LimitedBarrelDynamicModel extends BarrelDynamicModelBase<LimitedBar
 		}
 
 		@Override
-		protected void rotateDisplayItemQuads(BlockState state, QuadTransformers.LazyQuadTransformer stack) {
+		protected int getInWorldBlockHash(BlockState state, BarrelBlockEntity.ModelData data) {
+			int hash = super.getInWorldBlockHash(state, data);
+			hash = hash * 31 + state.getValue(LimitedBarrelBlock.HORIZONTAL_FACING).get2DDataValue();
+			hash = hash * 31 + state.getValue(LimitedBarrelBlock.VERTICAL_FACING).getIndex();
+			return hash;
+		}
+
+		@Override
+		protected List<BakedQuad> rotateDisplayItemQuads(List<BakedQuad> quads, BlockState state) {
 			VerticalFacing verticalFacing = state.getValue(LimitedBarrelBlock.VERTICAL_FACING);
 			if (verticalFacing != VerticalFacing.NO) {
-				stack.add(DIRECTION_ROTATES.get(verticalFacing.getDirection()));
+				quads = QuadTransformers.process(DIRECTION_ROTATES.get(verticalFacing.getDirection()), quads);
 			}
-			stack.add(DIRECTION_ROTATES.get(state.getValue(LimitedBarrelBlock.HORIZONTAL_FACING)));
+			quads = QuadTransformers.process(DIRECTION_ROTATES.get(state.getValue(LimitedBarrelBlock.HORIZONTAL_FACING)), quads);
+			return quads;
 		}
 
 		@Override

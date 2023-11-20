@@ -1,7 +1,6 @@
 package net.p3pp3rf1y.sophisticatedstorage.client.util;
 
 import com.mojang.math.Transformation;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -9,8 +8,41 @@ import org.joml.Vector4f;
 
 import net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
+import net.fabricmc.fabric.impl.client.indigo.renderer.mesh.EncodingFormat;
+import net.fabricmc.fabric.impl.client.indigo.renderer.mesh.MutableQuadViewImpl;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class QuadTransformers {
+	private static final MutableQuadViewImpl editorQuad = new MutableQuadViewImpl() {
+		{
+			this.data = new int[EncodingFormat.TOTAL_STRIDE];
+			this.clear();
+		}
+
+		public void emitDirectly() {
+			// noop
+		}
+	};
+
+	public static List<BakedQuad> process(RenderContext.QuadTransform transform, List<BakedQuad> quads) {
+		List<BakedQuad> transformedQuads = new ArrayList<>();
+
+		for (int i = 0; i < quads.size(); i++) {
+			BakedQuad quad = quads.get(i);
+			MutableQuadView mqv = editorQuad.fromVanilla(quad, null, null);
+			transform.transform(mqv);
+
+			BakedQuad transformedQuad = mqv.toBakedQuad(quad.getSprite());
+			transformedQuads.add(transformedQuad);
+			editorQuad.clear();
+		}
+
+		return transformedQuads;
+	}
+
     public static RenderContext.QuadTransform applying(Transformation transform) {
         if (transform.equals(Transformation.identity()))
             return quad -> true;
@@ -36,23 +68,5 @@ public class QuadTransformers {
             }
             return true;
         };
-    }
-
-    public static class LazyQuadTransformer implements RenderContext.QuadTransform {
-        final ObjectArrayList<RenderContext.QuadTransform> stack = new ObjectArrayList<>();
-
-        @Override
-        public boolean transform(MutableQuadView quad) {
-			for (RenderContext.QuadTransform quadTransform : stack) {
-				if (!quadTransform.transform(quad)) {
-					return false;
-				}
-			}
-            return true;
-        }
-
-        public void add(RenderContext.QuadTransform transformer) {
-            stack.add(transformer);
-        }
     }
 }

@@ -1,5 +1,6 @@
 package net.p3pp3rf1y.sophisticatedstorage.client.render;
 
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
@@ -8,8 +9,10 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.p3pp3rf1y.sophisticatedstorage.block.BarrelBlock;
+import net.p3pp3rf1y.sophisticatedstorage.block.BarrelBlockEntity;
 import net.p3pp3rf1y.sophisticatedstorage.client.util.QuadTransformers;
 
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import javax.annotation.Nullable;
@@ -31,13 +34,22 @@ public class BarrelDynamicModel extends BarrelDynamicModelBase<BarrelDynamicMode
 		}
 
 		@Override
+		protected int getInWorldBlockHash(BlockState state, BarrelBlockEntity.ModelData data) {
+			int hash = super.getInWorldBlockHash(state, data);
+			hash = hash * 31 + (Boolean.TRUE.equals(state.getValue(BarrelBlock.OPEN)) ? 1 : 0);
+			hash = hash * 31 + state.getValue(BarrelBlock.FACING).get3DDataValue();
+
+			return hash;
+		}
+
+		@Override
 		protected BarrelModelPart getBasePart(@Nullable BlockState state) {
 			return state != null && state.getValue(BarrelBlock.OPEN) ? BarrelModelPart.BASE_OPEN : BarrelModelPart.BASE;
 		}
 
 		@Override
-		protected void rotateDisplayItemQuads(BlockState state, QuadTransformers.LazyQuadTransformer stack) {
-			stack.add(DIRECTION_ROTATES.get(state.getValue(BarrelBlock.FACING)));
+		protected List<BakedQuad> rotateDisplayItemQuads(List<BakedQuad> quads, BlockState state) {
+			return QuadTransformers.process(DIRECTION_ROTATES.get(state.getValue(BarrelBlock.FACING)), quads);
 		}
 
 		@Override
