@@ -229,14 +229,8 @@ public class ModItems {
 		return Registry.register(BuiltInRegistries.LOOT_FUNCTION_TYPE, SophisticatedStorage.getRL(id), supplier.get());
 	}
 
-/*	private static void registerItemGroup() {
-		ItemGroupEvents.modifyEntriesEvent(CREATIVE_TAB).register(entries ->
-				ITEMS.values().stream().filter(item -> item != INACCESSIBLE_SLOT).forEach(entries::accept));
-	}*/
-
 	public static void register() {
 		registerContainers();
-//		registerItemGroup();
 	}
 
 	private static final UpgradeContainerType<PickupUpgradeWrapper, ContentsFilteredUpgradeContainer<PickupUpgradeWrapper>> PICKUP_BASIC_TYPE = new UpgradeContainerType<>(ContentsFilteredUpgradeContainer::new);
