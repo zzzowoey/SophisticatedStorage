@@ -1,20 +1,20 @@
-/*
-package net.p3pp3rf1y.sophisticatedstorage.compat.rubidium;
+package net.p3pp3rf1y.sophisticatedstorage.compat.sodium;
 
 import me.jellysquid.mods.sodium.client.render.vertex.VertexBufferWriter;
 import me.jellysquid.mods.sodium.client.render.vertex.VertexFormatDescription;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.p3pp3rf1y.sophisticatedstorage.client.render.TranslucentVertexConsumer;
 import org.lwjgl.system.MemoryStack;
 
-public class RubidiumTranslucentVertexConsumer extends TranslucentVertexConsumer implements VertexBufferWriter {
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.p3pp3rf1y.sophisticatedstorage.client.render.TranslucentVertexConsumer;
+
+public class SodiumTranslucentVertexConsumer extends TranslucentVertexConsumer implements VertexBufferWriter {
 	public static void register() {
-		TranslucentVertexConsumer.setFactory(RubidiumTranslucentVertexConsumer::new);
+		TranslucentVertexConsumer.setFactory(SodiumTranslucentVertexConsumer::new);
 	}
 
 	private final MultiBufferSource buffer;
 
-	public RubidiumTranslucentVertexConsumer(MultiBufferSource buffer, int alpha) {
+	public SodiumTranslucentVertexConsumer(MultiBufferSource buffer, int alpha) {
 		super(buffer, alpha);
 		this.buffer = buffer;
 	}
@@ -26,4 +26,3 @@ public class RubidiumTranslucentVertexConsumer extends TranslucentVertexConsumer
 		}
 	}
 }
-*/
