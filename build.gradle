@@ -70,14 +70,14 @@ repositories {
     maven { url = "https://modmaven.dev" } // Jei
     maven { url = "https://maven.ladysnake.org/releases" } // CCA, for Trinkets
     maven { url = "https://www.cursemaven.com" } // Balm, CraftingTweaks
-    /*maven {
+    maven {
         name = "GitHubPackages"
-        url = uri("https://maven.pkg.github.com/Salandora/sophisticatedstorage")
+        url = uri("https://maven.pkg.github.com/Salandora/sophisticatedcore")
         credentials {
             username = System.getenv("USERNAME")
             password = System.getenv("READ_PACKAGES_TOKEN")
         }
-    }*/
+    }
 }
 
 configurations.configureEach {
@@ -139,6 +139,7 @@ def compat(DependencyHandler deps) {
     deps.modCompileOnly("com.terraformersmc:modmenu:${modmenu_version}")
     deps.modImplementation("curse.maven:jade-324717:${jade_id}")
     deps.modImplementation("maven.modrinth:sodium:mc${minecraft_version}-${sodium_version}")
+    deps.modImplementation("maven.modrinth:indium:${indium_version}+mc${minecraft_version}")
 
     recipeViewers(deps)
 }
