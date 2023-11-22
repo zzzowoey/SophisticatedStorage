@@ -266,7 +266,10 @@ public class CompressionInventoryPartTest {
 		CompressionInventoryPart part = initCompressionInventoryPart(internalStacksBefore, invHandler, minSlot);
 
 		ItemVariant variant = part.getVariantInSlot(extractSlot, s -> ItemVariant.blank());
-		ItemStack result = variant.toStack((int) part.extractItem(extractSlot, variant, extractAmount, null));
+		ItemStack result;
+		try (Transaction ctx = Transaction.openOuter()) {
+			result = variant.toStack((int) part.extractItem(extractSlot, variant, extractAmount, ctx));
+		}
 
 		assertStackEquals(extractResult, result, "Extract result doesn't match");
 		assertCalculatedStacks(calculatedStacksAfter, minSlot, part);
@@ -555,7 +558,9 @@ public class CompressionInventoryPartTest {
 		CompressionInventoryPart part = initCompressionInventoryPart(invHandler, new InventoryPartitioner.SlotRange(0, 3), () -> getMemorySettings(invHandler, Map.of()));
 
 		ItemVariant resource = part.getVariantInSlot(0, s -> ItemVariant.blank());
-		part.extractItem(0, resource, 63, null);
+		try (Transaction ctx = Transaction.openOuter()) {
+			part.extractItem(0, resource, 63, ctx);
+		}
 
 		assertEquals(10L, part.insertItem(1, ItemVariant.of(Items.GOLD_NUGGET), 10, null, (s, res, amount, nested) -> 10L));
 	}
@@ -569,7 +574,9 @@ public class CompressionInventoryPartTest {
 		CompressionInventoryPart part = initCompressionInventoryPart(invHandler, new InventoryPartitioner.SlotRange(0, 3), () -> memorySettings);
 
 		ItemVariant resource = part.getVariantInSlot(0, s -> ItemVariant.blank());
-		part.extractItem(0, resource, 32, null);
+		try (Transaction ctx = Transaction.openOuter()) {
+			part.extractItem(0, resource, 32, ctx);
+		}
 
 		assertEquals(0L, part.insertItem(1, ItemVariant.of(Items.GOLD_BLOCK), 32, null, (s, res, amount, nested) -> 0L), "Insert result does not equal");
 	}
@@ -675,7 +682,7 @@ public class CompressionInventoryPartTest {
 		CompressionInventoryPart part = initCompressionInventoryPart(invHandler, new InventoryPartitioner.SlotRange(minSlot, minSlot + 3), () -> getMemorySettings(invHandler, Map.of()));
 
 		ItemVariant resource = part.getVariantInSlot(1, s -> ItemVariant.blank());
-		assertStackEquals(damagedItem, resource.toStack((int) part.extractItem(1, resource, 1, null)), "Extracted item doesn't match");
+		assertStackEquals(damagedItem, resource.toStack((int) part.extractItem(1, resource, 1, Transaction.openOuter())), "Extracted item doesn't match");
 	}
 
 	@Test
@@ -686,8 +693,10 @@ public class CompressionInventoryPartTest {
 		CompressionInventoryPart part = initCompressionInventoryPart(invHandler, new InventoryPartitioner.SlotRange(minSlot, minSlot + 3), () -> getMemorySettings(invHandler, Map.of()));
 
 		ItemVariant resource = part.getVariantInSlot(1, s -> ItemVariant.blank());
-		assertStackEquals(new ItemStack(Items.COBBLESTONE, 1), resource.toStack((int) part.extractItem(1, resource, 1, null)), "Extracted item doesn't match");
-		assertStackEquals(new ItemStack(Items.COBBLESTONE, 9), part.getStackInSlot(1, s -> ItemStack.EMPTY), "Item left in slot doesn't match");
+		try (Transaction ctx = Transaction.openOuter()) {
+			assertStackEquals(new ItemStack(Items.COBBLESTONE, 1), resource.toStack((int) part.extractItem(1, resource, 1, ctx)), "Extracted item doesn't match");
+			assertStackEquals(new ItemStack(Items.COBBLESTONE, 9), part.getStackInSlot(1, s -> ItemStack.EMPTY), "Item left in slot doesn't match");
+		}
 	}
 
 	@ParameterizedTest
@@ -781,9 +790,10 @@ public class CompressionInventoryPartTest {
 
 		int slot = params.extractedStack.getLeft();
 		ItemVariant resource = part.getVariantInSlot(slot, s -> ItemVariant.blank());
-		part.extractItem(slot, resource, params.extractedStack.getRight(), null);
-
-		assertCalculatedStacks(params.expectedCalculatedStacks(), 0, part);
+		try (Transaction ctx = Transaction.openOuter()) {
+			part.extractItem(slot, resource, params.extractedStack.getRight(), ctx);
+			assertCalculatedStacks(params.expectedCalculatedStacks(), 0, part);
+		}
 	}
 
 	private record ExtractingFromFullyFilledSlotsProperlyCalculatesCountsParams(Map<Integer, ItemStack> stacks, int baseLimit,

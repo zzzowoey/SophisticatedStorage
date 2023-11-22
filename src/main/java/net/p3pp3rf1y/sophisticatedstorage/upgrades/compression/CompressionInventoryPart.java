@@ -292,30 +292,27 @@ public class CompressionInventoryPart implements IInventoryPartHandler {
 	}
 
 	@Override
-	public long extractItem(int slot, ItemVariant resource, long amount, @Nullable TransactionContext ctx) {
+	public long extractItem(int slot, ItemVariant resource, long amount, TransactionContext ctx) {
 		if (!slotDefinitions.containsKey(slot) || !slotDefinitions.get(slot).isAccessible()) {
 			return 0;
 		}
 		int toExtract = Math.min(calculatedStacks.get(slot).getCount(), (int) amount);
 
 		if (toExtract > 0) {
-			try (Transaction nested = Transaction.openNested(ctx)) {
-				TransactionCallback.onSuccess(nested, () -> {
-					SlotDefinition slotDefinition = slotDefinitions.get(slot);
-					ItemStack slotStack = parent.getSlotStack(slot);
+			TransactionCallback.onSuccess(ctx, () -> {
+				SlotDefinition slotDefinition = slotDefinitions.get(slot);
+				ItemStack slotStack = parent.getSlotStack(slot);
 
-					if (slotDefinition.isCompressible()) {
-						extractFromCalculated(slot, toExtract);
-						extractFromInternal(slot, toExtract);
-					} else {
-						slotStack.shrink(toExtract);
-						parent.setSlotStack(slot, slotStack);
-						calculatedStacks.put(slot, slotStack.copy());
-					}
-					removeDefinitionsIfEmpty(slot);
-				});
-				nested.commit();
-			}
+				if (slotDefinition.isCompressible()) {
+					extractFromCalculated(slot, toExtract);
+					extractFromInternal(slot, toExtract);
+				} else {
+					slotStack.shrink(toExtract);
+					parent.setSlotStack(slot, slotStack);
+					calculatedStacks.put(slot, slotStack.copy());
+				}
+				removeDefinitionsIfEmpty(slot);
+			});
 
 			return toExtract;
 		}
@@ -606,10 +603,13 @@ public class CompressionInventoryPart implements IInventoryPartHandler {
 	@Override
 	public void setStackInSlot(int slot, ItemStack stack, BiConsumer<Integer, ItemStack> setStackInSlotSuper) {
 		int currentCount = calculatedStacks.containsKey(slot) ? calculatedStacks.get(slot).getCount() : 0;
-		if (currentCount < stack.getCount()) {
-			insertItem(slot, ItemVariant.of(stack), stack.getCount() - currentCount, null);
-		} else if (currentCount > stack.getCount()) {
-			extractItem(slot, ItemVariant.of(stack), currentCount - stack.getCount(), null);
+		try (Transaction ctx = Transaction.openOuter()) {
+			if (currentCount < stack.getCount()) {
+				insertItem(slot, ItemVariant.of(stack), stack.getCount() - currentCount, ctx);
+			} else if (currentCount > stack.getCount()) {
+				extractItem(slot, ItemVariant.of(stack), currentCount - stack.getCount(), ctx);
+			}
+			ctx.commit();
 		}
 	}
 
