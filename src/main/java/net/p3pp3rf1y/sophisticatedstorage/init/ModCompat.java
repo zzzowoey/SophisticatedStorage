@@ -17,31 +17,40 @@ import javax.annotation.Nullable;
 public class ModCompat {
 	private ModCompat() {}
 
-	 private static final String RUBIDIUM_MOD_ID = "sodium";
+	 private static final String SODIUM_MOD_ID = "sodium";
 
 	private static final Map<CompatInfo, Supplier<Callable<ICompat>>> compatFactories = new HashMap<>();
 
+	private static final Map<CompatInfo, ICompat> loadedCompats = new HashMap<>();
+
 	static {
 		// compatFactories.put(new CompatInfo(CompatModIds.QUARK, null), () -> QuarkCompat::new);
+		// compatFactories.put(new CompatInfo(CompatModIds.CHIPPED, null), () -> ChippedCompat::new);
 		try {
-			compatFactories.put(new CompatInfo(RUBIDIUM_MOD_ID, VersionPredicateParser.parse(">=0.4.9 <0.5")), () -> SodiumCompat::new);
+			compatFactories.put(new CompatInfo(SODIUM_MOD_ID, VersionPredicateParser.parse(">=0.4.9 <0.5")), () -> SodiumCompat::new);
 		}
 		catch (VersionParsingException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
+	public static void compatsSetup() {
+		loadedCompats.values().forEach(ICompat::setup);
+	}
+
 	public static void initCompats() {
 		for (Map.Entry<CompatInfo, Supplier<Callable<ICompat>>> entry : compatFactories.entrySet()) {
 			if (entry.getKey().isLoaded()) {
 				try {
-					entry.getValue().get().call().setup();
+					loadedCompats.put(entry.getKey(), entry.getValue().get().call());
 				}
 				catch (Exception e) {
 					SophisticatedStorage.LOGGER.error("Error instantiating compatibility ", e);
 				}
 			}
 		}
+
+		loadedCompats.values().forEach(ICompat::init);
 	}
 
 	record CompatInfo(String modId, @Nullable VersionPredicate supportedVersionRange){

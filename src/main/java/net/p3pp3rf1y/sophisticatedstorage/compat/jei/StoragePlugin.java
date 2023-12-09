@@ -40,10 +40,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.StringJoiner;
+import java.util.function.Consumer;
 
 @SuppressWarnings("unused")
 @JeiPlugin
 public class StoragePlugin implements IModPlugin {
+	private static Consumer<IRecipeCatalystRegistration> additionalCatalystRegistrar = registration -> {};
+	public static void setAdditionalCatalystRegistrar(Consumer<IRecipeCatalystRegistration> additionalCatalystRegistrar) {
+		StoragePlugin.additionalCatalystRegistrar = additionalCatalystRegistrar;
+	}
+
 	@Override
 	public ResourceLocation getPluginUid() {
 		return new ResourceLocation(SophisticatedStorage.ID, "default");
@@ -158,6 +164,8 @@ public class StoragePlugin implements IModPlugin {
 	@Override
 	public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
 		registration.addRecipeCatalyst(new ItemStack(ModItems.CRAFTING_UPGRADE), RecipeTypes.CRAFTING);
+		registration.addRecipeCatalyst(new ItemStack(ModItems.STONECUTTER_UPGRADE), RecipeTypes.STONECUTTING);
+		additionalCatalystRegistrar.accept(registration);
 	}
 
 	@Override

@@ -39,6 +39,7 @@ public class SophisticatedStorage implements ModInitializer {
 		ModCompat.initCompats();
 
 		StoragePacketHandler.init();
+		ModCompat.compatsSetup();
 	}
 
 	public static ResourceLocation getRL(String regName) {
