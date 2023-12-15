@@ -30,7 +30,7 @@ public class ToolInfoOverlay {
 			int i = font.width(overlayMessage);
 			int x = (screenWidth - i) / 2;
 			int y = screenHeight - 75;
-			font.draw(drawContext, overlayMessage, x + 1, y, DyeColor.WHITE.getTextColor());
+			drawContext.drawString(font, overlayMessage, x + 1, y, DyeColor.WHITE.getTextColor());
 		});
 	};
 }

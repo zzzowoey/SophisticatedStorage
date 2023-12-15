@@ -31,7 +31,7 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -54,7 +54,7 @@ public class ChestBlock extends WoodStorageBlockBase implements SimpleWaterlogge
 	}
 
 	public ChestBlock(Supplier<Integer> numberOfInventorySlotsSupplier, Supplier<Integer> numberOfUpgradeSlotsSupplier, float explosionResistance) {
-		super(Properties.of(Material.WOOD).strength(2.5F, explosionResistance).sound(SoundType.WOOD), numberOfInventorySlotsSupplier, numberOfUpgradeSlotsSupplier);
+		super(Properties.of().mapColor(MapColor.WOOD).strength(2.5F, explosionResistance).sound(SoundType.WOOD), numberOfInventorySlotsSupplier, numberOfUpgradeSlotsSupplier);
 		registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(WATERLOGGED, false).setValue(TICKING, false));
 	}
 

@@ -34,7 +34,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.WoodType;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.MapColor;
 import net.p3pp3rf1y.sophisticatedcore.util.BlockItemBase;
 import net.p3pp3rf1y.sophisticatedcore.util.SimpleIdentifiablePrepareableReloadListener;
 import net.p3pp3rf1y.sophisticatedstorage.Config;
@@ -106,15 +106,15 @@ public class ModBlocks {
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	private static final String BARREL_REG_NAME = "barrel";
 	public static final BarrelBlock BARREL = register(BARREL_REG_NAME, () -> new BarrelBlock(Config.SERVER.woodBarrel.inventorySlotCount, Config.SERVER.woodBarrel.upgradeSlotCount,
-			BlockBehaviour.Properties.of(Material.WOOD).strength(2.5F).sound(SoundType.WOOD)));
+			BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.5F).sound(SoundType.WOOD)));
 	public static final BarrelBlock IRON_BARREL = register("iron_barrel", () -> new BarrelBlock(Config.SERVER.ironBarrel.inventorySlotCount, Config.SERVER.ironBarrel.upgradeSlotCount,
-			BlockBehaviour.Properties.of(Material.WOOD).strength(2.5F).sound(SoundType.WOOD)));
+			BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.5F).sound(SoundType.WOOD)));
 	public static final BarrelBlock GOLD_BARREL = register("gold_barrel", () -> new BarrelBlock(Config.SERVER.goldBarrel.inventorySlotCount, Config.SERVER.goldBarrel.upgradeSlotCount,
-			BlockBehaviour.Properties.of(Material.WOOD).strength(2.5F).sound(SoundType.WOOD)));
+			BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.5F).sound(SoundType.WOOD)));
 	public static final BarrelBlock DIAMOND_BARREL = register("diamond_barrel", () -> new BarrelBlock(Config.SERVER.diamondBarrel.inventorySlotCount, Config.SERVER.diamondBarrel.upgradeSlotCount,
-			BlockBehaviour.Properties.of(Material.WOOD).strength(2.5F).sound(SoundType.WOOD)));
+			BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.5F).sound(SoundType.WOOD)));
 	public static final BarrelBlock NETHERITE_BARREL = register("netherite_barrel", () -> new BarrelBlock(Config.SERVER.netheriteBarrel.inventorySlotCount, Config.SERVER.netheriteBarrel.upgradeSlotCount,
-			BlockBehaviour.Properties.of(Material.WOOD).strength(2.5F, 1200).sound(SoundType.WOOD)));
+			BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.5F, 1200).sound(SoundType.WOOD)));
 	public static final BlockItem BARREL_ITEM = registerItem(BARREL_REG_NAME, () -> new BarrelBlockItem(BARREL));
 	public static final BlockItem IRON_BARREL_ITEM = registerItem("iron_barrel", () -> new BarrelBlockItem(IRON_BARREL));
 	public static final BlockItem GOLD_BARREL_ITEM = registerItem("gold_barrel", () -> new BarrelBlockItem(GOLD_BARREL));
@@ -123,15 +123,15 @@ public class ModBlocks {
 
 	private static final String LIMITED_BARREL_REG_NAME = LIMITED_BARREL_NAME;
 	public static final BarrelBlock LIMITED_BARREL_1 = register("limited_barrel_1", () -> new LimitedBarrelBlock(1, Config.SERVER.limitedBarrel1.baseSlotLimitMultiplier, Config.SERVER.limitedBarrel1.upgradeSlotCount,
-			BlockBehaviour.Properties.of(Material.WOOD).strength(2.5F).sound(SoundType.WOOD)));
+			BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.5F).sound(SoundType.WOOD)));
 	public static final BarrelBlock LIMITED_IRON_BARREL_1 = register("limited_iron_barrel_1", () -> new LimitedBarrelBlock(1, Config.SERVER.ironLimitedBarrel1.baseSlotLimitMultiplier, Config.SERVER.ironLimitedBarrel1.upgradeSlotCount,
-			BlockBehaviour.Properties.of(Material.WOOD).strength(2.5F).sound(SoundType.WOOD)));
+			BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.5F).sound(SoundType.WOOD)));
 	public static final BarrelBlock LIMITED_GOLD_BARREL_1 = register("limited_gold_barrel_1", () -> new LimitedBarrelBlock(1, Config.SERVER.goldLimitedBarrel1.baseSlotLimitMultiplier, Config.SERVER.goldLimitedBarrel1.upgradeSlotCount,
-			BlockBehaviour.Properties.of(Material.WOOD).strength(2.5F).sound(SoundType.WOOD)));
+			BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.5F).sound(SoundType.WOOD)));
 	public static final BarrelBlock LIMITED_DIAMOND_BARREL_1 = register("limited_diamond_barrel_1", () -> new LimitedBarrelBlock(1, Config.SERVER.diamondLimitedBarrel1.baseSlotLimitMultiplier, Config.SERVER.diamondLimitedBarrel1.upgradeSlotCount,
-			BlockBehaviour.Properties.of(Material.WOOD).strength(2.5F).sound(SoundType.WOOD)));
+			BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.5F).sound(SoundType.WOOD)));
 	public static final BarrelBlock LIMITED_NETHERITE_BARREL_1 = register("limited_netherite_barrel_1", () -> new LimitedBarrelBlock(1, Config.SERVER.netheriteLimitedBarrel1.baseSlotLimitMultiplier, Config.SERVER.netheriteLimitedBarrel1.upgradeSlotCount,
-			BlockBehaviour.Properties.of(Material.WOOD).strength(2.5F, 1200).sound(SoundType.WOOD)));
+			BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.5F, 1200).sound(SoundType.WOOD)));
 	public static final BlockItem LIMITED_BARREL_1_ITEM = registerItem("limited_barrel_1", () -> new BarrelBlockItem(LIMITED_BARREL_1));
 	public static final BlockItem LIMITED_IRON_BARREL_1_ITEM = registerItem("limited_iron_barrel_1", () -> new BarrelBlockItem(LIMITED_IRON_BARREL_1));
 	public static final BlockItem LIMITED_GOLD_BARREL_1_ITEM = registerItem("limited_gold_barrel_1", () -> new BarrelBlockItem(LIMITED_GOLD_BARREL_1));
@@ -139,15 +139,15 @@ public class ModBlocks {
 	public static final BlockItem LIMITED_NETHERITE_BARREL_1_ITEM = registerItem("limited_netherite_barrel_1", () -> new BarrelBlockItem(LIMITED_NETHERITE_BARREL_1, new Properties().fireResistant()));
 
 	public static final BarrelBlock LIMITED_BARREL_2 = register("limited_barrel_2", () -> new LimitedBarrelBlock(2, Config.SERVER.limitedBarrel2.baseSlotLimitMultiplier, Config.SERVER.limitedBarrel2.upgradeSlotCount,
-			BlockBehaviour.Properties.of(Material.WOOD).strength(2.5F).sound(SoundType.WOOD)));
+			BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.5F).sound(SoundType.WOOD)));
 	public static final BarrelBlock LIMITED_IRON_BARREL_2 = register("limited_iron_barrel_2", () -> new LimitedBarrelBlock(2, Config.SERVER.ironLimitedBarrel2.baseSlotLimitMultiplier, Config.SERVER.ironLimitedBarrel2.upgradeSlotCount,
-			BlockBehaviour.Properties.of(Material.WOOD).strength(2.5F).sound(SoundType.WOOD)));
+			BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.5F).sound(SoundType.WOOD)));
 	public static final BarrelBlock LIMITED_GOLD_BARREL_2 = register("limited_gold_barrel_2", () -> new LimitedBarrelBlock(2, Config.SERVER.goldLimitedBarrel2.baseSlotLimitMultiplier, Config.SERVER.goldLimitedBarrel2.upgradeSlotCount,
-			BlockBehaviour.Properties.of(Material.WOOD).strength(2.5F).sound(SoundType.WOOD)));
+			BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.5F).sound(SoundType.WOOD)));
 	public static final BarrelBlock LIMITED_DIAMOND_BARREL_2 = register("limited_diamond_barrel_2", () -> new LimitedBarrelBlock(2, Config.SERVER.diamondLimitedBarrel2.baseSlotLimitMultiplier, Config.SERVER.diamondLimitedBarrel2.upgradeSlotCount,
-			BlockBehaviour.Properties.of(Material.WOOD).strength(2.5F).sound(SoundType.WOOD)));
+			BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.5F).sound(SoundType.WOOD)));
 	public static final BarrelBlock LIMITED_NETHERITE_BARREL_2 = register("limited_netherite_barrel_2", () -> new LimitedBarrelBlock(2, Config.SERVER.netheriteLimitedBarrel2.baseSlotLimitMultiplier, Config.SERVER.netheriteLimitedBarrel2.upgradeSlotCount,
-			BlockBehaviour.Properties.of(Material.WOOD).strength(2.5F, 1200).sound(SoundType.WOOD)));
+			BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.5F, 1200).sound(SoundType.WOOD)));
 	public static final BlockItem LIMITED_BARREL_2_ITEM = registerItem("limited_barrel_2", () -> new BarrelBlockItem(LIMITED_BARREL_2));
 	public static final BlockItem LIMITED_IRON_BARREL_2_ITEM = registerItem("limited_iron_barrel_2", () -> new BarrelBlockItem(LIMITED_IRON_BARREL_2));
 	public static final BlockItem LIMITED_GOLD_BARREL_2_ITEM = registerItem("limited_gold_barrel_2", () -> new BarrelBlockItem(LIMITED_GOLD_BARREL_2));
@@ -155,15 +155,15 @@ public class ModBlocks {
 	public static final BlockItem LIMITED_NETHERITE_BARREL_2_ITEM = registerItem("limited_netherite_barrel_2", () -> new BarrelBlockItem(LIMITED_NETHERITE_BARREL_2, new Properties().fireResistant()));
 
 	public static final BarrelBlock LIMITED_BARREL_3 = register("limited_barrel_3", () -> new LimitedBarrelBlock(3, Config.SERVER.limitedBarrel3.baseSlotLimitMultiplier, Config.SERVER.limitedBarrel3.upgradeSlotCount,
-			BlockBehaviour.Properties.of(Material.WOOD).strength(2.5F).sound(SoundType.WOOD)));
+			BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.5F).sound(SoundType.WOOD)));
 	public static final BarrelBlock LIMITED_IRON_BARREL_3 = register("limited_iron_barrel_3", () -> new LimitedBarrelBlock(3, Config.SERVER.ironLimitedBarrel3.baseSlotLimitMultiplier, Config.SERVER.ironLimitedBarrel3.upgradeSlotCount,
-			BlockBehaviour.Properties.of(Material.WOOD).strength(2.5F).sound(SoundType.WOOD)));
+			BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.5F).sound(SoundType.WOOD)));
 	public static final BarrelBlock LIMITED_GOLD_BARREL_3 = register("limited_gold_barrel_3", () -> new LimitedBarrelBlock(3, Config.SERVER.goldLimitedBarrel3.baseSlotLimitMultiplier, Config.SERVER.goldLimitedBarrel3.upgradeSlotCount,
-			BlockBehaviour.Properties.of(Material.WOOD).strength(2.5F).sound(SoundType.WOOD)));
+			BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.5F).sound(SoundType.WOOD)));
 	public static final BarrelBlock LIMITED_DIAMOND_BARREL_3 = register("limited_diamond_barrel_3", () -> new LimitedBarrelBlock(3, Config.SERVER.diamondLimitedBarrel3.baseSlotLimitMultiplier, Config.SERVER.diamondLimitedBarrel3.upgradeSlotCount,
-			BlockBehaviour.Properties.of(Material.WOOD).strength(2.5F).sound(SoundType.WOOD)));
+			BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.5F).sound(SoundType.WOOD)));
 	public static final BarrelBlock LIMITED_NETHERITE_BARREL_3 = register("limited_netherite_barrel_3", () -> new LimitedBarrelBlock(3, Config.SERVER.netheriteLimitedBarrel3.baseSlotLimitMultiplier, Config.SERVER.netheriteLimitedBarrel3.upgradeSlotCount,
-			BlockBehaviour.Properties.of(Material.WOOD).strength(2.5F, 1200).sound(SoundType.WOOD)));
+			BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.5F, 1200).sound(SoundType.WOOD)));
 	public static final BlockItem LIMITED_BARREL_3_ITEM = registerItem("limited_barrel_3", () -> new BarrelBlockItem(LIMITED_BARREL_3));
 	public static final BlockItem LIMITED_IRON_BARREL_3_ITEM = registerItem("limited_iron_barrel_3", () -> new BarrelBlockItem(LIMITED_IRON_BARREL_3));
 	public static final BlockItem LIMITED_GOLD_BARREL_3_ITEM = registerItem("limited_gold_barrel_3", () -> new BarrelBlockItem(LIMITED_GOLD_BARREL_3));
@@ -171,15 +171,15 @@ public class ModBlocks {
 	public static final BlockItem LIMITED_NETHERITE_BARREL_3_ITEM = registerItem("limited_netherite_barrel_3", () -> new BarrelBlockItem(LIMITED_NETHERITE_BARREL_3, new Properties().fireResistant()));
 
 	public static final BarrelBlock LIMITED_BARREL_4 = register("limited_barrel_4", () -> new LimitedBarrelBlock(4, Config.SERVER.limitedBarrel4.baseSlotLimitMultiplier, Config.SERVER.limitedBarrel4.upgradeSlotCount,
-			BlockBehaviour.Properties.of(Material.WOOD).strength(2.5F).sound(SoundType.WOOD)));
+			BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.5F).sound(SoundType.WOOD)));
 	public static final BarrelBlock LIMITED_IRON_BARREL_4 = register("limited_iron_barrel_4", () -> new LimitedBarrelBlock(4, Config.SERVER.ironLimitedBarrel4.baseSlotLimitMultiplier, Config.SERVER.ironLimitedBarrel4.upgradeSlotCount,
-			BlockBehaviour.Properties.of(Material.WOOD).strength(2.5F).sound(SoundType.WOOD)));
+			BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.5F).sound(SoundType.WOOD)));
 	public static final BarrelBlock LIMITED_GOLD_BARREL_4 = register("limited_gold_barrel_4", () -> new LimitedBarrelBlock(4, Config.SERVER.goldLimitedBarrel4.baseSlotLimitMultiplier, Config.SERVER.goldLimitedBarrel4.upgradeSlotCount,
-			BlockBehaviour.Properties.of(Material.WOOD).strength(2.5F).sound(SoundType.WOOD)));
+			BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.5F).sound(SoundType.WOOD)));
 	public static final BarrelBlock LIMITED_DIAMOND_BARREL_4 = register("limited_diamond_barrel_4", () -> new LimitedBarrelBlock(4, Config.SERVER.diamondLimitedBarrel4.baseSlotLimitMultiplier, Config.SERVER.diamondLimitedBarrel4.upgradeSlotCount,
-			BlockBehaviour.Properties.of(Material.WOOD).strength(2.5F).sound(SoundType.WOOD)));
+			BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.5F).sound(SoundType.WOOD)));
 	public static final BarrelBlock LIMITED_NETHERITE_BARREL_4 = register("limited_netherite_barrel_4", () -> new LimitedBarrelBlock(4, Config.SERVER.netheriteLimitedBarrel4.baseSlotLimitMultiplier, Config.SERVER.netheriteLimitedBarrel4.upgradeSlotCount,
-			BlockBehaviour.Properties.of(Material.WOOD).strength(2.5F, 1200).sound(SoundType.WOOD)));
+			BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.5F, 1200).sound(SoundType.WOOD)));
 	public static final BlockItem LIMITED_BARREL_4_ITEM = registerItem("limited_barrel_4", () -> new BarrelBlockItem(LIMITED_BARREL_4));
 	public static final BlockItem LIMITED_IRON_BARREL_4_ITEM = registerItem("limited_iron_barrel_4", () -> new BarrelBlockItem(LIMITED_IRON_BARREL_4));
 	public static final BlockItem LIMITED_GOLD_BARREL_4_ITEM = registerItem("limited_gold_barrel_4", () -> new BarrelBlockItem(LIMITED_GOLD_BARREL_4));

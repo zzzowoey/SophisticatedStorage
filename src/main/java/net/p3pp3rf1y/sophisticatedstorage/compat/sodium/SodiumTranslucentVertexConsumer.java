@@ -1,7 +1,7 @@
 package net.p3pp3rf1y.sophisticatedstorage.compat.sodium;
 
-import me.jellysquid.mods.sodium.client.render.vertex.VertexBufferWriter;
-import me.jellysquid.mods.sodium.client.render.vertex.VertexFormatDescription;
+import net.caffeinemc.mods.sodium.api.vertex.buffer.VertexBufferWriter;
+import net.caffeinemc.mods.sodium.api.vertex.format.VertexFormatDescription;
 import org.lwjgl.system.MemoryStack;
 
 import net.minecraft.client.renderer.MultiBufferSource;

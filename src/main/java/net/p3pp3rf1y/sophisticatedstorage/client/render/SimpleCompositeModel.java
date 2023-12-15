@@ -288,7 +288,7 @@ public class SimpleCompositeModel implements IUnbakedGeometry<SimpleCompositeMod
 					childrenBuilder.put("model_" + (i++), model);
 					itemPassesBuilder.add(model);
 				}
-				return new SimpleCompositeModel.Baked(isGui3d, isSideLit, isAmbientOcclusion, particle, transforms, overrides, childrenBuilder.build(), itemPassesBuilder.build());
+				return new Baked(isGui3d, isSideLit, isAmbientOcclusion, particle, transforms, overrides, childrenBuilder.build(), itemPassesBuilder.build());
 			}
 		}
 	}

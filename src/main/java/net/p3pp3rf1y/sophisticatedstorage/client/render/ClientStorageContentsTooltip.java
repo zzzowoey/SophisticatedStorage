@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.world.item.ItemStack;
@@ -25,8 +26,8 @@ public class ClientStorageContentsTooltip extends ClientStorageContentsTooltipBa
 	}
 
 	@Override
-	public void renderImage(Font font, int x, int y, PoseStack poseStack, ItemRenderer itemRenderer) {
-		CapabilityStorageWrapper.get(storageItem).ifPresent(wrapper -> renderTooltip(wrapper, font, x, y, poseStack, itemRenderer));
+	public void renderImage(Font font, int x, int y, GuiGraphics guiGraphics) {
+		CapabilityStorageWrapper.get(storageItem).ifPresent(wrapper -> renderTooltip(wrapper, font, x, y, guiGraphics));
 	}
 
 	public ClientStorageContentsTooltip(StorageContentsTooltip tooltip) {

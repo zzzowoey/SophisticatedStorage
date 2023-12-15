@@ -15,7 +15,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.p3pp3rf1y.sophisticatedcore.client.gui.utils.TranslationHelper;
@@ -36,7 +36,7 @@ public class StorageLinkBlock extends Block implements EntityBlock {
 	private static final RotatedShapes SHAPE = new RotatedShapes(false, Block.box(1, 14, 1, 15, 16, 15));
 
 	public StorageLinkBlock() {
-		super(BlockBehaviour.Properties.of(Material.STONE).requiresCorrectToolForDrops().strength(2.5F, 5.0F));
+		super(Properties.of().mapColor(MapColor.STONE).requiresCorrectToolForDrops().strength(2.5F, 5.0F));
 		registerDefaultState(stateDefinition.any().setValue(FACING, Direction.UP));
 	}
 

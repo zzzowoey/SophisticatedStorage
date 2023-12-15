@@ -567,7 +567,7 @@ public abstract class StorageBlockEntity extends BlockEntity
 	}
 
 	public void onNeighborChange(BlockPos neighborPos) {
-		Direction direction = getNeighborDirection(neighborPos);
+		Direction direction = Direction.fromDelta(Integer.signum(neighborPos.getX() - worldPosition.getX()), Integer.signum(neighborPos.getY() - worldPosition.getY()), Integer.signum(neighborPos.getZ() - worldPosition.getZ()));
 		if (direction == null) {
 			return;
 		}
@@ -575,20 +575,9 @@ public abstract class StorageBlockEntity extends BlockEntity
 		storageWrapper.getUpgradeHandler().getWrappersThatImplement(INeighborChangeListenerUpgrade.class).forEach(upgrade -> upgrade.onNeighborChange(getLevel(), worldPosition, direction));
 	}
 
-	@Nullable
-	private Direction getNeighborDirection(BlockPos neighborPos) {
-		Direction direction = null;
-		int normalX = Integer.signum(neighborPos.getX() - worldPosition.getX());
-		int normalY = Integer.signum(neighborPos.getY() - worldPosition.getY());
-		int normalZ = Integer.signum(neighborPos.getZ() - worldPosition.getZ());
-		for (Direction value : Direction.values()) {
-			Vec3i normal = value.getNormal();
-			if (normal.getX() == normalX && normal.getY() == normalY && normal.getZ() == normalZ) {
-				direction = value;
-				break;
-			}
-		}
-		return direction;
+	public float getSlotFillPercentage(int slot) {
+		ItemStack stackInSlot = storageWrapper.getInventoryHandler().getStackInSlot(slot);
+		return stackInSlot.getCount() / (float) storageWrapper.getInventoryHandler().getStackLimit(slot, stackInSlot);
 	}
 
 	private static class ContentsFilteredItemHandler implements ITrackedContentsItemHandler {

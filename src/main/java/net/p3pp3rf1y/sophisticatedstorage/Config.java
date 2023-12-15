@@ -301,13 +301,13 @@ public class Config {
 	}
 
 	public static void onLoad(ModConfig modConfig) {
-		for (Config.BaseConfig config : CONFIGS.values())
+		for (BaseConfig config : CONFIGS.values())
 			if (config.specification == modConfig.getSpec())
 				config.onLoad();
 	}
 
 	public static void onReload(ModConfig modConfig) {
-		for (Config.BaseConfig config : CONFIGS.values())
+		for (BaseConfig config : CONFIGS.values())
 			if (config.specification == modConfig.getSpec())
 				config.onReload();
 	}

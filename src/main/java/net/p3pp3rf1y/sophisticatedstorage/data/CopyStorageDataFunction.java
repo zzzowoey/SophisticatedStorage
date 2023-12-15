@@ -40,8 +40,8 @@ public class CopyStorageDataFunction extends LootItemConditionalFunction {
 	}
 
 
-	public static CopyStorageDataFunction.Builder builder() {
-		return new CopyStorageDataFunction.Builder();
+	public static Builder builder() {
+		return new Builder();
 	}
 
 	public static class Serializer extends LootItemConditionalFunction.Serializer<CopyStorageDataFunction> {
@@ -52,9 +52,9 @@ public class CopyStorageDataFunction extends LootItemConditionalFunction {
 		}
 	}
 
-	public static class Builder extends LootItemConditionalFunction.Builder<CopyStorageDataFunction.Builder> {
+	public static class Builder extends LootItemConditionalFunction.Builder<Builder> {
 		@Override
-		protected CopyStorageDataFunction.Builder getThis() {
+		protected Builder getThis() {
 			return this;
 		}
 

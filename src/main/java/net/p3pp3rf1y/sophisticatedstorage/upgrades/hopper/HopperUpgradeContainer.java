@@ -72,7 +72,7 @@ public class HopperUpgradeContainer extends UpgradeContainerBase<HopperUpgradeWr
 		verticalFacing = VerticalFacing.NO;
 		if (player.containerMenu instanceof StorageContainerMenuBase<?> storageContainerMenu) {
 			storageContainerMenu.getBlockPosition().ifPresent(pos -> {
-				BlockState state = player.getLevel().getBlockState(pos);
+				BlockState state = player.level().getBlockState(pos);
 				if (state.getBlock() instanceof StorageBlockBase storageBlock) {
 					horizontalDirection = storageBlock.getHorizontalDirection(state);
 					verticalFacing = storageBlock.getVerticalFacing(state);

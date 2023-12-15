@@ -31,7 +31,6 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
@@ -74,7 +73,7 @@ public class ShulkerBoxBlock extends StorageBlockBase implements IAdditionalDrop
 	}
 
 	private static Properties getProperties(float explosionResistance) {
-		BlockBehaviour.StatePredicate statePredicate = (state, blockGetter, pos) -> {
+		StatePredicate statePredicate = (state, blockGetter, pos) -> {
 			BlockEntity blockentity = blockGetter.getBlockEntity(pos);
 			if (!(blockentity instanceof ShulkerBoxBlockEntity shulkerboxblockentity)) {
 				return true;
@@ -82,7 +81,7 @@ public class ShulkerBoxBlock extends StorageBlockBase implements IAdditionalDrop
 				return shulkerboxblockentity.isClosed();
 			}
 		};
-		return BlockBehaviour.Properties.of(Material.SHULKER_SHELL).strength(2.0F, explosionResistance).dynamicShape().noOcclusion().isSuffocating(statePredicate).isViewBlocking(statePredicate);
+		return Properties.of().strength(2.0F, explosionResistance).dynamicShape().noOcclusion().isSuffocating(statePredicate).isViewBlocking(statePredicate).pushReaction(PushReaction.DESTROY).mapColor(DyeColor.PURPLE);
 	}
 
 	@Override
@@ -208,12 +207,6 @@ public class ShulkerBoxBlock extends StorageBlockBase implements IAdditionalDrop
 		}
 
 		super.playerWillDestroy(level, pos, state, player);
-	}
-
-	@SuppressWarnings("deprecation")
-	@Override
-	public PushReaction getPistonPushReaction(BlockState state) {
-		return PushReaction.DESTROY;
 	}
 
 	@Override

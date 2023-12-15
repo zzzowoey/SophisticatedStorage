@@ -218,7 +218,7 @@ public abstract class StorageBlockBase extends BlockBase implements IStorageBloc
 	}
 
 	protected boolean tryAddUpgrade(Player player, InteractionHand hand, StorageBlockEntity b, ItemStack itemInHand, Direction facing, BlockHitResult hitResult) {
-		if (player.getLevel().isClientSide) {
+		if (player.level().isClientSide) {
 			return true;
 		}
 

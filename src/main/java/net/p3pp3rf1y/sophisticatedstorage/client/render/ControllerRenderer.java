@@ -150,10 +150,10 @@ public class ControllerRenderer implements BlockEntityRenderer<ControllerBlockEn
 		}
 
 		private static final RenderType LINES = RenderType.create("storage_lines", DefaultVertexFormat.POSITION_COLOR_NORMAL, VertexFormat.Mode.LINES, 256,
-				RenderType.CompositeState.builder()
+				CompositeState.builder()
 						.setShaderState(RENDERTYPE_LINES_SHADER)
 						.setDepthTestState(NO_DEPTH_TEST)
-						.setLineState(new RenderStateShard.LineStateShard(OptionalDouble.empty()))
+						.setLineState(new LineStateShard(OptionalDouble.empty()))
 						.setLayeringState(VIEW_OFFSET_Z_LAYERING)
 						.setCullState(RenderStateShard.NO_CULL)
 						.createCompositeState(false));

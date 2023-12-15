@@ -1,4 +1,4 @@
-/*
+package net.p3pp3rf1y.sophisticatedstorage.compat.quark;/*
 package net.p3pp3rf1y.sophisticatedstorage.compat.quark;
 
 import net.minecraft.core.registries.BuiltInRegistries;

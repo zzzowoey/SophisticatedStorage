@@ -6,6 +6,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.inventory.TransientCraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
@@ -32,7 +33,7 @@ public class ShulkerBoxFromChestRecipesMaker {
 			}
 
 			getChestItems(originalRecipe).forEach(chestItem -> {
-				CraftingContainer craftinginventory = new CraftingContainer(new AbstractContainerMenu(null, -1) {
+				CraftingContainer craftinginventory = new TransientCraftingContainer(new AbstractContainerMenu(null, -1) {
 					@Override
 					public ItemStack quickMoveStack(Player pPlayer, int pIndex) {
 						return ItemStack.EMPTY;

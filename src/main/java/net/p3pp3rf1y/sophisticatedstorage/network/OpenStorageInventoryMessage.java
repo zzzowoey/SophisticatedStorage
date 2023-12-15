@@ -37,14 +37,14 @@ public class OpenStorageInventoryMessage extends SimplePacketBase {
 			player.openMenu(
 					MenuProviderHelper.createMenuProvider(
 							(w, ctx, pl) -> {
-								if (pl.getLevel().getBlockState(pos).getBlock() instanceof LimitedBarrelBlock) {
+								if (pl.level().getBlockState(pos).getBlock() instanceof LimitedBarrelBlock) {
 									return new LimitedBarrelContainerMenu(w, pl, pos);
 								} else {
 									return new StorageContainerMenu(w, pl, pos);
 								}
 							},
 							buffer -> buffer.writeBlockPos(pos),
-							WorldHelper.getBlockEntity(player.level, pos, StorageBlockEntity.class).map(StorageBlockEntity::getDisplayName).orElse(Component.empty())
+							WorldHelper.getBlockEntity(player.level(), pos, StorageBlockEntity.class).map(StorageBlockEntity::getDisplayName).orElse(Component.empty())
 					)
 			);
 		});

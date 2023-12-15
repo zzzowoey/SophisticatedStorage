@@ -210,14 +210,18 @@ public class ModItems {
 			new LootItemFunctionType(new CopyStorageDataFunction.Serializer()));
 
 	@SuppressWarnings("unused")
-	public static final CreativeModeTab CREATIVE_TAB = FabricItemGroup.builder(SophisticatedStorage.getRL("item_group"))
-			.icon(() -> WoodStorageBlockItem.setWoodType(new ItemStack(ModBlocks.GOLD_BARREL_ITEM), WoodType.SPRUCE))
-			.title(Component.translatable("itemGroup.sophisticatedstorage"))
-			.displayItems((featureFlags, output) -> {
-				ITEMS.values().stream().filter(i -> i instanceof ItemBase).forEach(i -> ((ItemBase) i).addCreativeTabItems(output::accept));
-				ModBlocks.ITEMS.values().stream().filter(i -> i instanceof BlockItemBase).forEach(i -> ((BlockItemBase) i).addCreativeTabItems(output::accept));
-			})
-			.build();
+	public static final CreativeModeTab CREATIVE_TAB = Registry.register(
+			BuiltInRegistries.CREATIVE_MODE_TAB,
+			SophisticatedStorage.getRL("item_group"),
+			FabricItemGroup.builder()
+					.icon(() -> WoodStorageBlockItem.setWoodType(new ItemStack(ModBlocks.GOLD_BARREL_ITEM), WoodType.SPRUCE))
+					.title(Component.translatable("itemGroup.sophisticatedstorage"))
+					.displayItems((featureFlags, output) -> {
+						ITEMS.values().stream().filter(i -> i instanceof ItemBase).forEach(i -> ((ItemBase) i).addCreativeTabItems(output::accept));
+						ModBlocks.ITEMS.values().stream().filter(i -> i instanceof BlockItemBase).forEach(i -> ((BlockItemBase) i).addCreativeTabItems(output::accept));
+					})
+					.build()
+	);
 
 
 	public static <T extends Item> T register(String id, Supplier<T> supplier) {
