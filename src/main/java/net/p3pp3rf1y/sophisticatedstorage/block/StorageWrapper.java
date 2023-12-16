@@ -200,7 +200,7 @@ public abstract class StorageWrapper implements IStorageWrapper {
 	public void load(CompoundTag tag) {
 		loadContents(tag);
 		loadData(tag);
-		if (LogicalSidedProvider.WORKQUEUE.get(EnvType.SERVER).isSameThread() && getRenderInfo().getUpgradeItems().size() != getUpgradeHandler().getSlotCount()) {
+		if (!LogicalSidedProvider.WORKQUEUE.get(EnvType.CLIENT).isSameThread() && getRenderInfo().getUpgradeItems().size() != getUpgradeHandler().getSlotCount()) {
 			getUpgradeHandler().setRenderUpgradeItems();
 		}
 	}
