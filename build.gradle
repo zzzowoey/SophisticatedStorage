@@ -138,8 +138,13 @@ def dependencies(DependencyHandler deps) {
 
     deps.modImplementation("committee.nova.mkb.fabric:mkb-${minecraft_version}:${mkb_mod_version}")
 
+    def modules = project(':SophisticatedCore')['port_lib_modules'].split(',')
     for (def module in port_lib_modules.split(",")) {
-        deps.include(deps.modApi("io.github.fabricators_of_create.Porting-Lib:${module.trim()}:$port_lib_version"))
+        if (modules.contains(module)) {
+            deps.modImplementation("io.github.fabricators_of_create.Porting-Lib:${module.trim()}:$port_lib_version")
+        } else {
+            deps.include(deps.modApi("io.github.fabricators_of_create.Porting-Lib:${module.trim()}:$port_lib_version"))
+        }
     }
 }
 
@@ -363,6 +368,6 @@ sonarqube {
 }
 
 task printVersionName {
-  println "version:" + project.version
+    println "version:" + project.version
 }
 
